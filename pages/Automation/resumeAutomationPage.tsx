@@ -21,7 +21,7 @@ const ResumeAutomationPage = () => {
   const [image, setImage] = useState("");
   const [disabled, setDisabled] = useState(false);
   const [uploadBtn, setUploadBtn] = useState(false);
-  const [response, setResponse] = useState("");
+  const [response, setResponse] = useState<any[]>([]);
   const [fileError, setFileError] = useState(false);
   const [fileErrMsg, setFileErrorMsg] = useState("");
 
@@ -34,7 +34,7 @@ const ResumeAutomationPage = () => {
 
       // Check file size and type
       const maxSize = 10 * 1024 * 1024; // 10 MB
-      const fileTypes = [".jpg", ".jpeg", ".png"];
+      const fileTypes = [".pdf"];
       const fileExtension = filename
         .slice(filename.lastIndexOf("."))
         .toLowerCase();
@@ -45,7 +45,7 @@ const ResumeAutomationPage = () => {
         setUploadBtn(false);
       } else if (!fileTypes.includes(fileExtension)) {
         setFileError(true);
-        setFileErrorMsg("Only .jpg, .jpeg, and .png files are valid.");
+        setFileErrorMsg("Only .pdf files are valid.");
         setUploadBtn(false);
       } else {
         setFileError(false);
@@ -58,16 +58,33 @@ const ResumeAutomationPage = () => {
     e.preventDefault();
     setDisabled(true);
     const body = new FormData();
-    body.append("report", image);
+    body.append("file", image);
     try {
       let response = await axios.post(
-        `${process.env.NEXT_PUBLIC_MEDICAL_BACKEND_BASE_URL}/process_report`,
+        `${process.env.NEXT_PUBLIC_RESUME_BACKEND_BASE_URL}/compare_resumes`,
         body
       );
       if (response.status === 200) {
-        toast.success(response.data.message, toastOptions);
-        setResponse(response?.data?.response)
+        // toast.success(response.data.message, toastOptions);
+        toast.success("Resume Compare successfully", toastOptions);
 
+        let data:any[] = response?.data
+
+        if(data && data?.length > 0){
+          const sortedResumes = data.sort((a, b) => {
+            const scoreA = parseFloat(a.Similarity_score); 
+            const scoreB = parseFloat(b.Similarity_score);
+          
+            if (scoreB !== scoreA) {
+              return scoreB - scoreA; 
+            }
+          
+            return a.Resume_name.localeCompare(b.Resume_name);
+          });
+          setResponse([...sortedResumes])
+        }else{
+          setResponse([])
+        }
         setUploadBtn(false);
       } else {
         toast.error(response.data.message, toastOptions);
@@ -106,7 +123,7 @@ const ResumeAutomationPage = () => {
                 <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                   <tr className="text-center">
                     <th scope="col" className="px-6 py-3 text-start">
-                      Medical History
+                      Resume Compare
                     </th>
                     <th scope="col" className="px-6 py-3">
                       Action
@@ -136,7 +153,7 @@ const ResumeAutomationPage = () => {
                           className="mt-1 text-sm text-gray-500 dark:text-gray-300"
                           id="file_input_help"
                         >
-                          Upload your medical report in image format.
+                          Upload resume in pdf format.
                         </p>
                       )}
                     </td>
@@ -175,15 +192,30 @@ const ResumeAutomationPage = () => {
                   </tr>
                   {response && response.length > 0 && (
                     <tr>
-                      <td colSpan={2} className="bg-white py-3 px-5">
-                        <div className="bg-gray-100 border border-gray-200 rounded-lg p-4">
-                          <p className="text-base font-semibold text-gray-700">
-                            <strong>Result:</strong>
-
-                          </p>
-                          <p className="text-sm text-gray-800 mt-2 whitespace-pre-line">
-                            {response}
-                          </p>
+                      <td colSpan={2}>
+                        <div className="bg-white py-4 px-5 rounded-lg shadow-md mt-3 m-auto">
+                          <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+                            Matching Result:
+                          </h2>
+                          <div className="flex flex-wrap gap-4 ">
+                            {response.map((resume, index) => (
+                              <div
+                                key={index}
+                                className="bg-gray-100 border border-gray-200 rounded-lg p-4 shadow-md transition-transform transform hover:scale-105"
+                              >
+                                <h3 className="text-lg font-semibold text-gray-800">
+                                  {resume.Resume_name}
+                                </h3>
+                                <p className="text-md text-gray-600">
+                                  <strong>Similarity Score:</strong>{" "}
+                                  {resume.Similarity_score}
+                                </p>
+                                <p className="text-sm text-gray-500 mt-1">
+                                  <strong>Summary:</strong> {resume.Summary}
+                                </p>
+                              </div>
+                            ))}
+                          </div>
                         </div>
                       </td>
                     </tr>
