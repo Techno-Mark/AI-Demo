@@ -61,7 +61,7 @@ const Automation = () => {
     body.append("report", image);
     try {
       let response = await axios.post(
-        `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/process_report`,
+        `${process.env.NEXT_PUBLIC_MEDICAL_BACKEND_BASE_URL}/process_report`,
         body
       );
       if (response.status === 200) {

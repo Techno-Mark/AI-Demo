@@ -4,7 +4,7 @@ export default function Document() {
   return (
     <Html lang="en">
       <Head>
-        <title>Taxworkpaper</title>
+        <title>AI-Demo</title>
       </Head>
       <body>
         <Main />
