@@ -28,7 +28,7 @@ const UploadSection: React.FC<UploadSectionProps> = ({
             <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
               <tr className="text-center">
                 <th scope="col" className="px-6 py-3 text-start">
-                  Indexing & Bookmarking
+                Medical History
                 </th>
                 <th scope="col" className="px-6 py-3">
                   Action
