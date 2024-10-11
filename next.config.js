@@ -1,15 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: true,
-    async redirects() {
-      return [
-        {
-          source: "/",
-          destination: "/medical-history",
-          permanent: true,
-        },
-      ]
-  }
+  reactStrictMode: true
 }
 
 module.exports = nextConfig
