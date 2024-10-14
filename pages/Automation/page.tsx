@@ -34,7 +34,7 @@ const Automation = () => {
 
       // Check file size and type
       const maxSize = 10 * 1024 * 1024; // 10 MB
-      const fileTypes = [".jpg", ".jpeg", ".png"];
+      const fileTypes = [".jpg", ".jpeg", ".png",".pdf"];
       const fileExtension = filename
         .slice(filename.lastIndexOf("."))
         .toLowerCase();
@@ -45,7 +45,7 @@ const Automation = () => {
         setUploadBtn(false);
       } else if (!fileTypes.includes(fileExtension)) {
         setFileError(true);
-        setFileErrorMsg("Only .jpg, .jpeg, and .png files are valid.");
+        setFileErrorMsg("Only .jpg, .jpeg, .png and .pdf files are valid.");
         setUploadBtn(false);
       } else {
         setFileError(false);
@@ -136,7 +136,7 @@ const Automation = () => {
                           className="mt-1 text-sm text-gray-500 dark:text-gray-300"
                           id="file_input_help"
                         >
-                          Upload your medical report in image format.
+                          Upload your medical report in image or pdf format.
                         </p>
                       )}
                     </td>
@@ -182,7 +182,9 @@ const Automation = () => {
 
                           </p>
                           <p className="text-sm text-gray-800 mt-2 whitespace-pre-line">
-                            {response}
+                            <div
+                                dangerouslySetInnerHTML={{ __html: response }}
+                            />
                           </p>
                         </div>
                       </td>
