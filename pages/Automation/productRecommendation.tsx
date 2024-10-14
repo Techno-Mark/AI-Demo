@@ -140,9 +140,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ title, description, price,med
   // let imageURL = `https://static.wixstatic.com/media/${mediaId}/v1/fit/w_500,h_500,q_90/file.png`;
     let imageURL = `https://static.wixstatic.com/media/${mediaId}`;
   return (
-    <div className="max-w-xs rounded-lg shadow-lg bg-white transition-transform transform hover:scale-105">
-      <img className="w-full h-48 object-contain" src={imageURL} alt={title} />
-      <div className="px-6 py-4">
+    <div className="max-w-xs h-96 rounded-lg shadow-lg bg-white transition-transform transform hover:scale-105">
+      <img className="w-full h-56 object-contain" src={imageURL} alt={title} />
+      <div className="px-6 py-4 h-24">
         <div className="font-bold text-xl mb-2">{title}</div>
       </div>
       <div className="px-6 py-4">
