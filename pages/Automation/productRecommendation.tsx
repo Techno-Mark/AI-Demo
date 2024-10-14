@@ -24,15 +24,17 @@ const ProductRecommendation = () => {
   const handleUpload = async (e:any) => {
     e.preventDefault();
     setDisabled(true);
-    const body = { prompt };
+    const body = new FormData();
+    body.append("prompt", prompt);
     try {
-      const result = await axios.get(
-        `${process.env.NEXT_PUBLIC_PRODUCT_RECOMMEND_BASE_URL}`
+      const result = await axios.post(
+        `${process.env.NEXT_PUBLIC_PRODUCT_RECOMMEND_BASE_URL}/process_products`,
+        body
       );
 
       if (result.status === 200) {
         toast.success("Products retrieved successfully", toastOptions);
-        setResponse(result.data?.items?.splice(0,9) || []); 
+        setResponse(result.data?.matched_products || []); 
       } else {
         toast.error(result.data.message, toastOptions);
       }
@@ -108,11 +110,10 @@ const ProductRecommendation = () => {
                         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-7 bg-gray-100 border border-gray-200 rounded-lg px-4 py-6">
                           {response.map((product:any, index) => (
                             <ProductCard
-                              key={product._id} 
-                              title={product.name} 
-                              description={product.description}
-                              mediaId={product.mediaItems[0]?.id}
-                              price={product.price}
+                              key={product.Image} 
+                              title={product["Product Name"]} 
+                              mediaId={product.Image}
+                              price={product["Price"]}
                             />
                           ))}
                         </div>
@@ -131,12 +132,11 @@ const ProductRecommendation = () => {
 
 interface ProductCardProps {
   title: string;
-  description: string;
-  price: number;
+  price: string;
   mediaId:string
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({ title, description, price,mediaId }) => {
+const ProductCard: React.FC<ProductCardProps> = ({ title, price,mediaId }) => {
   // let imageURL = `https://static.wixstatic.com/media/${mediaId}/v1/fit/w_500,h_500,q_90/file.png`;
     let imageURL = `https://static.wixstatic.com/media/${mediaId}`;
   return (
@@ -146,7 +146,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ title, description, price,med
         <div className="font-bold text-xl mb-2">{title}</div>
       </div>
       <div className="px-6 py-4">
-        <span className="text-gray-900 font-bold text-lg">{`₹${price.toFixed(2)}`}</span>
+        <span className="text-gray-900 font-bold text-lg">{`${price}`}</span>
       </div>
     </div>
   );
