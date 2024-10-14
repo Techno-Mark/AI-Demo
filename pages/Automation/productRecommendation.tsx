@@ -144,7 +144,6 @@ const ProductCard: React.FC<ProductCardProps> = ({ title, description, price,med
       <img className="w-full h-48 object-contain" src={imageURL} alt={title} />
       <div className="px-6 py-4">
         <div className="font-bold text-xl mb-2">{title}</div>
-        <p className="text-gray-700 text-base">{description}</p>
       </div>
       <div className="px-6 py-4">
         <span className="text-gray-900 font-bold text-lg">{`₹${price.toFixed(2)}`}</span>
