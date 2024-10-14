@@ -1,0 +1,16 @@
+Show revenue for 2022
+Show cost of goods sold for 2022
+Show gross profit for 2022
+Show net profit for 2022
+
+Show revenue for march 2022
+Show cost of goods sold for march 2022
+Show gross profit for march 2022
+Show net profit for march 2022
+
+get all data
+give me data of march 2022
+give me data of june 2022
+give me sum of amount for march 2022
+give me sum of amount for june 2022
+give me sum of amount for 2022

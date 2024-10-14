@@ -43,7 +43,7 @@ const Bot = () => {
     setResponse(null);
 
     try {
-      const res = await fetch(`${process.env.CHATBOT}/chatbot`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_MEDICAL_BACKEND_BASE_URL_CHATBOT}/chatbot`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -61,7 +61,6 @@ const Bot = () => {
     } catch (error) {
       setResponse(null);
       setPrompt("");
-      toast.error("Failed to fetch response from the API", toastOptions);
       setDisabled(false);
     } finally {
       setDisabled(false);
@@ -117,7 +116,10 @@ const Bot = () => {
                 </td>
               </tr>
 
-              {!!response && !!response.data && !!response.is_predefined ? (
+              {!!response &&
+              !!response.data &&
+              !!response.is_predefined &&
+              response.is_graph ? (
                 <tr>
                   <td colSpan={2} className="bg-white py-3 px-5">
                     <div className="bg-gray-100 border border-gray-200 rounded-lg p-4">
@@ -125,6 +127,27 @@ const Bot = () => {
                         <strong>Result:</strong>
                       </p>
                       <FinanceChart data={response.data} />
+                    </div>
+                  </td>
+                </tr>
+              ) : !!response && !!response.data && !response.is_graph && Array.isArray(response.data) ? (
+                <tr>
+                  <td colSpan={2} className="bg-white py-3 px-5">
+                    <div className="bg-gray-100 border border-gray-200 rounded-lg p-4">
+                      <p className="text-base font-semibold text-gray-700">
+                        <strong>Result:</strong>
+                      </p>
+                      <pre>Total count is {response.count}</pre>
+                      <pre className="mt-2">
+                        Data = [
+                        {response.data.map((item: any, index: number) => (
+                          <div key={index}>
+                            {JSON.stringify(item, null, 2)}
+                            {index < response.data.length - 1 ? "," : ""}
+                          </div>
+                        ))}
+                        ]
+                      </pre>
                     </div>
                   </td>
                 </tr>
