@@ -25,6 +25,8 @@
     "chart.js": "^4.4.4",
     "eslint": "8.49.0",
     "eslint-config-next": "13.4.19",
+    "highcharts": "^10.3.3",
+    "highcharts-react-official": "^3.2.1",
     "immutability-helper": "^3.1.1",
     "mui-datatables": "^4.3.0",
     "next": "13.4.19",
@@ -40,6 +42,7 @@
   },
   "devDependencies": {
     "@types/chart.js": "^2.9.41",
+    "@types/highcharts": "^7.0.0",
     "@types/mui-datatables": "^4.3.12",
     "@types/react-dnd": "^3.0.2",
     "@types/react-dnd-html5-backend": "^3.0.2",

@@ -43,13 +43,16 @@ const Bot = () => {
     setResponse(null);
 
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_MEDICAL_BACKEND_BASE_URL_CHATBOT}/chatbot`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ prompt: prompt.trim() }),
-      });
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_MEDICAL_BACKEND_BASE_URL_CHATBOT}/chatbot`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ prompt: prompt.trim() }),
+        }
+      );
 
       if (!res.ok) {
         throw new Error("Network response was not ok");
@@ -118,19 +121,48 @@ const Bot = () => {
 
               {!!response &&
               !!response.data &&
+              response.data.length > 0 &&
               !!response.is_predefined &&
               response.is_graph ? (
                 <tr>
                   <td colSpan={2} className="bg-white py-3 px-5">
                     <div className="bg-gray-100 border border-gray-200 rounded-lg p-4">
-                      <p className="text-base font-semibold text-gray-700">
+                      <p className="text-base font-semibold text-gray-700 mb-4">
                         <strong>Result:</strong>
                       </p>
-                      <FinanceChart data={response.data} />
+                      <div className="grid grid-cols-2 gap-10">
+                        <div className="chart-container">
+                          <FinanceChart data={response.data} chartType="line" />
+                        </div>
+                        <div className="chart-container">
+                          <FinanceChart data={response.data} chartType="area" />
+                        </div>
+                        <div className="chart-container">
+                          <FinanceChart
+                            data={response.data}
+                            chartType="column"
+                          />
+                        </div>
+                        <div className="chart-container">
+                          <FinanceChart data={response.data} chartType="bar" />
+                        </div>
+                        <div className="chart-container">
+                          <FinanceChart data={response.data} chartType="pie" />
+                        </div>
+                        <div className="chart-container">
+                          <FinanceChart
+                            data={response.data}
+                            chartType="scatter"
+                          />
+                        </div>
+                      </div>
                     </div>
                   </td>
                 </tr>
-              ) : !!response && !!response.data && !response.is_graph && Array.isArray(response.data) ? (
+              ) : !!response &&
+                !!response.data &&
+                !response.is_graph &&
+                Array.isArray(response.data) ? (
                 <tr>
                   <td colSpan={2} className="bg-white py-3 px-5">
                     <div className="bg-gray-100 border border-gray-200 rounded-lg p-4">
