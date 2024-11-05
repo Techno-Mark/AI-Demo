@@ -175,7 +175,7 @@ export default function Home() {
                       }`}
                     >
                       <div
-                        className={`bg-gray-200 p-3 rounded-lg max-w-xs ${
+                        className={`p-3 rounded-lg max-w-xs ${
                           msg.name === "Alice" ? "bg-blue-500" : "bg-gray-500"
                         }`}
                       >
