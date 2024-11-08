@@ -110,7 +110,7 @@ const ProductRecommendation = () => {
                             <ProductCard
                               key={product.Image}
                               title={product["Product Name"]}
-                              mediaId={product.Image}
+                              imageURL={product.Image}
                               price={product["Price"]}
                             />
                           ))}
@@ -131,12 +131,10 @@ const ProductRecommendation = () => {
 interface ProductCardProps {
   title: string;
   price: string;
-  mediaId: string;
+  imageURL: string;
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({ title, price, mediaId }) => {
-  // let imageURL = `https://static.wixstatic.com/media/${mediaId}/v1/fit/w_500,h_500,q_90/file.png`;
-  let imageURL = `https://static.wixstatic.com/media/${mediaId}`;
+const ProductCard: React.FC<ProductCardProps> = ({ title, price, imageURL }) => {
   return (
     <div className="max-w-xs h-96 rounded-lg shadow-lg bg-white transition-transform transform hover:scale-105">
       <img className="w-full h-56 object-contain" src={imageURL} alt={title} />
