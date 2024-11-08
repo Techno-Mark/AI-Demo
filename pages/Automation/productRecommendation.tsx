@@ -136,13 +136,13 @@ interface ProductCardProps {
 
 const ProductCard: React.FC<ProductCardProps> = ({ title, price, imageURL }) => {
   return (
-    <div className="max-w-xs h-96 rounded-lg shadow-lg bg-white transition-transform transform hover:scale-105">
+    <div className="max-w-xs rounded-lg shadow-lg bg-white transition-transform transform hover:scale-105">
       <img className="w-full h-56 object-contain" src={imageURL} alt={title} />
-      <div className="px-6 py-4 h-24">
-        <div className="font-bold text-xl mb-2">{title}</div>
+      <div className="px-6 pt-4">
+        <div className="font-bold text-xl">{title}</div>
       </div>
-      <div className="px-6 py-4">
-        <span className="text-gray-900 font-bold text-lg">{`${price}`}</span>
+      <div className="px-6 pb-4">
+        <span className="text-gray-900 font-bold text-lg">{`€ ${price}`}</span>
       </div>
     </div>
   );
