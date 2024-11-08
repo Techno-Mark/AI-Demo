@@ -26,7 +26,8 @@ const InvoiceUpload: React.FC<InvoiceUploadProps> = ({ isFraud }) => {
   const [image, setImage] = useState("");
   const [disabled, setDisabled] = useState(false);
   const [uploadBtn, setUploadBtn] = useState(false);
-  const [response, setResponse] = useState<any>([]);
+  const [response1, setResponse1] = useState<any>([]);
+  const [response2, setResponse2] = useState<any>([]);
   const [fileError, setFileError] = useState(false);
   const [fileErrMsg, setFileErrorMsg] = useState("");
 
@@ -59,18 +60,44 @@ const InvoiceUpload: React.FC<InvoiceUploadProps> = ({ isFraud }) => {
     }
   };
 
-  const handleUpload = async (e: any) => {
-    e.preventDefault();
-    setDisabled(true);
+  const checkfraud = async () => {
     const body = new FormData();
     body.append("file", image);
     try {
       let response = await axios.post(
-        `${
-          isFraud
-            ? `${process.env.NEXT_PUBLIC_FRAUD_DETECTION_BASE_URL}`
-            : `${process.env.NEXT_PUBLIC_INVOICE_CONSISTENCY_BASE_URL}`
-        }/${isFraud ? `check_fraud` : `check_consistency`}`,
+        `${process.env.NEXT_PUBLIC_FRAUD_DETECTION_BASE_URL}/check_fraud`,
+        body
+      );
+      if (response.status === 200) {
+        // toast.success("Invoice successfully verified!", toastOptions);
+
+        let data: any[] = response?.data;
+
+        if (!!data) {
+          setResponse1(data);
+        } else {
+          setResponse1([]);
+        }
+        await checkconsistency();
+        setUploadBtn(false);
+      } else {
+        // toast.error("Failed to extract data from PDF", toastOptions);
+        setResponse1([]);
+        await checkconsistency();
+      }
+    } catch (error: any) {
+      // toast.error("Failed to extract data from PDF", toastOptions);
+      setResponse1([]);
+      await checkconsistency();
+    }
+  };
+
+  const checkconsistency = async () => {
+    const body = new FormData();
+    body.append("file", image);
+    try {
+      let response = await axios.post(
+        `${process.env.NEXT_PUBLIC_INVOICE_CONSISTENCY_BASE_URL}/check_consistency`,
         body
       );
       if (response.status === 200) {
@@ -79,24 +106,43 @@ const InvoiceUpload: React.FC<InvoiceUploadProps> = ({ isFraud }) => {
         let data: any[] = response?.data;
 
         if (!!data) {
-          setResponse(data);
+          setResponse2(data);
         } else {
-          setResponse([]);
+          setResponse2([]);
         }
         setUploadBtn(false);
       } else {
         toast.error("Failed to extract data from PDF", toastOptions);
-        setResponse([]);
+        setResponse2([]);
       }
     } catch (error: any) {
       toast.error("Failed to extract data from PDF", toastOptions);
-      setResponse([]);
+      setResponse2([]);
     }
+  };
+  console.log(response1, response2);
+
+  const handleUpload = async (e: any) => {
+    e.preventDefault();
+    setDisabled(true);
+    await checkfraud();
     setDisabled(false);
   };
 
   return (
     <>
+      <ToastContainer
+        position="top-center"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
       {disabled ? (
         <>
           <div className="flex justify-center items-center min-h-[calc(100vh-70px)] bg-[#fcfcff]">
@@ -107,18 +153,6 @@ const InvoiceUpload: React.FC<InvoiceUploadProps> = ({ isFraud }) => {
         <section className="automationSection px-5 py-9">
           <div className="container mx-auto px-20">
             <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
-              <ToastContainer
-                position="top-center"
-                autoClose={5000}
-                hideProgressBar={false}
-                newestOnTop={false}
-                closeOnClick
-                rtl={false}
-                pauseOnFocusLoss
-                draggable
-                pauseOnHover
-                theme="light"
-              />
               <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
                 <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                   <tr className="text-center">
@@ -192,10 +226,10 @@ const InvoiceUpload: React.FC<InvoiceUploadProps> = ({ isFraud }) => {
                       </a> */}
                     </td>
                   </tr>
-                  {!!response &&
-                    isFraud &&
-                    !!response.extracted_data &&
-                    response.extracted_data.length > 0 && (
+                  {!!response1 &&
+                    // isFraud &&
+                    !!response1.extracted_data &&
+                    response1.extracted_data.length > 0 && (
                       <tr>
                         <td colSpan={2}>
                           <div className="bg-white py-4 px-5 rounded-lg shadow-md mt-3 m-auto">
@@ -203,7 +237,7 @@ const InvoiceUpload: React.FC<InvoiceUploadProps> = ({ isFraud }) => {
                               Result:
                             </h2>
                             <div className="flex flex-wrap gap-4">
-                              {response.extracted_data.map(
+                              {response1.extracted_data.map(
                                 (resume: any, index: number) => (
                                   <div
                                     key={index}
@@ -238,11 +272,11 @@ const InvoiceUpload: React.FC<InvoiceUploadProps> = ({ isFraud }) => {
                         </td>
                       </tr>
                     )}
-                  {!!response &&
-                    !isFraud &&
-                    !!response.consistency_result &&
-                    !!response.descriptions_amounts &&
-                    response.descriptions_amounts.length > 0 && (
+                  {!!response2 &&
+                    // !isFraud &&
+                    !!response2.consistency_result &&
+                    !!response2.descriptions_amounts &&
+                    response2.descriptions_amounts.length > 0 && (
                       <tr>
                         <td colSpan={2}>
                           <div className="bg-white py-4 px-5 rounded-lg shadow-md mt-3 m-auto">
@@ -256,19 +290,19 @@ const InvoiceUpload: React.FC<InvoiceUploadProps> = ({ isFraud }) => {
                                   <span className="font-semibold">
                                     Vendor Name:
                                   </span>
-                                  &nbsp;{response.target_id}
+                                  &nbsp;{response2.target_id}
                                 </p>
                                 <p className="text-md text-gray-600 py-3">
                                   <span className="font-semibold">
                                     Consistency Result:
                                   </span>
-                                  &nbsp;{response.consistency_result}
+                                  &nbsp;{response2.consistency_result}
                                 </p>
                                 <p className="text-md text-gray-600 font-semibold">
                                   Items and Amounts:
                                 </p>
-                                {response.descriptions_amounts &&
-                                response.descriptions_amounts.length > 0 ? (
+                                {response2.descriptions_amounts &&
+                                response2.descriptions_amounts.length > 0 ? (
                                   <table className="min-w-full bg-white border border-gray-200 rounded-lg mt-2">
                                     <thead>
                                       <tr className="bg-gray-200">
@@ -281,7 +315,7 @@ const InvoiceUpload: React.FC<InvoiceUploadProps> = ({ isFraud }) => {
                                       </tr>
                                     </thead>
                                     <tbody>
-                                      {response.descriptions_amounts.map(
+                                      {response2.descriptions_amounts.map(
                                         (item: any, index: number) => (
                                           <tr
                                             key={index}

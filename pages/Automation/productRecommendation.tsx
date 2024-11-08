@@ -21,27 +21,26 @@ const ProductRecommendation = () => {
   const [disabled, setDisabled] = useState(false);
   const [response, setResponse] = useState([]);
 
-  const handleUpload = async (e:any) => {
+  const handleUpload = async (e: any) => {
     e.preventDefault();
     setDisabled(true);
-    const body = new FormData();
-    body.append("prompt", prompt);
+
     try {
       const result = await axios.post(
         `${process.env.NEXT_PUBLIC_PRODUCT_RECOMMEND_BASE_URL}/process_products`,
-        body
+        { prompt: prompt }
       );
 
       if (result.status === 200) {
         toast.success("Products retrieved successfully", toastOptions);
-        setResponse(result.data?.matched_products || []); 
+        setResponse(result.data?.matched_products || []);
       } else {
         toast.error(result.data.message, toastOptions);
       }
-    } catch (error:any) {
+    } catch (error: any) {
       toast.error(error?.message, toastOptions);
     } finally {
-      setPrompt('');
+      setPrompt("");
       setDisabled(false);
     }
   };
@@ -67,8 +66,8 @@ const ProductRecommendation = () => {
                 pauseOnHover
                 theme="light"
               />
-              <table className="w-full text-sm text-left text-gray-500">
-                <thead className="text-xs text-gray-700 uppercase bg-gray-50">
+              <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                   <tr className="text-center">
                     <th scope="col" className="px-6 py-3 text-start">
                       Product Recommendation
@@ -79,10 +78,10 @@ const ProductRecommendation = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  <tr className="bg-white border-b text-center">
-                    <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap text-start">
+                  <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 text-center">
+                    <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white text-start">
                       <textarea
-                        className="w-full f-16 py-2 px-4 rounded-lg text-sm text-gray-900 border border-gray-300 bg-gray-50 focus:outline-none dark:bg-gray-700 dark:border-gray-600"
+                        className="w-full f-16 py-2 px-4 rounded-lg text-sm text-gray-900 border border-gray-300 bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
                         placeholder="Type your prompt here..."
                         value={prompt}
                         onChange={(e) => setPrompt(e.target.value)}
@@ -91,27 +90,26 @@ const ProductRecommendation = () => {
                     <td className="flex px-6 py-4 gap-[15px] justify-center">
                       <button
                         className={`flex gap-[15px] bg-[#1492c8] text-white text-sm font-semibold px-4 py-2 rounded-md ${
-                          disabled || !prompt
-                            ? "cursor-not-allowed opacity-50"
-                            : ""
+                          disabled || !prompt ? "cursor-not-allowed opacity-50" : ""
                         }`}
                         onClick={disabled || !prompt ? undefined : handleUpload}
                       >
-                        Search
+                        {disabled ? "Loading..." : "Search"}
                       </button>
                     </td>
                   </tr>
+
                   {response && response.length > 0 && (
                     <tr>
                       <td colSpan={2} className="bg-white py-3 px-5">
-                      <p className="text-2xl font-semibold text-gray-700 mb-3">
-                        <strong>Result:</strong>
-                      </p>
+                        <p className="text-2xl font-semibold text-gray-700 mb-3">
+                          <strong>Result:</strong>
+                        </p>
                         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-7 bg-gray-100 border border-gray-200 rounded-lg px-4 py-6">
-                          {response.map((product:any, index) => (
+                          {response.map((product: any, index) => (
                             <ProductCard
-                              key={product.Image} 
-                              title={product["Product Name"]} 
+                              key={product.Image}
+                              title={product["Product Name"]}
                               mediaId={product.Image}
                               price={product["Price"]}
                             />
@@ -133,12 +131,12 @@ const ProductRecommendation = () => {
 interface ProductCardProps {
   title: string;
   price: string;
-  mediaId:string
+  mediaId: string;
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({ title, price,mediaId }) => {
+const ProductCard: React.FC<ProductCardProps> = ({ title, price, mediaId }) => {
   // let imageURL = `https://static.wixstatic.com/media/${mediaId}/v1/fit/w_500,h_500,q_90/file.png`;
-    let imageURL = `https://static.wixstatic.com/media/${mediaId}`;
+  let imageURL = `https://static.wixstatic.com/media/${mediaId}`;
   return (
     <div className="max-w-xs h-96 rounded-lg shadow-lg bg-white transition-transform transform hover:scale-105">
       <img className="w-full h-56 object-contain" src={imageURL} alt={title} />
