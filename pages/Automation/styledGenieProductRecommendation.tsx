@@ -83,7 +83,7 @@ const StyledGenieProductRecommendation = () => {
 
       const result = await axios.post(
         `${process.env.NEXT_PUBLIC_STYLEDGENIE_PRODUCT_RECOMMEND_BASE_URL}/process_products`,
-        { prompt: queryString }
+        { prompt: queryString, price:data.budget }
       );
       console.log(result.data, "result data");
       if (result.status === 200) {
@@ -598,7 +598,7 @@ const StyledGenieProductRecommendation = () => {
                           <option value="Over €200 per item">
                             Over €200 per item
                           </option>
-                          <option value="€100 to €500">
+                          <option value="Set a budget between 100 to 500 €">
                             budget between 100 to 500 €
                           </option>
                         </select>
