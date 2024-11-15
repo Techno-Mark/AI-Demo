@@ -59,6 +59,7 @@ const initialData = {
 };
 
 const StyledGenieProductRecommendation = () => {
+  const [mode, setMode] = useState("StyledGenie");
   const [data, setData] = useState<typeof initialData>(initialData);
   const [disabled, setDisabled] = useState(false);
   const [response, setResponse] = useState([]);
@@ -68,7 +69,7 @@ const StyledGenieProductRecommendation = () => {
     setDisabled(true);
 
     try {
-      const queryString = Object.keys(data)
+      let queryString = Object.keys(data)
         .filter((key) => key !== "email")
         .map((key: any) => {
           const value = data[key as keyof typeof initialData];
@@ -79,24 +80,40 @@ const StyledGenieProductRecommendation = () => {
         })
         .join(" ");
 
+      queryString = queryString?.trim()
       console.log("query", queryString);
 
-      const result = await axios.post(
-        `${process.env.NEXT_PUBLIC_STYLEDGENIE_PRODUCT_RECOMMEND_BASE_URL}/process_products`,
-        { prompt: queryString }
-      );
-      console.log(result.data, "result data");
+      let result = null
+
+      if(mode === "StyledGenie"){
+        console.log('StyledGenie')
+        result = await axios.post(
+          `${process.env.NEXT_PUBLIC_STYLEDGENIE_PRODUCT_RECOMMEND_BASE_URL}/process_products`,
+          { prompt: queryString }
+        );
+        console.log(result.data, "result data");
+      }else{
+        console.log('Developer')
+        result = await axios.post(
+          `${process.env.NEXT_PUBLIC_PRODUCT_RECOMMEND_BASE_URL}/process_products`,
+          { prompt: queryString }
+        );
+        console.log(result.data, "result data");
+      }
+
       if (result.status === 200) {
         toast.success("Products retrieved successfully", toastOptions);
-        setResponse(result.data?.matched_products || []);
+        setResponse(result?.data?.matched_products || []);
       } else {
-        toast.error(result.data.message, toastOptions);
+        setResponse([])
+        toast.error(result?.data?.message, toastOptions);
       }
     } catch (error: any) {
       toast.error(
-        error?.response?.data?.message || error?.message,
+        error?.response?.data?.message || error?.response?.data?.error || error?.message,
         toastOptions
       );
+      setResponse([])
     } finally {
       setDisabled(false);
     }
@@ -161,6 +178,27 @@ const StyledGenieProductRecommendation = () => {
                       colSpan={2}
                       className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white text-start flex flex-col gap-2"
                     >
+                      <div className="mb-4">
+                        <label
+                          htmlFor="mode"
+                          className="block text-lg font-medium text-gray-700"
+                        >
+                          Testing Mode
+                        </label>
+                        <select
+                          id="mode"
+                          value={mode}
+                          onChange={(e) => {
+                            setMode(e.target.value)
+                            setResponse([])
+                          }}
+                          className="mt-2 p-3 w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                        >
+                          <option value="StyledGenie">StyledGenie</option>
+                          <option value="Developer">Developer</option>
+                        </select>
+                      </div>
+
                       <div className="mb-4">
                         <label
                           htmlFor="email"
@@ -647,6 +685,7 @@ const StyledGenieProductRecommendation = () => {
                               title={product["Product Name"]}
                               imageURL={product.Image}
                               price={product["Price"]}
+                              mode={mode}
                             />
                           ))}
                         </div>
@@ -667,14 +706,21 @@ interface ProductCardProps {
   title: string;
   price: string;
   imageURL: string;
+  mode:string;
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({
+  mode,
   title,
   price,
   imageURL,
 }) => {
-  let imageURLFinal = "https://static.wixstatic.com/media/" + imageURL;
+  let imageURLFinal
+  if(mode == "StyledGenie"){
+    imageURLFinal = "https://static.wixstatic.com/media/" + imageURL;
+  }else{
+    imageURLFinal = imageURL
+  }
   return (
     <div className="max-w-xs rounded-lg shadow-lg bg-white transition-transform transform hover:scale-105">
       <img
