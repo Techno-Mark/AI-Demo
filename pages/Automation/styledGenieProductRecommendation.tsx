@@ -69,7 +69,7 @@ const StyledGenieProductRecommendation = () => {
     setDisabled(true);
 
     try {
-      const queryString = Object.keys(data)
+      let queryString = Object.keys(data)
         .filter((key) => key !== "email")
         .map((key: any) => {
           const value = data[key as keyof typeof initialData];
@@ -80,6 +80,7 @@ const StyledGenieProductRecommendation = () => {
         })
         .join(" ");
 
+      queryString = queryString?.trim()
       console.log("query", queryString);
 
       let result = null
@@ -187,7 +188,10 @@ const StyledGenieProductRecommendation = () => {
                         <select
                           id="mode"
                           value={mode}
-                          onChange={(e) => setMode(e.target.value)}
+                          onChange={(e) => {
+                            setMode(e.target.value)
+                            setResponse([])
+                          }}
                           className="mt-2 p-3 w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                         >
                           <option value="StyledGenie">StyledGenie</option>
