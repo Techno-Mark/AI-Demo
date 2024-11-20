@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { toast, ToastContainer, ToastOptions } from "react-toastify";
 import FinanceChart from "./FinanceChart";
 import "react-toastify/dist/ReactToastify.css";
+import DynamicTable from "./DynamicTable";
 
 const toastOptions: ToastOptions = {
   position: "top-right",
@@ -17,7 +18,8 @@ const toastOptions: ToastOptions = {
 const data = {
   prompt: "user_prompt",
   response: "sql_query",
-  is_predefined: true,
+  is_table: true,
+  is_graph: true,
   count: 2,
   data: [
     {
@@ -44,7 +46,7 @@ const Bot = () => {
 
     try {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_MEDICAL_BACKEND_BASE_URL_CHATBOT}/chatbot`,
+        `http://127.0.0.1:5001/chatbot`,
         {
           method: "POST",
           headers: {
@@ -120,49 +122,78 @@ const Bot = () => {
               </tr>
 
               {!!response &&
-              !!response.data &&
-              response.data.length > 0 &&
-              !!response.is_predefined &&
-              response.is_graph ? (
-                <tr>
-                  <td colSpan={2} className="bg-white py-3 px-5">
-                    <div className="bg-gray-100 border border-gray-200 rounded-lg p-4">
-                      <p className="text-base font-semibold text-gray-700 mb-4">
-                        <strong>Result:</strong>
-                      </p>
-                      <div className="grid grid-cols-2 gap-10">
-                        <div className="chart-container">
-                          <FinanceChart data={response.data} chartType="line" />
-                        </div>
-                        <div className="chart-container">
-                          <FinanceChart data={response.data} chartType="area" />
-                        </div>
-                        <div className="chart-container">
-                          <FinanceChart
-                            data={response.data}
-                            chartType="column"
-                          />
-                        </div>
-                        <div className="chart-container">
-                          <FinanceChart data={response.data} chartType="bar" />
-                        </div>
-                        <div className="chart-container">
-                          <FinanceChart data={response.data} chartType="pie" />
-                        </div>
-                        <div className="chart-container">
-                          <FinanceChart
-                            data={response.data}
-                            chartType="scatter"
-                          />
+                !!response.data &&
+                response.data.length > 0 &&
+                response.is_graph && (
+                  <tr>
+                    <td colSpan={2} className="bg-white py-3 px-5">
+                      <div className="bg-gray-100 border border-gray-200 rounded-lg p-4">
+                        <p className="text-base font-semibold text-gray-700 mb-4">
+                          <strong>Result:</strong>
+                        </p>
+                        <div className="grid grid-cols-2 gap-10">
+                          <div className="chart-container">
+                            <FinanceChart
+                              data={response.data}
+                              chartType="line"
+                            />
+                          </div>
+                          <div className="chart-container">
+                            <FinanceChart
+                              data={response.data}
+                              chartType="area"
+                            />
+                          </div>
+                          <div className="chart-container">
+                            <FinanceChart
+                              data={response.data}
+                              chartType="column"
+                            />
+                          </div>
+                          <div className="chart-container">
+                            <FinanceChart
+                              data={response.data}
+                              chartType="bar"
+                            />
+                          </div>
+                          <div className="chart-container">
+                            <FinanceChart
+                              data={response.data}
+                              chartType="pie"
+                            />
+                          </div>
+                          <div className="chart-container">
+                            <FinanceChart
+                              data={response.data}
+                              chartType="scatter"
+                            />
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </td>
-                </tr>
-              ) : !!response &&
+                    </td>
+                  </tr>
+                )}
+              {!!response &&
                 !!response.data &&
-                !response.is_graph &&
-                Array.isArray(response.data) ? (
+                response.data.length > 0 &&
+                response.is_table && (
+                  <tr>
+                    <td colSpan={2} className="bg-white py-3 px-5">
+                      <div className="bg-gray-100 border border-gray-200 rounded-lg p-4">
+                        <p className="text-base font-semibold text-gray-700 mb-4">
+                          <strong>Result:</strong>
+                        </p>
+                        <DynamicTable data={response.data} />
+                      </div>
+                    </td>
+                  </tr>
+                )}
+              {!!response &&
+              !!response.data &&
+              !response.is_table &&
+              !response.is_graph &&
+              Array.isArray(response.data) &&
+              response.data.length > 0 ? (
                 <tr>
                   <td colSpan={2} className="bg-white py-3 px-5">
                     <div className="bg-gray-100 border border-gray-200 rounded-lg p-4">
@@ -186,7 +217,7 @@ const Bot = () => {
               ) : !!response ? (
                 <tr>
                   <td colSpan={2} className="bg-white py-3 px-5">
-                    No data found.
+                    {!!response.response ? response.response : "No data found."}
                   </td>
                 </tr>
               ) : (

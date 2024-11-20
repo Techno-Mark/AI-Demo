@@ -8,6 +8,26 @@ Show cost of goods sold for march 2022
 Show gross profit for march 2022
 Show net profit for march 2022
 
+Could you please provide the revenue for the year 2022 in table?
+Could you please provide the cost of goods sold for the year 2022 in graph?
+Could you please provide the gross profit for the year 2022  in table and graph?
+Could you please provide the net profit for the year 2022 in table and graph?
+
+Could you please provide the revenue for march year 2022 in table?
+Could you please provide the cost of goods for march year 2022 in graph?
+Could you please provide the gross profit for march year 2022  in table and graph?
+Could you please provide the net profit for march year 2022 in table and graph?
+
+Could you please provide the revenue based on location in table?
+Could you please provide the cost of goods based on location in graph?
+Could you please provide the gross profit based on location in table and graph?
+Could you please provide the net profit based on location in table and graph?
+
+Could you please provide the revenue for last year in table?
+Could you please provide the cost of goods for last month in graph?
+Could you please provide the gross profit for last 2 years in table?
+Could you please provide the net profit for last 2 months in graph?
+
 get all data
 give me data of march 2022
 give me data of june 2022
