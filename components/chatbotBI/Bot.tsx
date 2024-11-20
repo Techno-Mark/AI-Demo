@@ -46,7 +46,7 @@ const Bot = () => {
 
     try {
       const res = await fetch(
-        `http://127.0.0.1:5001/chatbot`,
+        `${process.env.NEXT_PUBLIC_MEDICAL_BACKEND_BASE_URL_CHATBOT}/chatbot`,
         {
           method: "POST",
           headers: {
