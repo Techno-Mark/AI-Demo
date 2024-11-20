@@ -36,3 +36,14 @@ select {
 select {
   padding: 5px;
 }
+
+/* Hide scrollbar for webkit browsers */
+.scrollbar-hidden::-webkit-scrollbar {
+  display: none; /* Safari and Chrome */
+}
+
+/* Hide scrollbar for IE and Edge */
+.scrollbar-hidden {
+  -ms-overflow-style: none; /* Internet Explorer and Edge */
+  scrollbar-width: none; /* Firefox */
+}
