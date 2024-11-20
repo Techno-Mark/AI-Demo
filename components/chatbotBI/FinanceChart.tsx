@@ -12,7 +12,12 @@ interface MonthlyFinanceData {
   TotalAmount: string;
 }
 
-type FinanceData = DailyFinanceData | MonthlyFinanceData;
+interface LocationFinanceData {
+  Location: string | null;
+  TotalAmount: string;
+}
+
+type FinanceData = DailyFinanceData | MonthlyFinanceData | LocationFinanceData;
 
 interface FinanceChartProps {
   data: FinanceData[];
@@ -24,10 +29,19 @@ const FinanceChart: React.FC<FinanceChartProps> = ({ data, chartType }) => {
     return (entry as MonthlyFinanceData).Month !== undefined;
   };
 
+  const isLocationData = (entry: FinanceData): entry is LocationFinanceData => {
+    return (entry as LocationFinanceData).Location !== undefined;
+  };
+
   const chartData = data.map((entry) => {
     if (isMonthlyData(entry)) {
       return {
         x: entry.Month - 1,
+        y: parseFloat(entry.TotalAmount),
+      };
+    } else if (isLocationData(entry)) {
+      return {
+        x: entry.Location ? parseFloat(entry.Location) : 0,
         y: parseFloat(entry.TotalAmount),
       };
     } else {
@@ -43,6 +57,11 @@ const FinanceChart: React.FC<FinanceChartProps> = ({ data, chartType }) => {
     if (isMonthlyData(entry)) {
       return {
         name: `${entry.Month}`,
+        y: parseFloat(entry.TotalAmount),
+      };
+    } else if (isLocationData(entry)) {
+      return {
+        name: `${entry.Location || "Unknown Location"}`,
         y: parseFloat(entry.TotalAmount),
       };
     } else {
@@ -104,10 +123,16 @@ const FinanceChart: React.FC<FinanceChartProps> = ({ data, chartType }) => {
     xAxis: !isPieChart
       ? {
           title: {
-            text: isMonthlyData(data[0]) ? "Month" : "Day",
+            text: isMonthlyData(data[0])
+              ? "Month"
+              : isLocationData(data[0])
+              ? "Location"
+              : "Day",
           },
           categories: data.map((entry) => {
-            return isMonthlyData(entry) ? `${entry.Month}` : `${entry.Day}`;
+            if (isMonthlyData(entry)) return `${entry.Month}`;
+            if (isLocationData(entry)) return entry.Location || "Unknown";
+            return `${entry.Day}`;
           }),
         }
       : undefined,
