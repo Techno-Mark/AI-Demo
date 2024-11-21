@@ -38,6 +38,8 @@ const colorChoices = ["Warm", "Cool", "Neutral", "Spring", "Light"];
 
 const initialData = {
   email: "",
+  fName:"",
+  lName:"",
   gender: "",
   bodyType: "",
   ageGroup: "",
@@ -91,6 +93,12 @@ const StyledGenieProductRecommendation = () => {
           `${process.env.NEXT_PUBLIC_STYLEDGENIE_PRODUCT_RECOMMEND_BASE_URL}/process_products`,
           { prompt: queryString }
         );
+
+        //call the api in local for admin panel
+        axios.post(
+          `http://localhost:3003/api/lead/save`,
+          { query: queryString, email: data.email, fName:data.fName,lName:data.lName }
+        );
         console.log(result.data, "result data");
       }else{
         console.log('Developer')
@@ -98,6 +106,13 @@ const StyledGenieProductRecommendation = () => {
           `${process.env.NEXT_PUBLIC_PRODUCT_RECOMMEND_BASE_URL}/process_products`,
           { prompt: queryString }
         );
+         //call the api in local for admin panel
+         axios.post(
+          `http://localhost:3003/api/lead/save`,
+          { query: queryString, email: data.email, fName:data.fName,lName:data.lName }
+        );
+        console.log(result.data, "result data");
+
         console.log(result.data, "result data");
       }
 
@@ -197,6 +212,46 @@ const StyledGenieProductRecommendation = () => {
                           <option value="StyledGenie">StyledGenie</option>
                           <option value="Developer">Developer</option>
                         </select>
+                      </div>
+
+                      <div className="mb-4">
+                        <label
+                          htmlFor="fName"
+                          className="block text-lg font-medium text-gray-700"
+                        >
+                          First Name
+                        </label>
+                        <input
+                          id="fName"
+                          type="email"
+                          value={data?.fName}
+                          onChange={(e) =>
+                            handleChange("fName", e.target.value)
+                          }
+                          className="mt-2 p-3 w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                          placeholder="Enter your first name"
+                          required
+                        />
+                      </div>
+
+                      <div className="mb-4">
+                        <label
+                          htmlFor="lName"
+                          className="block text-lg font-medium text-gray-700"
+                        >
+                          Last Name
+                        </label>
+                        <input
+                          id="email"
+                          type="email"
+                          value={data?.lName}
+                          onChange={(e) =>
+                            handleChange("lName", e.target.value)
+                          }
+                          className="mt-2 p-3 w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                          placeholder="Enter your last name"
+                          required
+                        />
                       </div>
 
                       <div className="mb-4">
