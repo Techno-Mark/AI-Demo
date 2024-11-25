@@ -6,7 +6,7 @@ import Image from "next/image";
 import loader from "../../public/loder.gif";
 
 const NODE_BACKEND_URL =
-  "https://crm-stageapi.pacificabs.com:3015/api-url/lead/save";
+  "https://crm-stageapi.pacificabs.com:3015/api/lead/save";
 
 const toastOptions: ToastOptions = {
   position: "top-right",
