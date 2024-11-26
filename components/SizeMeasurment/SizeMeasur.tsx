@@ -182,49 +182,49 @@ const SizeMeasur: React.FC = () => {
             calculatedMeasurements.tShirtSize = "N/A";
           }
 
-          if (keypointsMap.leftHip && keypointsMap.rightHip) {
-            calculatedMeasurements.waistSize =
-              calculateDistance(keypointsMap.leftHip, keypointsMap.rightHip) *
-              scalingFactor;
-          } else {
-            calculatedMeasurements.waistSize = "N/A";
-          }
+          // if (keypointsMap.leftHip && keypointsMap.rightHip) {
+          //   calculatedMeasurements.waistSize =
+          //     calculateDistance(keypointsMap.leftHip, keypointsMap.rightHip) *
+          //     scalingFactor;
+          // } else {
+          //   calculatedMeasurements.waistSize = "N/A";
+          // }
 
-          if (keypointsMap.leftShoulder && keypointsMap.leftHip) {
-            calculatedMeasurements.shoulderToHip =
-              calculateDistance(
-                keypointsMap.leftShoulder,
-                keypointsMap.leftHip
-              ) * scalingFactor;
-          } else {
-            calculatedMeasurements.shoulderToHip = "N/A";
-          }
+          // if (keypointsMap.leftShoulder && keypointsMap.leftHip) {
+          //   calculatedMeasurements.shoulderToHip =
+          //     calculateDistance(
+          //       keypointsMap.leftShoulder,
+          //       keypointsMap.leftHip
+          //     ) * scalingFactor;
+          // } else {
+          //   calculatedMeasurements.shoulderToHip = "N/A";
+          // }
 
-          if (keypointsMap.leftHip && keypointsMap.leftKnee) {
-            calculatedMeasurements.hipToKnee =
-              calculateDistance(keypointsMap.leftHip, keypointsMap.leftKnee) *
-              scalingFactor;
-          } else {
-            calculatedMeasurements.hipToKnee = "N/A";
-          }
+          // if (keypointsMap.leftHip && keypointsMap.leftKnee) {
+          //   calculatedMeasurements.hipToKnee =
+          //     calculateDistance(keypointsMap.leftHip, keypointsMap.leftKnee) *
+          //     scalingFactor;
+          // } else {
+          //   calculatedMeasurements.hipToKnee = "N/A";
+          // }
 
-          if (keypointsMap.leftKnee && keypointsMap.leftAnkle) {
-            calculatedMeasurements.kneeToAnkle =
-              calculateDistance(keypointsMap.leftKnee, keypointsMap.leftAnkle) *
-              scalingFactor;
-          } else {
-            calculatedMeasurements.kneeToAnkle = "N/A";
-          }
+          // if (keypointsMap.leftKnee && keypointsMap.leftAnkle) {
+          //   calculatedMeasurements.kneeToAnkle =
+          //     calculateDistance(keypointsMap.leftKnee, keypointsMap.leftAnkle) *
+          //     scalingFactor;
+          // } else {
+          //   calculatedMeasurements.kneeToAnkle = "N/A";
+          // }
 
-          if (keypointsMap.leftShoulder && keypointsMap.leftWrist) {
-            calculatedMeasurements.armLength =
-              calculateDistance(
-                keypointsMap.leftShoulder,
-                keypointsMap.leftWrist
-              ) * scalingFactor;
-          } else {
-            calculatedMeasurements.armLength = "N/A";
-          }
+          // if (keypointsMap.leftShoulder && keypointsMap.leftWrist) {
+          //   calculatedMeasurements.armLength =
+          //     calculateDistance(
+          //       keypointsMap.leftShoulder,
+          //       keypointsMap.leftWrist
+          //     ) * scalingFactor;
+          // } else {
+          //   calculatedMeasurements.armLength = "N/A";
+          // }
 
           // Estimate distance to camera only if both shoulders are visible
           if (keypointsMap.leftShoulder && keypointsMap.rightShoulder) {
@@ -316,9 +316,9 @@ const SizeMeasur: React.FC = () => {
                 : value}
             </p>
           ))}
-          <p>
+          {/* <p>
             <strong>T-shirt Size:</strong> {measurements.tShirtSize}
-          </p>
+          </p> */}
         </div>
       )}
     </div>
