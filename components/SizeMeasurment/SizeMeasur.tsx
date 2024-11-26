@@ -12,7 +12,7 @@ interface Measurements {
   armLength?: number | string;
   distanceToCamera?: number | string;
   tShirtSize?: string;
-}
+} 
 
 const SizeMeasur: React.FC = () => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
