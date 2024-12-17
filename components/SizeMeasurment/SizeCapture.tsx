@@ -416,7 +416,7 @@ const SizeCapture = () => {
         <DialogTitle>Pose Detection</DialogTitle>
         <DialogContent>
           {hasCamera ? (
-            <div>
+            <div className="!max-w-[500px]">
               <video
                 ref={videoRef}
                 width="100%"
@@ -430,7 +430,7 @@ const SizeCapture = () => {
               />
               <canvas ref={canvasRef} width={"0px"} height={"0px"} />
               {hasCamera && userDetected ? (
-                <div>
+                <div className="mt-4">
                   <Typography variant="h6">User Detected</Typography>
                   {isCounting && (
                     <Typography variant="h6" color="primary">
