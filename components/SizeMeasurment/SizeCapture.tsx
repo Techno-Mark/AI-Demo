@@ -211,7 +211,7 @@ const SizeCapture = () => {
           rightAnkle: poseKeypoints[16],
         };
 
-        const scalingFactor = 0.15;
+        const scalingFactor = 0.154;
 
         const measurementsData = {
           chestSize:
