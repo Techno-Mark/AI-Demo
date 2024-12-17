@@ -1,11 +1,11 @@
 import Header from "tsconfig.json/components/Header`";
-import SizeMeasurCheck from "tsconfig.json/components/SizeMeasurment/SizeDetection`";
+import SizeCapture from "tsconfig.json/components/SizeMeasurment/SizeCapture`";
 export default function Home() {
   return (
     <>
       <main className={`min-h-screen`}>
         <Header />
-        <SizeMeasurCheck />
+        <SizeCapture />
       </main>
     </>
   );
