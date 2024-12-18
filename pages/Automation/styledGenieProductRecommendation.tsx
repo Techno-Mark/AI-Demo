@@ -38,6 +38,23 @@ const clothingChoices = [
   "Trend-driven, experimental styles",
 ];
 const colorChoices = ["Warm", "Cool", "Neutral", "Spring", "Light"];
+const femaleBodyType = [
+  "Inverted Triangle",
+  "Rectangle",
+  "Apple",
+  "Hourglass",
+  "Pear",
+  "None"
+]
+
+const maleBodyType = [
+  "Rectangle",
+  "Inverted Triangle",
+  "Trapezoid",
+  "Triangle",
+  "Oval",
+  "None"
+]
 
 const initialData = {
   email: "",
@@ -65,6 +82,7 @@ const initialData = {
 
 const StyledGenieProductRecommendation = () => {
   const [mode, setMode] = useState("StyledGenie");
+  const [bodyType, setBodyType] = useState<string[]>([])
   const [data, setData] = useState<typeof initialData>(initialData);
   const [disabled, setDisabled] = useState(false);
   const [response, setResponse] = useState([]);
@@ -94,7 +112,7 @@ const StyledGenieProductRecommendation = () => {
         console.log("StyledGenie");
         result = await axios.post(
           `${process.env.NEXT_PUBLIC_STYLEDGENIE_PRODUCT_RECOMMEND_BASE_URL}/process_products`,
-          { prompt: queryString }
+          { prompt: queryString, price: data.budget }
         );
 
         //call the api in local for admin panel
@@ -109,7 +127,7 @@ const StyledGenieProductRecommendation = () => {
         console.log("Developer");
         result = await axios.post(
           `${process.env.NEXT_PUBLIC_PRODUCT_RECOMMEND_BASE_URL}/process_products`,
-          { prompt: queryString }
+          { prompt: queryString, price: data.budget }
         );
         //call the api in local for admin panel
         axios.post(`${NODE_BACKEND_URL}`, {
@@ -291,9 +309,15 @@ const StyledGenieProductRecommendation = () => {
                         <select
                           id="gender"
                           value={data.gender}
-                          onChange={(e) =>
+                          onChange={(e) => {
                             handleChange("gender", e.target.value)
+                            if(e.target.value === "Male"){
+                              setBodyType([...maleBodyType])
+                            }else{
+                              setBodyType([...femaleBodyType])
+                            }
                           }
+                        }
                           className="mt-2 p-3 w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                         >
                           <option value="">Select your gender</option>
@@ -318,14 +342,11 @@ const StyledGenieProductRecommendation = () => {
                           className="mt-2 p-3 w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                         >
                           <option value="">Select your body type</option>
-                          <option value="Rectangle">Rectangle</option>
-                          <option value="Inverted Triangle">
-                            Inverted Triangle
-                          </option>
-                          <option value="Trapezoid">Trapezoid</option>
-                          <option value="Triangle">Triangle</option>
-                          <option value="Oval">Oval</option>
-                          <option value="None">None</option>
+                          {
+                            bodyType && bodyType.map((bodyType:string)=>{
+                              return <option value={bodyType}>{bodyType}</option>
+                            })
+                          }
                         </select>
                       </div>
 
@@ -698,9 +719,12 @@ const StyledGenieProductRecommendation = () => {
                           <option value="Over €200 per item">
                             Over €200 per item
                           </option>
-                          <option value="€100 to €500">
+                          <option value="Set a budget between 100 to 500 €">
                             budget between 100 to 500 €
                           </option>
+                          {/* <option value="Other">
+                            Other
+                          </option> */}
                         </select>
                       </div>
 
