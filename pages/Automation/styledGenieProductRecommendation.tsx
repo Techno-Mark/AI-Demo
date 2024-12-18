@@ -344,7 +344,7 @@ const StyledGenieProductRecommendation = () => {
                           <option value="">Select your body type</option>
                           {
                             bodyType && bodyType.map((bodyType:string)=>{
-                              return <option value={bodyType}>{bodyType}</option>
+                              return <option key={bodyType} value={bodyType}>{bodyType}</option>
                             })
                           }
                         </select>
