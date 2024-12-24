@@ -10,8 +10,23 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  TextField,
   Typography,
 } from "@mui/material";
+import axios from "axios";
+import { toast, ToastContainer, ToastOptions } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+const toastOptions: ToastOptions = {
+  position: "top-right",
+  autoClose: 3000,
+  hideProgressBar: false,
+  closeOnClick: true,
+  pauseOnHover: true,
+  draggable: true,
+  progress: undefined,
+  theme: "light",
+};
 
 // Define types for keypoints
 interface Keypoint {
@@ -58,9 +73,17 @@ const SizeCapture1 = () => {
   const [isCounting, setIsCounting] = useState<boolean>(false);
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
   const [measurements, setMeasurements] = useState<Measurements[]>([]);
-  const [averageMeasurements, setAverageMeasurements] = useState({});
+  const [averageMeasurements, setAverageMeasurements] = useState<
+    Measurements | any
+  >({});
+  const [openMeasurementData, setOpenMeasurementData] =
+    useState<boolean>(false);
+  const [chestSize, setChestSize] = useState<number>(0);
+  const [waistSize, setWaistSize] = useState<number>(0);
+  const [id, setId] = useState<number>(0);
 
   const startCamera = async () => {
+    setId(0);
     try {
       const userMediaStream = await navigator.mediaDevices.getUserMedia({
         video: { facingMode: "user" },
@@ -373,6 +396,19 @@ const SizeCapture1 = () => {
     return "Too large size not available";
   };
 
+  const estimateHoddieSize = (chestInInches: number) => {
+    if (chestInInches < 30) return "Check kids section";
+    if (chestInInches >= 30 && chestInInches < 32) return "XXS";
+    if (chestInInches >= 32 && chestInInches < 34) return "XS";
+    if (chestInInches >= 34 && chestInInches < 36) return "Small (S)";
+    if (chestInInches >= 36 && chestInInches < 38) return "Medium (M)";
+    if (chestInInches >= 38 && chestInInches < 40) return "Large (L)";
+    if (chestInInches >= 40 && chestInInches < 42) return "XL";
+    if (chestInInches >= 42 && chestInInches < 44) return "XXL";
+    if (chestInInches >= 44 && chestInInches < 46) return "XXXL";
+    return "Too large size not available";
+  };
+
   useEffect(() => {
     errorMessage.length > 0 && setMeasurements([]);
   }, [errorMessage]);
@@ -389,12 +425,11 @@ const SizeCapture1 = () => {
     });
 
     Object.entries(average).forEach(([key, value]: any) => {
-      average[key] = value / measurements.length;
+      average[key] = Math.round(value / measurements.length);
     });
 
     setAverageMeasurements({
       ...average,
-      tShirtSize: estimateTShirtSize(average.chestSize),
     });
   };
 
@@ -417,105 +452,158 @@ const SizeCapture1 = () => {
     return () => clearInterval(countdownTimer);
   }, [isCounting, countdown]);
 
+  const updateSatisfiedStatus = async (isSatisfied: boolean) => {
+    const params = {
+      ...averageMeasurements,
+      isSatisfied: isSatisfied,
+      chestMeasure: chestSize === 0 ? null : chestSize,
+      waistMeasure: waistSize === 0 ? null : waistSize,
+      id: id,
+    };
+    try {
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_SIZE_MEASUREMENT}/measurements`,
+        params
+      );
+      return response.data;
+    } catch (error) {
+      toast.error("There is some error. Please try again later.", toastOptions);
+      throw error;
+    }
+  };
+
+  const handleClickSatisfied = async (
+    isSatisfied: boolean,
+    success: boolean
+  ) => {
+    try {
+      const response = await updateSatisfiedStatus(isSatisfied);
+      if (response.status.toLowerCase() == "success") {
+        setId(response.data.id);
+        success &&
+          toast.success(
+            "Thank you for sharing your measurement!",
+            toastOptions
+          );
+        success && handleClose();
+        success && setOpenMeasurementData(false);
+        success && setMeasurements([]);
+        success && setAverageMeasurements({});
+        success && setIsCounting(false);
+        success && setCapturedImage(null);
+      }
+    } catch (error) {
+      toast.error("There is some error. Please try again later.", toastOptions);
+    }
+  };
+
   return (
-    <div style={{ textAlign: "center", marginTop: "20px" }}>
-      <Button
-        variant="contained"
-        onClick={handleClickOpen}
-        className="my-4 !bg-[#1565c0]"
-      >
-        Capture
-      </Button>
+    <>
+      <ToastContainer
+        position="top-center"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
+      <div style={{ textAlign: "center", marginTop: "20px" }}>
+        <Button
+          variant="contained"
+          onClick={handleClickOpen}
+          className="my-4 !bg-[#1565c0]"
+        >
+          Capture
+        </Button>
 
-      <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
-        <DialogTitle>Pose Detection</DialogTitle>
-        <DialogContent>
-          {hasCamera ? (
-            <div className="!max-w-[500px]">
-              <video
-                ref={videoRef}
-                width="100%"
-                height="fit"
-                style={{
-                  border:
-                    distance && (distance < 0.11 || distance > 0.12)
-                      ? "2px solid red"
-                      : "2px solid black",
-                }}
-              ></video>
-              <canvas
-                ref={canvasRef}
-                style={{
-                  position: "absolute",
-                  top: 65,
-                  left: 25,
-                  display: "block",
-                  width: "55%",
-                  height: "fit",
-                }}
-              ></canvas>
-              {hasCamera && userDetected ? (
-                <div className="mt-4">
-                  <Typography variant="h6">User Detected</Typography>
-                  {isCounting && (
-                    <Typography variant="h6" color="primary">
-                      Countdown: {countdown} seconds
-                    </Typography>
-                  )}
-                </div>
-              ) : (
-                <Typography variant="h6" color="error">
-                  No user detected. Please step into the frame.
-                </Typography>
-              )}
-              {userDetected && errorMessage && (
-                <Typography variant="h6" color="error">
-                  {errorMessage}
-                </Typography>
-              )}
-            </div>
-          ) : (
-            <Typography variant="h6" color="error">
-              No Camera Found
-            </Typography>
-          )}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose} color="primary">
-            Close
-          </Button>
-        </DialogActions>
-      </Dialog>
+        <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
+          <DialogTitle>Pose Detection</DialogTitle>
+          <DialogContent>
+            {hasCamera ? (
+              <div className="!max-w-[500px]">
+                <video
+                  ref={videoRef}
+                  width="100%"
+                  height="fit"
+                  style={{
+                    border:
+                      distance && (distance < 0.11 || distance > 0.12)
+                        ? "2px solid red"
+                        : "2px solid black",
+                  }}
+                ></video>
+                <canvas
+                  ref={canvasRef}
+                  width={"0px"}
+                  height={"0px"}
+                  className="hidden"
+                />
+                {hasCamera && userDetected ? (
+                  <div className="mt-4">
+                    <Typography variant="h6">User Detected</Typography>
+                    {isCounting && (
+                      <Typography variant="h6" color="primary">
+                        Countdown: {countdown} seconds
+                      </Typography>
+                    )}
+                  </div>
+                ) : (
+                  <Typography variant="h6" color="error">
+                    No user detected. Please step into the frame.
+                  </Typography>
+                )}
+                {userDetected && errorMessage && (
+                  <Typography variant="h6" color="error">
+                    {errorMessage}
+                  </Typography>
+                )}
+              </div>
+            ) : (
+              <Typography variant="h6" color="error">
+                No Camera Found
+              </Typography>
+            )}
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose} variant="outlined" color="error">
+              Close
+            </Button>
+          </DialogActions>
+        </Dialog>
 
-      {capturedImage && (
-        <div className="flex flex-col items-center justify-center">
-          <Typography variant="h6">Captured Image:</Typography>
-          <img
-            src={capturedImage}
-            alt="Captured"
-            style={{ width: "400px", maxHeight: "400px" }}
-            className="mb-4"
-          />
-        </div>
-      )}
-
-      {capturedImage && measurements.length > 0 && (
-        <div className="flex items-center justify-center gap-4">
-          <div>
-            {Object.entries(averageMeasurements)
-              .slice(0, Object.entries(averageMeasurements).length / 2)
-              .map(([key, value]) => (
-                <p key={key} className="py-1">
-                  <strong>{key.replace(/([A-Z])/g, " $1")}</strong>:{" "}
-                  {value === "N/A"
-                    ? value
-                    : typeof value === "number"
-                    ? value.toFixed(2)
-                    : (value as string)}
-                </p>
-              ))}
+        {capturedImage && (
+          <div className="flex flex-col items-center justify-center">
+            <Typography variant="h6">Captured Image:</Typography>
+            <img
+              src={capturedImage}
+              alt="Captured"
+              style={{ width: "400px", maxHeight: "400px" }}
+              className="mb-4"
+            />
           </div>
-          <div>
+        )}
+
+        {capturedImage && measurements.length > 0 && (
+          <div className="flex flex-col items-center justify-center gap-4">
+            <div>
+              {Object.entries(averageMeasurements)
+                // .slice(0, Object.entries(averageMeasurements).length / 2)
+                .map(([key, value]) => (
+                  <p key={key} className="py-1">
+                    <strong>{key.replace(/([A-Z])/g, " $1")}</strong>:{" "}
+                    {value === "N/A"
+                      ? value
+                      : typeof value === "number"
+                      ? value.toFixed(2)
+                      : (value as string)}
+                  </p>
+                ))}
+            </div>
+            {/* <div>
             {Object.entries(averageMeasurements)
               .slice(Object.entries(averageMeasurements).length / 2)
               .map(([key, value]) => (
@@ -528,10 +616,95 @@ const SizeCapture1 = () => {
                     : (value as string)}
                 </p>
               ))}
+          </div> */}
+            <p>
+              As per Zara Your T-shirt size is&nbsp;
+              {estimateTShirtSize(averageMeasurements.chestSize)}, Paint size
+              is&nbsp;
+              {Math.round(averageMeasurements.waistSize)} and Hoodie size
+              is&nbsp;
+              {estimateHoddieSize(averageMeasurements.chestSize)}
+            </p>
+            <p className="border rounded-lg w-[30%] py-4 flex flex-col items-center justify-center gap-5">
+              <b>Are you satisfied with this data?</b>
+              <div className="flex gap-5">
+                <Button
+                  variant="contained"
+                  onClick={() => handleClickSatisfied(true, true)}
+                  className="my-4 !bg-[#1565c0]"
+                >
+                  Yes
+                </Button>
+                <Button
+                  variant="outlined"
+                  color="error"
+                  onClick={() => {
+                    setOpenMeasurementData(true);
+                    handleClickSatisfied(true, false);
+                  }}
+                  className="my-4 "
+                >
+                  No
+                </Button>
+              </div>
+            </p>
           </div>
-        </div>
-      )}
-    </div>
+        )}
+
+        <Dialog
+          open={openMeasurementData}
+          onClose={() => setOpenMeasurementData(false)}
+          maxWidth="sm"
+          fullWidth
+        >
+          <DialogTitle>Provide your sizes(In inches)</DialogTitle>
+          <DialogContent className="flex items-center justify-center gap-5">
+            <TextField
+              label="Chest size(In inches)"
+              className="pt-1"
+              value={chestSize}
+              onChange={(e) => {
+                const value = e.target.value;
+                if (/^\d*$/.test(value) && value.length <= 2) {
+                  setChestSize(Number(value));
+                }
+              }}
+              margin="normal"
+              variant="standard"
+            />
+            <TextField
+              label="Waist size(In inches)"
+              className="pt-1"
+              value={waistSize}
+              onChange={(e) => {
+                const value = e.target.value;
+                if (/^\d*$/.test(value) && value.length <= 2) {
+                  setWaistSize(Number(value));
+                }
+              }}
+              margin="normal"
+              variant="standard"
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button
+              onClick={() => handleClickSatisfied(false, true)}
+              variant="contained"
+              className="!bg-[#1565c0]"
+            >
+              save
+            </Button>
+            <Button
+              onClick={() => setOpenMeasurementData(false)}
+              variant="outlined"
+              color="error"
+            >
+              Close
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </div>
+    </>
   );
 };
 
