@@ -120,7 +120,6 @@ const InvoiceUpload: React.FC<InvoiceUploadProps> = ({ isFraud }) => {
       setResponse2([]);
     }
   };
-  console.log(response1, response2);
 
   const handleUpload = async (e: any) => {
     e.preventDefault();
