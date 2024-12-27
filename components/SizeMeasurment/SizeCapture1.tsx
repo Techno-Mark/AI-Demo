@@ -619,7 +619,7 @@ const SizeCapture1 = () => {
           </div> */}
             <p>
               As per Zara Your T-shirt size is&nbsp;
-              {estimateTShirtSize(averageMeasurements.chestSize)}, Paint size
+              {estimateTShirtSize(averageMeasurements.chestSize)}, Pant size
               is&nbsp;
               {Math.round(averageMeasurements.waistSize)} and Hoodie size
               is&nbsp;
