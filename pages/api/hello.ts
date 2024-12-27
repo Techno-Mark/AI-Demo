@@ -18,16 +18,22 @@ export default async function handler(
   if (req.method === "POST") {
     try {
       const bodyData = req.body;
-   
-      const externalApiUrl = "https://crm-stageapi.pacificabs.com:3015/api/lead/save"; 
-
-      const externalApiResponse = await axios.post(externalApiUrl, bodyData);
 
       return res.status(200).json({
         success: true,
-        message: externalApiResponse.data.Message,
-        data: externalApiResponse.data.ResponseData,
+        message: "This is Dev API for Internal Process Only"
       });
+
+
+      // const externalApiUrl = "https://crm-stageapi.pacificabs.com:3015/api/lead/save"; 
+
+      // const externalApiResponse = await axios.post(externalApiUrl, bodyData);
+
+      // return res.status(200).json({
+      //   success: true,
+      //   message: externalApiResponse.data.Message,
+      //   data: externalApiResponse.data.ResponseData,
+      // });
 
       // data = bodyData;
 
