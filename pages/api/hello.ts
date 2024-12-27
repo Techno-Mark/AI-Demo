@@ -18,55 +18,66 @@ export default async function handler(
   if (req.method === "POST") {
     try {
       const bodyData = req.body;
-      data = bodyData;
+   
+      const externalApiUrl = "https://crm-stageapi.pacificabs.com:3015/api/lead/save"; 
 
-      let email = "";
+      const externalApiResponse = await axios.post(externalApiUrl, bodyData);
 
-      data?.form_response.answers.forEach((answer: any) => {
-        if (answer?.type == "email") {
-          email = answer?.email;
-        }
+      return res.status(200).json({
+        success: true,
+        message: externalApiResponse.data.Message,
+        data: externalApiResponse.data.ResponseData,
       });
 
-      if (!email) {
-        return res
-          .status(400)
-          .json({
-            success: false,
-            message: "email not found in submission form",
-          });
-      }
+      // data = bodyData;
 
-      const wixUSer = await axios.get(
-        `${process.env.NEXT_PUBLIC_WIX_BASE_URL}/userByEmail?email=${email}`
-      );
+      // let email = "";
 
-      if (!wixUSer || !wixUSer?.data?.exists) {
-        return res
-          .status(400)
-          .json({ success: false, message: "email not found in wix data" });
-      }
+      // data?.form_response.answers.forEach((answer: any) => {
+      //   if (answer?.type == "email") {
+      //     email = answer?.email;
+      //   }
+      // });
 
-      const formData = new FormData()
-      formData.append('prompt', JSON.stringify(data))
+      // if (!email) {
+      //   return res
+      //     .status(400)
+      //     .json({
+      //       success: false,
+      //       message: "email not found in submission form",
+      //     });
+      // }
 
-      const result = await axios.post(
-        `${process.env.NEXT_PUBLIC_PRODUCT_RECOMMEND_BASE_URL}/process_products`,
-        formData
-      );
+      // const wixUSer = await axios.get(
+      //   `${process.env.NEXT_PUBLIC_WIX_BASE_URL}/userByEmail?email=${email}`
+      // );
 
-      const filePath = path.join(process.cwd(), "products.json");
-      const newProducts = result.data?.matched_products || [];
+      // if (!wixUSer || !wixUSer?.data?.exists) {
+      //   return res
+      //     .status(400)
+      //     .json({ success: false, message: "email not found in wix data" });
+      // }
+
+      // const formData = new FormData()
+      // formData.append('prompt', JSON.stringify(data))
+
+      // const result = await axios.post(
+      //   `${process.env.NEXT_PUBLIC_PRODUCT_RECOMMEND_BASE_URL}/process_products`,
+      //   formData
+      // );
+
+      // const filePath = path.join(process.cwd(), "products.json");
+      // const newProducts = result.data?.matched_products || [];
      
-      fs.writeFileSync(filePath, JSON.stringify(newProducts, null, 2));
+      // fs.writeFileSync(filePath, JSON.stringify(newProducts, null, 2));
 
-      res
-        .status(200)
-        .json({
-          success: true,
-          message: "Product recommnedation retrieved successfully",
-          data: result.data?.matched_products,
-        });
+      // res
+      //   .status(200)
+      //   .json({
+      //     success: true,
+      //     message: "Product recommnedation retrieved successfully",
+      //     data: result.data?.matched_products,
+      //   });
     } catch (error: any) {
       console.log(error)
       return res.status(500).json({ success: false, message: error.message });
