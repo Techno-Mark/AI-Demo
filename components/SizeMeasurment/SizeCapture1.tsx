@@ -621,9 +621,18 @@ const SizeCapture1 = () => {
               </div>
             </p>
             <div className="flex items-center justify-center gap-5">
-              <p>Chest Size:{averageMeasurements.chestSize}</p>
-              <p>Shoulder Size:{averageMeasurements.shoulderSize}</p>
-              <p>Waist Size:{averageMeasurements.waistSize}</p>
+              <p>
+                Chest Size: {averageMeasurements.chestSize}inches,&nbsp;
+                {(averageMeasurements.chestSize * 2.54).toFixed(2)}cm
+              </p>
+              <p>
+                Shoulder Size: {averageMeasurements.shoulderSize}inches,&nbsp;
+                {(averageMeasurements.shoulderSize * 2.54).toFixed(2)}cm
+              </p>
+              <p>
+                Waist Size: {averageMeasurements.waistSize}inches,&nbsp;
+                {(averageMeasurements.waistSize * 2.54).toFixed(2)}cm
+              </p>
             </div>
             {/* <div>
               {Object.entries(averageMeasurements)
