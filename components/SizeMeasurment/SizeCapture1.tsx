@@ -581,7 +581,7 @@ const SizeCapture1 = () => {
             <img
               src={capturedImage}
               alt="Captured"
-              style={{ width: "400px", maxHeight: "400px" }}
+              style={{ width: "300px", maxHeight: "300px" }}
               className="mb-4"
             />
           </div>
@@ -589,34 +589,6 @@ const SizeCapture1 = () => {
 
         {capturedImage && measurements.length > 0 && (
           <div className="flex flex-col items-center justify-center gap-4">
-            <div>
-              {Object.entries(averageMeasurements)
-                // .slice(0, Object.entries(averageMeasurements).length / 2)
-                .map(([key, value]) => (
-                  <p key={key} className="py-1">
-                    <strong>{key.replace(/([A-Z])/g, " $1")}</strong>:{" "}
-                    {value === "N/A"
-                      ? value
-                      : typeof value === "number"
-                      ? value.toFixed(2)
-                      : (value as string)}
-                  </p>
-                ))}
-            </div>
-            {/* <div>
-            {Object.entries(averageMeasurements)
-              .slice(Object.entries(averageMeasurements).length / 2)
-              .map(([key, value]) => (
-                <p key={key} className="py-1">
-                  <strong>{key.replace(/([A-Z])/g, " $1")}</strong>:{" "}
-                  {value === "N/A"
-                    ? value
-                    : typeof value === "number"
-                    ? value.toFixed(2)
-                    : (value as string)}
-                </p>
-              ))}
-          </div> */}
             <p>
               As per Zara Your T-shirt size is&nbsp;
               {estimateTShirtSize(averageMeasurements.chestSize)}, Pant size
@@ -648,6 +620,39 @@ const SizeCapture1 = () => {
                 </Button>
               </div>
             </p>
+            <div className="flex items-center justify-center gap-5">
+              <p>Chest Size:{averageMeasurements.chestSize}</p>
+              <p>Shoulder Size:{averageMeasurements.shoulderSize}</p>
+              <p>Waist Size:{averageMeasurements.waistSize}</p>
+            </div>
+            {/* <div>
+              {Object.entries(averageMeasurements)
+                // .slice(0, Object.entries(averageMeasurements).length / 2)
+                .map(([key, value]) => (
+                  <p key={key} className="py-1">
+                    <strong>{key.replace(/([A-Z])/g, " $1")}</strong>:{" "}
+                    {value === "N/A"
+                      ? value
+                      : typeof value === "number"
+                      ? value.toFixed(2)
+                      : (value as string)}
+                  </p>
+                ))}
+            </div> */}
+            {/* <div>
+            {Object.entries(averageMeasurements)
+              .slice(Object.entries(averageMeasurements).length / 2)
+              .map(([key, value]) => (
+                <p key={key} className="py-1">
+                  <strong>{key.replace(/([A-Z])/g, " $1")}</strong>:{" "}
+                  {value === "N/A"
+                    ? value
+                    : typeof value === "number"
+                    ? value.toFixed(2)
+                    : (value as string)}
+                </p>
+              ))}
+          </div> */}
           </div>
         )}
 
