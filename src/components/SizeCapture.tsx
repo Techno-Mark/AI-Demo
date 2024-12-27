@@ -173,116 +173,112 @@ const SizeCapture = () => {
       ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
       if (poses.length > 0) {
-        poses.forEach(
-          (pose: {
-            keypoints: { x: number; y: number; score: number; name: string }[];
-          }) => {
-            const leftHip: any = pose.keypoints.find(
-              (kp: { name: string }) => kp.name === "left_hip"
+        poses.forEach((pose: any) => {
+          const leftHip: any = pose.keypoints.find(
+            (kp: { name: string }) => kp.name === "left_hip"
+          );
+          const rightHip: any = pose.keypoints.find(
+            (kp: { name: string }) => kp.name === "right_hip"
+          );
+
+          if (leftHip?.score > 0.5 && rightHip?.score > 0.5) {
+            const yLevel = Math.round((leftHip.y + rightHip.y) / 2);
+            const startX = Math.min(leftHip.x, rightHip.x) - 50;
+            const endX = Math.max(leftHip.x, rightHip.x) + 50;
+
+            const imageData = ctx.getImageData(
+              startX,
+              yLevel,
+              endX - startX,
+              1
             );
-            const rightHip: any = pose.keypoints.find(
-              (kp: { name: string }) => kp.name === "right_hip"
-            );
+            const { data, width } = imageData;
 
-            if (leftHip?.score > 0.5 && rightHip?.score > 0.5) {
-              const yLevel = Math.round((leftHip.y + rightHip.y) / 2);
-              const startX = Math.min(leftHip.x, rightHip.x) - 50;
-              const endX = Math.max(leftHip.x, rightHip.x) + 50;
+            let bodyLeftEdge = null;
+            let bodyRightEdge = null;
 
-              const imageData = ctx.getImageData(
-                startX,
-                yLevel,
-                endX - startX,
-                1
-              );
-              const { data, width } = imageData;
-
-              let bodyLeftEdge = null;
-              let bodyRightEdge = null;
-
-              for (let x = 0; x < width; x++) {
-                const idx = x * 4;
-                const [r, g, b, a] = data.slice(idx, idx + 4);
-                if (a > 0) {
-                  if (bodyLeftEdge === null) bodyLeftEdge = x + startX;
-                  bodyRightEdge = x + startX;
-                }
-              }
-
-              if (bodyLeftEdge !== null) {
-                pose.keypoints.push({
-                  x: bodyLeftEdge + 20,
-                  y: yLevel,
-                  score: 0.8,
-                  name: "left_waist",
-                });
-              }
-
-              if (bodyRightEdge !== null) {
-                pose.keypoints.push({
-                  x: bodyRightEdge - 20,
-                  y: yLevel,
-                  score: 0.8,
-                  name: "right_waist",
-                });
+            for (let x = 0; x < width; x++) {
+              const idx = x * 4;
+              const [r, g, b, a] = data.slice(idx, idx + 4);
+              if (a > 0) {
+                if (bodyLeftEdge === null) bodyLeftEdge = x + startX;
+                bodyRightEdge = x + startX;
               }
             }
 
-            pose.keypoints.forEach(({ x, y, score, name }: any) => {
-              if (Number(score) > 0.5) {
-                ctx.beginPath();
-                ctx.arc(x, y, 5, 0, 2 * Math.PI);
-                ctx.fillStyle = name.includes("waist") ? "blue" : "red";
-                ctx.fill();
-              }
-            });
+            if (bodyLeftEdge !== null) {
+              pose.keypoints.push({
+                x: bodyLeftEdge + 20,
+                y: yLevel,
+                score: 0.8,
+                name: "left_waist",
+              });
+            }
+
+            if (bodyRightEdge !== null) {
+              pose.keypoints.push({
+                x: bodyRightEdge - 20,
+                y: yLevel,
+                score: 0.8,
+                name: "right_waist",
+              });
+            }
           }
-        );
+
+          pose.keypoints.forEach(({ x, y, score, name }: any) => {
+            if (Number(score) > 0.5) {
+              ctx.beginPath();
+              ctx.arc(x, y, 5, 0, 2 * Math.PI);
+              ctx.fillStyle = name.includes("waist") ? "blue" : "red";
+              ctx.fill();
+            }
+          });
+        });
 
         const nose: any = poses[0].keypoints.find(
-          (keypoint: { name: string }) => keypoint.name === "nose"
+          (keypoint: any) => keypoint.name === "nose"
         );
         const leftShoulder: any = poses[0].keypoints.find(
-          (keypoint: { name: string }) => keypoint.name === "left_shoulder"
+          (keypoint: any) => keypoint.name === "left_shoulder"
         );
         const rightShoulder: any = poses[0].keypoints.find(
-          (keypoint: { name: string }) => keypoint.name === "right_shoulder"
+          (keypoint: any) => keypoint.name === "right_shoulder"
         );
         const leftHip: any = poses[0].keypoints.find(
-          (keypoint: { name: string }) => keypoint.name === "left_hip"
+          (keypoint: any) => keypoint.name === "left_hip"
         );
         const rightHip: any = poses[0].keypoints.find(
-          (keypoint: { name: string }) => keypoint.name === "right_hip"
+          (keypoint: any) => keypoint.name === "right_hip"
         );
         const leftElbow: any = poses[0].keypoints.find(
-          (keypoint: { name: string }) => keypoint.name === "left_elbow"
+          (keypoint: any) => keypoint.name === "left_elbow"
         );
         const rightElbow: any = poses[0].keypoints.find(
-          (keypoint: { name: string }) => keypoint.name === "right_elbow"
+          (keypoint: any) => keypoint.name === "right_elbow"
         );
         const leftWrist: any = poses[0].keypoints.find(
-          (keypoint: { name: string }) => keypoint.name === "left_wrist"
+          (keypoint: any) => keypoint.name === "left_wrist"
         );
         const rightWrist: any = poses[0].keypoints.find(
-          (keypoint: { name: string }) => keypoint.name === "right_wrist"
+          (keypoint: any) => keypoint.name === "right_wrist"
         );
         const leftKnee: any = poses[0].keypoints.find(
-          (keypoint: { name: string }) => keypoint.name === "left_knee"
+          (keypoint: any) => keypoint.name === "left_knee"
         );
         const rightKnee: any = poses[0].keypoints.find(
-          (keypoint: { name: string }) => keypoint.name === "right_knee"
+          (keypoint: any) => keypoint.name === "right_knee"
         );
         const leftAnkle: any = poses[0].keypoints.find(
-          (keypoint: { name: string }) => keypoint.name === "left_ankle"
+          (keypoint: any) => keypoint.name === "left_ankle"
         );
         const rightAnkle: any = poses[0].keypoints.find(
-          (keypoint: { name: string }) => keypoint.name === "right_ankle"
+          (keypoint: any) => keypoint.name === "right_ankle"
         );
         const leftWaist: any = poses[0].keypoints.find(
-          (keypoint: { name: string }) => keypoint.name === "left_waist"
+          (keypoint: any) => keypoint.name === "left_waist"
         );
         const rightWaist: any = poses[0].keypoints.find(
-          (keypoint: { name: string }) => keypoint.name === "right_waist"
+          (keypoint: any) => keypoint.name === "right_waist"
         );
 
         const scalingFactor = 0.15;
