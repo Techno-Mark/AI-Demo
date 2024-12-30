@@ -20,7 +20,7 @@ const HomePage = () => {
       <h1 className="text-3xl font-bold text-gray-800 mb-10">Services</h1>
 
       <div className="flex flex-wrap justify-center gap-4 lg:max-w-[60%]">
-        <Link href="/resume-matching" passHref>
+        {/* <Link href="/resume-matching" passHref>
           <button className="flex items-center bg-white rounded-full px-4 py-2 shadow-md hover:scale-105 transform transition duration-200 ease-in-out cursor-pointer border border-gray-200">
             <FontAwesomeIcon
               icon={faFileAlt}
@@ -107,22 +107,9 @@ const HomePage = () => {
               StyledGenie Product Recommendation
             </span>
           </button>
-        </Link>
-
-        {/* <Link href="/invoice-consistency" passHref>
-          <button className="flex items-center bg-white rounded-full px-4 py-2 shadow-md hover:scale-105 transform transition duration-200 ease-in-out cursor-pointer border border-gray-200">
-            <FontAwesomeIcon
-              icon={faCheckCircle}
-              size="2xl"
-              className="text-green-500 mr-2"
-            />
-            <span className="text-base font-medium text-gray-700">
-              Invoice Consistency
-            </span>
-          </button>
         </Link> */}
 
-        <Link href="/size-measurement" passHref>
+        {/* <Link href="/size-measurement" passHref>
           <button className="flex items-center bg-white rounded-full px-4 py-2 shadow-md hover:scale-105 transform transition duration-200 ease-in-out cursor-pointer border border-gray-200">
             <FontAwesomeIcon
               icon={faArrowsAlt}
@@ -133,7 +120,7 @@ const HomePage = () => {
               Size measurment
             </span>
           </button>
-        </Link>
+        </Link> */}
 
         <Link href="/size-measurement-capture" passHref>
           <button className="flex items-center bg-white rounded-full px-4 py-2 shadow-md hover:scale-105 transform transition duration-200 ease-in-out cursor-pointer border border-gray-200">
@@ -148,7 +135,7 @@ const HomePage = () => {
           </button>
         </Link>
 
-        <Link href="/snap-size-measurement" passHref>
+        {/* <Link href="/snap-size-measurement" passHref>
           <button className="flex items-center bg-white rounded-full px-4 py-2 shadow-md hover:scale-105 transform transition duration-200 ease-in-out cursor-pointer border border-gray-200">
             <FontAwesomeIcon
               icon={faRulerHorizontal}
@@ -159,7 +146,7 @@ const HomePage = () => {
               Snap Size measurment
             </span>
           </button>
-        </Link>
+        </Link> */}
       </div>
     </div>
   );
