@@ -155,7 +155,7 @@ const SizeCapture1 = () => {
 
     const video = videoRef.current;
     if (!video || video.videoWidth === 0 || video.videoHeight === 0) {
-      console.warn("Invalid video dimensions. Skipping pose detection.");
+      console.warn("Invalid video dimensions. Skipping Fit checking.");
       return;
     }
 
@@ -521,7 +521,7 @@ const SizeCapture1 = () => {
         </Button>
 
         <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
-          <DialogTitle>Pose Detection</DialogTitle>
+          <DialogTitle>Fit check</DialogTitle>
           <DialogContent>
             {hasCamera ? (
               <div className="!max-w-[500px]">
