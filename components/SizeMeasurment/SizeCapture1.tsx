@@ -459,6 +459,7 @@ const SizeCapture1 = () => {
       chestMeasure: chestSize === 0 ? null : chestSize,
       waistMeasure: waistSize === 0 ? null : waistSize,
       id: id,
+      blob: capturedImage,
     };
     try {
       const response = await axios.post(
@@ -590,7 +591,7 @@ const SizeCapture1 = () => {
         {capturedImage && measurements.length > 0 && (
           <div className="flex flex-col items-center justify-center gap-4">
             <p>
-              As per Zara Your T-shirt size is&nbsp;
+              As per Fitcheck Your T-shirt size is&nbsp;
               {estimateTShirtSize(averageMeasurements.chestSize)}, Pant size
               is&nbsp;
               {Math.round(averageMeasurements.waistSize)} and Hoodie size
