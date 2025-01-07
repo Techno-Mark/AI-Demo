@@ -13,7 +13,7 @@ export default function Home() {
           <Image src="https://technomark.io/images/logo.svg" width={150} height={150} alt="Logo" />
         </div>
       </div>
-        <SizeCapture3 />
+        <SizeCapture2 />
       </main>
     </>
   );
