@@ -529,7 +529,7 @@ const SizeCapture2 = () => {
         pauseOnHover
         theme="light"
       />
-      <div style={{ textAlign: "center", marginTop: "20px" }}>
+      <div style={{ textAlign: "center", marginTop: "20px" }} className="text-black">
         <Button
           variant="contained"
           onClick={handleClickOpen}
