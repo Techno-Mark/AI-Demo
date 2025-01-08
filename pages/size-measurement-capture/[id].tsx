@@ -4,6 +4,7 @@ import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import React from "react";
 import SizeCapture1 from "tsconfig.json/components/SizeMeasurment/SizeCapture1`";
+import SizeCapture2 from "tsconfig.json/components/SizeMeasurment/SizeCapture2`";
 
 const id = () => {
   const params = usePathname();
@@ -22,15 +23,18 @@ const id = () => {
         </div>
       </div>
       {params === "/size-measurement-capture/v1" && <SizeCapture1 />}
-      {params === "/size-measurement-capture/v2" && <SizeCapture1 />}
+      {params === "/size-measurement-capture/v2" && <SizeCapture2 />}
 
-      <Button
-        variant="contained"
-        className="my-4 !bg-[#1565c0] ml-5"
-        onClick={() => router.push("/size-measurement-capture")}
-      >
-        Back
-      </Button>
+      {params !== "/size-measurement-capture/v1" &&
+        params !== "/size-measurement-capture/v2" && (
+          <Button
+            variant="contained"
+            className="my-4 !bg-[#1565c0] ml-5"
+            onClick={() => router.push("/size-measurement-capture")}
+          >
+            Back
+          </Button>
+        )}
     </main>
   );
 };
