@@ -328,9 +328,9 @@ const SizeCapture2 = () => {
             neckSize:
               (calculateDistance(nose, leftShoulder) * 4.2) / distanceToEyes,
             hipSize:
-            ((calculateDistance(leftWaist, rightWaist) * 3.5) /
-              distanceToEyes) *
-            2,
+              ((calculateDistance(leftWaist, rightWaist) * 3.5) /
+                distanceToEyes) *
+              2,
             legSize:
               ((calculateDistance(leftHip, leftKnee) +
                 calculateDistance(leftKnee, leftAnkle)) *
@@ -529,7 +529,7 @@ const SizeCapture2 = () => {
         pauseOnHover
         theme="light"
       />
-      <div style={{ textAlign: "center", marginTop: "20px" }} className="text-black">
+      <div style={{ textAlign: "center", marginTop: "20px" }}>
         <Button
           variant="contained"
           onClick={handleClickOpen}
