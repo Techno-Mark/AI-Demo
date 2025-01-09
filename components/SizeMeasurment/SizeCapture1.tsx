@@ -455,6 +455,8 @@ const SizeCapture1 = () => {
   const updateSatisfiedStatus = async (isSatisfied: boolean) => {
     const params = {
       ...averageMeasurements,
+      height: null,
+      version: "v1",
       isSatisfied: isSatisfied,
       chestMeasure: chestSize === 0 ? null : chestSize,
       waistMeasure: waistSize === 0 ? null : waistSize,

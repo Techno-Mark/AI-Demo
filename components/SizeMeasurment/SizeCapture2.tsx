@@ -81,6 +81,8 @@ const SizeCapture2 = () => {
   const [chestSize, setChestSize] = useState<number>(0);
   const [waistSize, setWaistSize] = useState<number>(0);
   const [id, setId] = useState<number>(0);
+  const [height, setHeight] = useState(0);
+  const [heightErr, setHeightErr] = useState(false);
 
   const startCamera = async () => {
     setId(0);
@@ -376,15 +378,19 @@ const SizeCapture2 = () => {
   }, [poseDetector, hasCamera]);
 
   const handleClickOpen = () => {
-    setUserDetected(false);
-    setErrorMessage("");
-    setCountdown(5);
-    setIsCounting(false);
-    setCapturedImage(null);
-    setMeasurements([]);
-    setAverageMeasurements({});
-    setOpen(true);
-    startCamera();
+    setHeightErr(height.toString().trim().length < 3);
+
+    if (height.toString().trim().length === 3 && !heightErr) {
+      setUserDetected(false);
+      setErrorMessage("");
+      setCountdown(5);
+      setIsCounting(false);
+      setCapturedImage(null);
+      setMeasurements([]);
+      setAverageMeasurements({});
+      setOpen(true);
+      startCamera();
+    }
   };
 
   const handleClose = () => {
@@ -397,6 +403,8 @@ const SizeCapture2 = () => {
     setUserDetected(false);
     setErrorMessage("");
     setCountdown(5);
+    setHeight(0);
+    setHeightErr(false);
   };
 
   const estimateTShirtSize = (chestInInches: number) => {
@@ -472,6 +480,8 @@ const SizeCapture2 = () => {
   const updateSatisfiedStatus = async (isSatisfied: boolean) => {
     const params = {
       ...averageMeasurements,
+      height: height,
+      version: "v2",
       isSatisfied: isSatisfied,
       chestMeasure: chestSize === 0 ? null : chestSize,
       waistMeasure: waistSize === 0 ? null : waistSize,
@@ -529,14 +539,62 @@ const SizeCapture2 = () => {
         pauseOnHover
         theme="light"
       />
-      <div style={{ textAlign: "center", marginTop: "20px" }}>
-        <Button
-          variant="contained"
-          onClick={handleClickOpen}
-          className="my-4 !bg-[#1565c0]"
-        >
-          Capture
-        </Button>
+      <div>
+        <div className="flex flex-col items-center justify-center gap-5">
+          <TextField
+            label="Height (In CM)"
+            onFocus={(e) =>
+              e.target.addEventListener(
+                "wheel",
+                function (e) {
+                  e.preventDefault();
+                },
+                { passive: false }
+              )
+            }
+            fullWidth
+            value={height}
+            onChange={(e) => {
+              const value = e.target.value.replace(/[^0-9]/g, "");
+              if (value.length <= 3) {
+                setHeight(Number(value));
+                setHeightErr(false);
+              }
+            }}
+            margin="normal"
+            variant="standard"
+            sx={{
+              width: 300,
+              mx: 0.75,
+            }}
+            onBlur={(e) => {
+              const value = e.target.value;
+              if (!value || Number(value) < 3 || value.length > 3) {
+                setHeightErr(true);
+              } else {
+                setHeightErr(false);
+              }
+            }}
+            error={heightErr}
+            helperText={
+              heightErr &&
+              height !== null &&
+              height.toString().trim().length < 3
+                ? "Enter a valid height in cm."
+                : heightErr && height !== null && height.toString().length > 3
+                ? "Maximum 3 digits allowed."
+                : ""
+            }
+          />
+
+          <Button
+            variant="contained"
+            onClick={handleClickOpen}
+            className="my-4 !bg-[#1565c0]"
+          >
+            Capture
+          </Button>
+        </div>
 
         <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
           <DialogTitle>Fit check</DialogTitle>
