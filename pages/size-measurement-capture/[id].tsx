@@ -11,7 +11,7 @@ const id = () => {
   const router = useRouter();
 
   return (
-    <main className={`min-h-screen`}>
+    <main className={`min-h-screen bg-white text-black`}>
       <div className="py-2.5 border-b">
         <div className="mx-auto px-20">
           <Image
@@ -22,19 +22,14 @@ const id = () => {
           />
         </div>
       </div>
+      <p
+        className="my-4 ml-5 cursor-pointer"
+        onClick={() => router.push("/size-measurement-capture")}
+      >
+        &lt; Back
+      </p>
       {params === "/size-measurement-capture/v1" && <SizeCapture1 />}
       {params === "/size-measurement-capture/v2" && <SizeCapture2 />}
-
-      {params !== "/size-measurement-capture/v1" &&
-        params !== "/size-measurement-capture/v2" && (
-          <Button
-            variant="contained"
-            className="my-4 !bg-[#1565c0] ml-5"
-            onClick={() => router.push("/size-measurement-capture")}
-          >
-            Back
-          </Button>
-        )}
     </main>
   );
 };

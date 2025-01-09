@@ -6,7 +6,7 @@ export default function Home() {
   const router = useRouter();
   return (
     <>
-      <main className={`min-h-screen`}>
+      <main className={`min-h-screen bg-white`}>
         <div className="py-2.5 border-b">
           <div className="mx-auto px-20">
             <Image
@@ -17,7 +17,7 @@ export default function Home() {
             />
           </div>
         </div>
-        <div className="flex items-center justify-center gap-5 w-full">
+        <div className="flex items-center justify-center gap-10 w-full mt-5">
           <Button
             variant="contained"
             className="my-4 !bg-[#1565c0]"
