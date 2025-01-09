@@ -403,8 +403,6 @@ const SizeCapture2 = () => {
     setUserDetected(false);
     setErrorMessage("");
     setCountdown(5);
-    setHeight(0);
-    setHeightErr(false);
   };
 
   const estimateTShirtSize = (chestInInches: number) => {
