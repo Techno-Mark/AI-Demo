@@ -80,6 +80,7 @@ const SizeCapture2 = () => {
     useState<boolean>(false);
   const [chestSize, setChestSize] = useState<number>(0);
   const [waistSize, setWaistSize] = useState<number>(0);
+  const [shoulderSize, setShoulderSize] = useState<number>(0);
   const [id, setId] = useState<number>(0);
   const [height, setHeight] = useState(0);
   const [heightErr, setHeightErr] = useState(false);
@@ -381,6 +382,9 @@ const SizeCapture2 = () => {
     setHeightErr(height.toString().trim().length < 3);
 
     if (height.toString().trim().length === 3 && !heightErr) {
+      setChestSize(0);
+      setWaistSize(0);
+      setShoulderSize(0);
       setUserDetected(false);
       setErrorMessage("");
       setCountdown(5);
@@ -483,6 +487,7 @@ const SizeCapture2 = () => {
       isSatisfied: isSatisfied,
       chestMeasure: chestSize === 0 ? null : chestSize,
       waistMeasure: waistSize === 0 ? null : waistSize,
+      shoulderMeasure: shoulderSize === 0 ? null : shoulderSize,
       id: id,
       blob: capturedImage,
     };
@@ -511,6 +516,8 @@ const SizeCapture2 = () => {
             "Thank you for sharing your measurement!",
             toastOptions
           );
+        success && setId(0);
+        success && setHeight(0);
         success && handleClose();
         success && setOpenMeasurementData(false);
         success && setMeasurements([]);
@@ -748,12 +755,12 @@ const SizeCapture2 = () => {
           <DialogTitle>Provide your sizes(In inches)</DialogTitle>
           <DialogContent className="flex items-center justify-center gap-5">
             <TextField
-              label="Chest size(In inches)"
+              label="Chest size(In CM)"
               className="pt-1"
               value={chestSize}
               onChange={(e) => {
                 const value = e.target.value;
-                if (/^\d*$/.test(value) && value.length <= 2) {
+                if (/^\d*$/.test(value) && value.length <= 3) {
                   setChestSize(Number(value));
                 }
               }}
@@ -761,13 +768,26 @@ const SizeCapture2 = () => {
               variant="standard"
             />
             <TextField
-              label="Waist size(In inches)"
+              label="Waist size(In CM)"
               className="pt-1"
               value={waistSize}
               onChange={(e) => {
                 const value = e.target.value;
-                if (/^\d*$/.test(value) && value.length <= 2) {
+                if (/^\d*$/.test(value) && value.length <= 3) {
                   setWaistSize(Number(value));
+                }
+              }}
+              margin="normal"
+              variant="standard"
+            />
+            <TextField
+              label="Shoulder size(In CM)"
+              className="pt-1"
+              value={shoulderSize}
+              onChange={(e) => {
+                const value = e.target.value;
+                if (/^\d*$/.test(value) && value.length <= 3) {
+                  setShoulderSize(Number(value));
                 }
               }}
               margin="normal"
