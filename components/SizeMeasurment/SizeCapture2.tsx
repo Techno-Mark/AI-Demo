@@ -752,7 +752,7 @@ const SizeCapture2 = () => {
           maxWidth="sm"
           fullWidth
         >
-          <DialogTitle>Provide your sizes(In inches)</DialogTitle>
+          <DialogTitle>Provide your sizes(In CM)</DialogTitle>
           <DialogContent className="flex items-center justify-center gap-5">
             <TextField
               label="Chest size(In CM)"
