@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import React from "react";
 import SizeCapture1 from "tsconfig.json/components/SizeMeasurment/SizeCapture1`";
 import SizeCapture2 from "tsconfig.json/components/SizeMeasurment/SizeCapture2`";
+import SizeCapture4 from "tsconfig.json/components/SizeMeasurment/SizeCapture4`";
 
 const id = () => {
   const params = usePathname();
@@ -29,7 +30,7 @@ const id = () => {
         &lt; Back
       </p>
       {params === "/size-measurement-capture/v1" && <SizeCapture1 />}
-      {params === "/size-measurement-capture/v2" && <SizeCapture2 />}
+      {params === "/size-measurement-capture/v2" && <SizeCapture4 />}
     </main>
   );
 };
