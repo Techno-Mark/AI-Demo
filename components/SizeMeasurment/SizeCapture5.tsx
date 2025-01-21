@@ -58,7 +58,7 @@ interface Measurements {
   calfSize: number;
 }
 
-const SizeCapture4 = () => {
+const SizeCapture5 = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [open, setOpen] = useState<boolean>(false);
@@ -350,7 +350,8 @@ const SizeCapture4 = () => {
         setUserDetected(true);
         const distanceToCamera = estimateDistance(leftChest, rightChest);
         setDistance(distanceToCamera);
-        const distanceToEyes = calculateDistance(leftEye, rightEye);
+        // const distanceToEyes = calculateDistance(leftEye, rightEye);
+        const distanceToEyes = 25;
 
         if (distanceToCamera >= 0.21 && distanceToCamera <= 0.25) {
           const measurementsData = {
@@ -389,7 +390,7 @@ const SizeCapture4 = () => {
             neckSize:
               (calculateDistance(nose, leftShoulder) * 4.2) / distanceToEyes,
             hipSize:
-              ((calculateDistance(leftWaist, rightWaist) * 3.5) /
+              ((calculateDistance(leftWaist, rightWaist) * 4) /
                 distanceToEyes) *
               2,
             legSize:
@@ -679,7 +680,7 @@ const SizeCapture4 = () => {
                   ref={canvasRef}
                   width={"0px"}
                   height={"0px"}
-                  className="hidden"
+                  // className="hidden"
                 />
                 {hasCamera && userDetected ? (
                   <div className="mt-4">
@@ -728,7 +729,7 @@ const SizeCapture4 = () => {
 
         {capturedImage && measurements.length > 0 && (
           <div className="flex flex-col items-center justify-center gap-4">
-            <p className="px-10">
+            <p>
               As per Fitcheck Your T-shirt size is&nbsp;
               {estimateTShirtSize(averageMeasurements.chestSize)}, Pant size
               is&nbsp;
@@ -736,7 +737,7 @@ const SizeCapture4 = () => {
               is&nbsp;
               {estimateHoddieSize(averageMeasurements.chestSize)}
             </p>
-            <p className="border rounded-lg w-[70%] lg:w-[30%] py-4 flex flex-col items-center justify-center gap-5">
+            <p className="border rounded-lg w-[30%] py-4 flex flex-col items-center justify-center gap-5">
               <b>Are you satisfied with this data?</b>
               <div className="flex gap-5">
                 <Button
@@ -759,7 +760,7 @@ const SizeCapture4 = () => {
                 </Button>
               </div>
             </p>
-            <div className="flex flex-col lg:flex-row items-center justify-center gap-5">
+            <div className="flex items-center justify-center gap-5">
               <p>
                 Chest Size: {averageMeasurements.chestSize}inches,&nbsp;
                 {(averageMeasurements.chestSize * 2.54).toFixed(2)}cm
@@ -771,6 +772,10 @@ const SizeCapture4 = () => {
               <p>
                 Waist Size: {averageMeasurements.waistSize}inches,&nbsp;
                 {(averageMeasurements.waistSize * 2.54).toFixed(2)}cm
+              </p>
+              <p>
+                Hip Size: {averageMeasurements.hipSize}inches,&nbsp;
+                {(averageMeasurements.hipSize * 2.54).toFixed(2)}cm
               </p>
             </div>
             {/* <div>
@@ -874,4 +879,4 @@ const SizeCapture4 = () => {
   );
 };
 
-export default SizeCapture4;
+export default SizeCapture5;
