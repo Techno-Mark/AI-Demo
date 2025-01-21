@@ -6,6 +6,7 @@ import React from "react";
 import SizeCapture1 from "tsconfig.json/components/SizeMeasurment/SizeCapture1`";
 import SizeCapture2 from "tsconfig.json/components/SizeMeasurment/SizeCapture2`";
 import SizeCapture4 from "tsconfig.json/components/SizeMeasurment/SizeCapture4`";
+import SizeCapture5 from "tsconfig.json/components/SizeMeasurment/SizeCapture5`";
 
 const id = () => {
   const params = usePathname();
@@ -14,7 +15,7 @@ const id = () => {
   return (
     <main className={`min-h-screen bg-white text-black`}>
       <div className="py-2.5 border-b">
-        <div className="mx-auto px-20">
+        <div className="mx-auto px-8 lg:px-20">
           <Image
             src="https://technomark.io/images/logo.svg"
             width={150}
@@ -31,6 +32,7 @@ const id = () => {
       </p>
       {params === "/size-measurement-capture/v1" && <SizeCapture1 />}
       {params === "/size-measurement-capture/v2" && <SizeCapture4 />}
+      {params === "/size-measurement-capture/test" && <SizeCapture5 />}
     </main>
   );
 };
