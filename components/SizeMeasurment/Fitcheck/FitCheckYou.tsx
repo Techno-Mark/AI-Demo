@@ -21,14 +21,14 @@ const FitCheckYou = ({
 }: any) => {
   return (
     <>
-      <p className="md:text-lg lg:text-xl px-5 lg:px-0 flex items-center justify-center md:max-w-[70%] lg:max-w-[40%] text-center">
+      <p className="md:text-lg lg:text-xl px-3 py-2 md:px-0 flex items-center justify-center md:max-w-[70%] lg:max-w-[50%] text-center">
         Tell us about yourself, so that we can recommend the best size for you
         Are you interested in buying men’s or women’s clothing?
       </p>
-      <div className="flex items-center justify-center gap-10 py-5">
+      <div className="flex items-center justify-center gap-10">
         {["Male", "Female"].map((i, index) => (
           <div
-            className={`flex flex-col items-center justify-center gap-5 text-2xl px-4 py-2 bg-white rounded-xl shadow-lg ${
+            className={`flex flex-col items-center justify-center gap-2 md:gap-5 md:text-2xl px-4 py-2 bg-white rounded-xl shadow-lg ${
               sex === index ? "border-[#6B7CF6] border-2" : ""
             }`}
             key={index}
@@ -39,7 +39,7 @@ const FitCheckYou = ({
           </div>
         ))}
       </div>
-      <div className="flex flex-col md:flex-row items-center justify-center gap-5">
+      <div className="flex flex-col md:flex-row items-center justify-center md:gap-5">
         <TextField
           label="Height (In CM)"
           onFocus={(e) =>
@@ -51,7 +51,6 @@ const FitCheckYou = ({
               { passive: false }
             )
           }
-          fullWidth
           value={height === 0 ? null : height}
           onChange={(e) => {
             const value = e.target.value.replace(/[^0-9]/g, "");
@@ -63,7 +62,7 @@ const FitCheckYou = ({
           margin="normal"
           variant="standard"
           sx={{
-            width: 300,
+            width: 200,
             mx: 0.75,
           }}
           onBlur={(e) => {
@@ -94,7 +93,6 @@ const FitCheckYou = ({
               { passive: false }
             )
           }
-          fullWidth
           value={weight === 0 ? null : weight}
           onChange={(e) => {
             const value = e.target.value.replace(/[^0-9]/g, "");
@@ -106,7 +104,7 @@ const FitCheckYou = ({
           margin="normal"
           variant="standard"
           sx={{
-            width: 300,
+            width: 200,
             mx: 0.75,
           }}
           onBlur={(e) => {
@@ -128,8 +126,6 @@ const FitCheckYou = ({
               : ""
           }
         />
-      </div>
-      <div>
         <TextField
           label="Year of Birth (YYYY)"
           onFocus={(e) =>
@@ -141,7 +137,6 @@ const FitCheckYou = ({
               { passive: false }
             )
           }
-          fullWidth
           value={dob === 0 ? null : dob}
           onChange={(e) => {
             const value = e.target.value.replace(/[^0-9]/g, "");
@@ -153,7 +148,7 @@ const FitCheckYou = ({
           margin="normal"
           variant="standard"
           sx={{
-            width: 300,
+            width: 200,
             mx: 0.75,
           }}
           onBlur={(e) => {

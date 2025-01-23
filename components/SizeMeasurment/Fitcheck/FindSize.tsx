@@ -98,13 +98,13 @@ const FindSize = () => {
         pauseOnHover
         theme="light"
       />
-      <div className="flex flex-col items-center justify-center py-5 gap-2 md:gap-4">
-        <Logo />
+      <div className="flex flex-col items-center justify-center pt-5 md:gap-2">
+        {/* <Logo /> */}
         <p className="text-2xl">Find Your Best Size</p>
-        <div className="flex items-center justify-center gap-8 md:gap-16 lg:gap-20 py-4 lg:py-10">
+        <div className="flex items-center justify-center gap-8 md:gap-16 lg:gap-20 py-4 lg:py-4">
           {tabs.map((tab) => (
             <p
-              className={`border-b-4 text-2xl md:text-3xl lg:text-4xl pb-2 ${
+              className={`border-b-4 text-2xl md:text-3xl pb-2 ${
                 tab.value === activeTab
                   ? "border-[#6B7CF6]"
                   : "border-[#D9D9D9]"
