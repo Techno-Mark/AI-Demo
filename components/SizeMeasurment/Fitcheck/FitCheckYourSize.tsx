@@ -755,10 +755,7 @@ const FitCheckYourSize = ({
               Number((averageMeasurements.chestSize * 2.54).toFixed(2))
             )}
             , Pant size is&nbsp;
-            {Math.round(averageMeasurements.waistSize)} and Hoodie size is&nbsp;
-            {estimateHoddieSize(
-              Number((averageMeasurements.chestSize * 2.54).toFixed(2))
-            )}
+            {Math.round(averageMeasurements.waistSize)}.
           </p>
           <p className="border rounded-lg w-[70%] py-4 flex flex-col items-center justify-center gap-5">
             <b>Are you satisfied with this data?</b>
