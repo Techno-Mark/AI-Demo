@@ -427,7 +427,7 @@ const FitCheckYourSize = ({
             ).toFixed(2)}
                ${
                  distanceToCamera < 0.21
-                   ? "Go far."
+                   ? "go far."
                    : distanceToCamera > 0.25
                    ? "come closer."
                    : ""
@@ -605,24 +605,28 @@ const FitCheckYourSize = ({
 
   return (
     <>
-      <p className="text-ml flex items-center justify-center">
-        Help us find your best fit.
-      </p>
-      <Button
-        variant="contained"
-        onClick={() => handleOpen()}
-        className="mt-6 !bg-[#6B7CF6]"
-      >
-        Open Camera
-      </Button>
+      {!camera && !capturedImage && (
+        <>
+          <p className="text-ml flex items-center justify-center">
+            Help us find your best fit.
+          </p>
+          <Button
+            variant="contained"
+            onClick={() => handleOpen()}
+            className="mt-6 !bg-[#6B7CF6]"
+          >
+            Open Camera
+          </Button>
+        </>
+      )}
       {/* <Dialog open={camera} onClose={handleClose} maxWidth="lg" fullWidth> */}
       {/* <DialogTitle className="border-b">
           <Logo />
         </DialogTitle>
         <DialogContent> */}
       {camera && (
-        <div className="flex flex-col md:flex-row items-center md:items-start justify-around gap-4 md:gap-10 py-2 md:py-4">
-          <div className="flex flex-col items-start justify-center gap-1 md:gap-2">
+        <div className="flex flex-col md:flex-row items-center md:items-start justify-between py-10 gap-4 md:gap-10 md:py-4 !w-[70%]">
+          <div className="flex flex-col items-start justify-center gap-1 md:gap-2 md:w-[33%]">
             <div>
               <p className="text-[#28A745] text-md lg:text-xl">
                 Correct Technique
@@ -645,7 +649,8 @@ const FitCheckYourSize = ({
               </p>
             ))}
           </div>
-          <div className="flex items-start justify-center gap-5">{hasCamera ? (
+          <div className="flex items-start justify-center gap-5 md:w-[66%]">
+          {hasCamera ? (
             <div className="!max-w-[300px] flex flex-col items-center justify-center">
               <video
                 ref={videoRef}
@@ -701,7 +706,10 @@ const FitCheckYourSize = ({
               </span>
             </Typography>
           )}
-          <img src="/pose.png" alt="pose" /></div>
+          <div className="w-[50%]">
+            <img src="/pose.png" alt="pose" />
+          </div>
+          </div>
         </div>
       )}
       {/* </DialogContent> */}
@@ -713,7 +721,6 @@ const FitCheckYourSize = ({
       {/* </Dialog> */}
       {capturedImage && (
         <div className="flex flex-col items-center justify-center">
-          <Typography variant="h6">Captured Image:</Typography>
           <img
             src={capturedImage}
             alt="Captured"
@@ -730,7 +737,7 @@ const FitCheckYourSize = ({
             {estimateTShirtSize(
               Number((averageMeasurements.chestSize * 2.54).toFixed(2))
             )}
-            , Pant size is&nbsp;
+            , pant size is&nbsp;
             {Math.round(averageMeasurements.waistSize)}.
           </p>
           <p className="border rounded-lg w-[70%] py-4 flex flex-col items-center justify-center gap-5">
