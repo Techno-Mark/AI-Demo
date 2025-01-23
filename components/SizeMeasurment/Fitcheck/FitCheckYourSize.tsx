@@ -15,9 +15,7 @@ import "@tensorflow/tfjs-backend-webgl";
 import { toast, ToastOptions } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
-import Logo from "tsconfig.json/assets/icons/Logo`";
 import Correct from "tsconfig.json/assets/icons/Correct`";
-import Incorrect from "tsconfig.json/assets/icons/Incorrect`";
 
 const toastOptions: ToastOptions = {
   position: "top-right",
@@ -607,7 +605,7 @@ const FitCheckYourSize = ({
 
   return (
     <>
-      <p className="text-xl flex items-center justify-center">
+      <p className="text-ml flex items-center justify-center">
         Help us find your best fit.
       </p>
       <Button
@@ -617,133 +615,109 @@ const FitCheckYourSize = ({
       >
         Open Camera
       </Button>
-      <Dialog open={camera} onClose={handleClose} maxWidth="lg" fullWidth>
-        <DialogTitle className="border-b">
+      {/* <Dialog open={camera} onClose={handleClose} maxWidth="lg" fullWidth> */}
+      {/* <DialogTitle className="border-b">
           <Logo />
         </DialogTitle>
-        <DialogContent>
-          <div className="flex flex-col md:flex-row items-start md:items-center justify-around py-2 md:py-4">
-            <div className="flex flex-col items-start justify-center gap-1 md:gap-2">
-              <div>
-                <p className="text-[#28A745] text-md lg:text-xl">
-                  Correct Technique
-                </p>
-                <span className="text-xs md:text-md lg:text-lg">
-                  (for best results)
-                </span>
-              </div>
-              {[
-                "Wear fitted clothes",
-                "Stretch your arms outward",
-                "Turn slowly in a full circle",
-                "Use good lighting",
-              ].map((i, index) => (
-                <p
-                  className="flex items-center justify-center py-1 text-xs md:text-md lg:text-lg"
-                  key={index}
-                >
-                  <Correct />
-                  &nbsp;{i}
-                </p>
-              ))}
+        <DialogContent> */}
+      {camera && (
+        <div className="flex flex-col md:flex-row items-center md:items-start justify-around gap-4 md:gap-10 py-2 md:py-4">
+          <div className="flex flex-col items-start justify-center gap-1 md:gap-2">
+            <div>
+              <p className="text-[#28A745] text-md lg:text-xl">
+                Correct Technique
+              </p>
+              <span className="text-xs md:text-md lg:text-lg">
+                (for best results)
+              </span>
             </div>
-            <div className="flex flex-col items-start justify-center gap-1 md:gap-2">
-              <div>
-                <p className="text-[#DC3545] text-md lg:text-xl">
-                  Incorrect Technique
-                </p>
-                <span className="text-xs md:text-md lg:text-lg">
-                  (avoid these common mistakes)
-                </span>
-              </div>
-              {[
-                "Avoid loose or baggy clothing",
-                "Don’t keep arms by your side",
-                "Avoid fast spins",
-                "Avoid low lighting",
-              ].map((i, index) => (
-                <p
-                  className="flex items-center justify-center py-1 text-xs md:text-md lg:text-lg"
-                  key={index}
-                >
-                  <Incorrect />
-                  &nbsp;{i}
-                </p>
-              ))}
-            </div>
+            {[
+              "Wear fitted clothes",
+              "Stretch your arms outward",
+              "Use good lighting",
+            ].map((i, index) => (
+              <p
+                className="flex items-center justify-center py-1 text-xs md:text-md lg:text-lg"
+                key={index}
+              >
+                <Correct />
+                &nbsp;{i}
+              </p>
+            ))}
           </div>
-          <div className="flex items-center justify-center">
-            {hasCamera ? (
-              <div className="!max-w-[500px] flex flex-col items-center justify-center">
-                <video
-                  ref={videoRef}
-                  width="100%"
-                  height="fit"
-                  style={{
-                    border:
-                      distance && (distance < 0.21 || distance > 0.25)
-                        ? "2px solid red"
-                        : "2px solid black",
-                  }}
-                ></video>
-                <canvas
-                  ref={canvasRef}
-                  width={"0px"}
-                  height={"0px"}
-                  className="hidden"
-                />
-                {hasCamera && userDetected ? (
-                  <div className="mt-4 flex flex-col items-center justify-center">
-                    <Typography variant="h6">
+          <div className="flex items-start justify-center gap-5">{hasCamera ? (
+            <div className="!max-w-[300px] flex flex-col items-center justify-center">
+              <video
+                ref={videoRef}
+                width="100%"
+                height="fit"
+                style={{
+                  border:
+                    distance && (distance < 0.21 || distance > 0.25)
+                      ? "2px solid red"
+                      : "2px solid black",
+                }}
+              ></video>
+              <canvas
+                ref={canvasRef}
+                width={"0px"}
+                height={"0px"}
+                className="hidden"
+              />
+              {hasCamera && userDetected ? (
+                <div className="mt-4 flex flex-col items-center justify-center">
+                  <Typography variant="h6">
+                    <span className="text-sm md:text-md lg:text-xl">
+                      User Detected
+                    </span>
+                  </Typography>
+                  {isCounting && (
+                    <Typography variant="h6" color="primary">
                       <span className="text-sm md:text-md lg:text-xl">
-                        User Detected
+                        Countdown: {countdown} seconds
                       </span>
                     </Typography>
-                    {isCounting && (
-                      <Typography variant="h6" color="primary">
-                        <span className="text-sm md:text-md lg:text-xl">
-                          Countdown: {countdown} seconds
-                        </span>
-                      </Typography>
-                    )}
-                  </div>
-                ) : (
-                  <Typography variant="h6" color="error">
-                    <span className="text-sm md:text-md lg:text-xl">
-                      No user detected. Please step into the frame.
-                    </span>
-                  </Typography>
-                )}
-                {userDetected && errorMessage && (
-                  <Typography variant="h6" color="error">
-                    <span className="text-sm md:text-md lg:text-xl">
-                      {errorMessage}
-                    </span>
-                  </Typography>
-                )}
-              </div>
-            ) : (
-              <Typography variant="h6" color="error">
-                <span className="text-sm md:text-md lg:text-xl">
-                  No Camera Found
-                </span>
-              </Typography>
-            )}
-          </div>
-        </DialogContent>
-        {/* <DialogActions>
+                  )}
+                </div>
+              ) : (
+                <Typography variant="h6" color="error">
+                  <span className="text-sm md:text-md lg:text-xl">
+                    No user detected. Please step into the frame.
+                  </span>
+                </Typography>
+              )}
+              {userDetected && errorMessage && (
+                <Typography variant="h6" color="error">
+                  <span className="text-sm md:text-md lg:text-xl">
+                    {errorMessage}
+                  </span>
+                </Typography>
+              )}
+            </div>
+          ) : (
+            <Typography variant="h6" color="error">
+              <span className="text-sm md:text-md lg:text-xl">
+                No Camera Found
+              </span>
+            </Typography>
+          )}
+          <img src="/pose.png" alt="pose" /></div>
+        </div>
+      )}
+      {/* </DialogContent> */}
+      {/* <DialogActions>
           <Button onClick={handleClose} variant="outlined" color="error">
             Close
           </Button>
         </DialogActions> */}
-      </Dialog>
+      {/* </Dialog> */}
       {capturedImage && (
         <div className="flex flex-col items-center justify-center">
           <Typography variant="h6">Captured Image:</Typography>
           <img
             src={capturedImage}
             alt="Captured"
-            style={{ width: "300px", maxHeight: "300px" }}
+            style={{ width: "200px", maxHeight: "200px" }}
             className="mb-4"
           />
         </div>

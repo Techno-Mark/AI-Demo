@@ -3,6 +3,7 @@ import { Button } from "@mui/material";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import React from "react";
+import Logo from "tsconfig.json/assets/icons/Logo`";
 import FindSize from "tsconfig.json/components/SizeMeasurment/Fitcheck/FindSize`";
 import SizeCapture1 from "tsconfig.json/components/SizeMeasurment/SizeCapture1`";
 import SizeCapture2 from "tsconfig.json/components/SizeMeasurment/SizeCapture2`";
@@ -23,12 +24,16 @@ const id = () => {
     >
       <div className="py-2.5 border-b">
         <div className="mx-auto px-8 lg:px-20">
-          <Image
-            src="https://technomark.io/images/logo.svg"
-            width={150}
-            height={150}
-            alt="Logo"
-          />
+          {params === "/size-measurement-capture/fitcheck" ? (
+            <Logo />
+          ) : (
+            <Image
+              src="https://technomark.io/images/logo.svg"
+              width={150}
+              height={150}
+              alt="Logo"
+            />
+          )}
         </div>
       </div>
       {params !== "/size-measurement-capture/fitcheck" && (

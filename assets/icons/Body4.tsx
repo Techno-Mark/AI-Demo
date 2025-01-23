@@ -3,8 +3,8 @@ import React from "react";
 const Body4 = () => {
   return (
     <svg
-      width="96"
-      height="250"
+      width="80"
+      height="150"
       viewBox="0 0 96 250"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
