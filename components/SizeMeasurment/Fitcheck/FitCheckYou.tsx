@@ -21,7 +21,7 @@ const FitCheckYou = ({
 }: any) => {
   return (
     <>
-      <p className="text-xl flex items-center justify-center max-w-[40%] text-center">
+      <p className="md:text-lg lg:text-xl px-5 lg:px-0 flex items-center justify-center md:max-w-[70%] lg:max-w-[40%] text-center">
         Tell us about yourself, so that we can recommend the best size for you
         Are you interested in buying men’s or women’s clothing?
       </p>
@@ -39,7 +39,7 @@ const FitCheckYou = ({
           </div>
         ))}
       </div>
-      <div className="flex items-center justify-center gap-5">
+      <div className="flex flex-col md:flex-row items-center justify-center gap-5">
         <TextField
           label="Height (In CM)"
           onFocus={(e) =>

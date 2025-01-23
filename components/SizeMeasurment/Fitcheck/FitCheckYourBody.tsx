@@ -7,14 +7,14 @@ import Body4 from "tsconfig.json/assets/icons/Body4`";
 const FitCheckYourBody = ({ body, bodyErr, setBody, setBodyErr }: any) => {
   return (
     <>
-      <p className="text-2xl flex items-center justify-center">
+      <p className="text-xl lg:text-2xl flex items-center justify-center">
         Select your body type
       </p>
-      <div className="flex items-center justify-center gap-10 py-5">
+      <div className="grid grid-cols-2 gap-5 py-5 sm:grid-cols-4 sm:gap-10 items-center justify-center">
         {Array.from({ length: 4 }).map((_, index) => (
           <div
             key={index}
-            className={`flex flex-col items-center justify-center gap-5 text-2xl px-4 py-2 bg-white rounded-xl shadow-lg ${
+            className={`flex flex-col items-center justify-center gap-2 px-4 py-2 bg-white rounded-xl shadow-lg ${
               bodyErr ? "border-[#FF0000] border" : ""
             } ${body === index + 1 ? "border-[#6B7CF6] border-2" : ""}`}
             onClick={() => {
