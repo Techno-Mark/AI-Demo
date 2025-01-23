@@ -474,31 +474,44 @@ const FitCheckYourSize = ({
     setCountdown(5);
   };
 
-  const estimateTShirtSize = (chestInInches: number) => {
-    if (chestInInches < 30) return "Check kids section";
-    if (chestInInches >= 30 && chestInInches < 32) return "XXXS";
-    if (chestInInches >= 32 && chestInInches < 34) return "XXS";
-    if (chestInInches >= 34 && chestInInches < 36) return "XS";
-    if (chestInInches >= 36 && chestInInches < 38) return "Small (S)";
-    if (chestInInches >= 38 && chestInInches < 40) return "Medium (M)";
-    if (chestInInches >= 40 && chestInInches < 42) return "Large (L)";
-    if (chestInInches >= 42 && chestInInches < 44) return "XL";
-    if (chestInInches >= 44 && chestInInches < 46) return "XXL";
-    if (chestInInches >= 46 && chestInInches <= 48) return "XXXL";
-    return "Too large size not available";
+  const estimateTShirtSize = (chestInCM: number) => {
+    if (sex === 0) {
+      if (chestInCM < 88) return "Check kids section";
+      if (chestInCM >= 88 && chestInCM < 92) return "Small (S)";
+      if (chestInCM >= 92 && chestInCM < 96) return "Medium (M)";
+      if (chestInCM >= 96 && chestInCM < 100) return "Large (L)";
+      if (chestInCM >= 100 && chestInCM < 104) return "XL";
+      if (chestInCM >= 104 && chestInCM < 108) return "XXL";
+      return "Too large size not available";
+    } else {
+      if (chestInCM < 76) return "Check kids section";
+      if (chestInCM >= 76 && chestInCM < 80) return "Small (S)";
+      if (chestInCM >= 80 && chestInCM < 84) return "Medium (M)";
+      if (chestInCM >= 84 && chestInCM < 88) return "Large (L)";
+      if (chestInCM >= 88 && chestInCM < 92) return "XL";
+      if (chestInCM >= 92 && chestInCM < 96) return "XXL";
+      return "Too large size not available";
+    }
   };
 
-  const estimateHoddieSize = (chestInInches: number) => {
-    if (chestInInches < 30) return "Check kids section";
-    if (chestInInches >= 30 && chestInInches < 32) return "XXS";
-    if (chestInInches >= 32 && chestInInches < 34) return "XS";
-    if (chestInInches >= 34 && chestInInches < 36) return "Small (S)";
-    if (chestInInches >= 36 && chestInInches < 38) return "Medium (M)";
-    if (chestInInches >= 38 && chestInInches < 40) return "Large (L)";
-    if (chestInInches >= 40 && chestInInches < 42) return "XL";
-    if (chestInInches >= 42 && chestInInches < 44) return "XXL";
-    if (chestInInches >= 44 && chestInInches < 46) return "XXXL";
-    return "Too large size not available";
+  const estimateHoddieSize = (chestInCM: number) => {
+    if (sex === 0) {
+      if (chestInCM < 88) return "Check kids section";
+      if (chestInCM >= 88 && chestInCM < 92) return "Small (S)";
+      if (chestInCM >= 92 && chestInCM < 96) return "Medium (M)";
+      if (chestInCM >= 96 && chestInCM < 100) return "Large (L)";
+      if (chestInCM >= 100 && chestInCM < 104) return "XL";
+      if (chestInCM >= 104 && chestInCM < 108) return "XXL";
+      return "Too large size not available";
+    } else {
+      if (chestInCM < 76) return "Check kids section";
+      if (chestInCM >= 76 && chestInCM < 80) return "Small (S)";
+      if (chestInCM >= 80 && chestInCM < 84) return "Medium (M)";
+      if (chestInCM >= 84 && chestInCM < 88) return "Large (L)";
+      if (chestInCM >= 88 && chestInCM < 92) return "XL";
+      if (chestInCM >= 92 && chestInCM < 96) return "XXL";
+      return "Too large size not available";
+    }
   };
 
   useEffect(() => {
@@ -592,7 +605,7 @@ const FitCheckYourSize = ({
         success && setAverageMeasurements({});
         success && setIsCounting(false);
         success && setCapturedImage(null);
-        success && handleCloseMeasurementData()
+        success && handleCloseMeasurementData();
         success && onClose();
       }
     } catch (error) {
@@ -609,20 +622,6 @@ const FitCheckYourSize = ({
     setWaistSize(0);
     setWaistSizeErr(false);
   };
-  console.log(
-    chestSize,chestSize === 0,
-    chestSize.toString().length < 2,
-    chestSize.toString().length > 3,
-    chestSizeErr,
-    waistSize === 0,
-    waistSize.toString().length < 2,
-    waistSize.toString().length > 3,
-    waistSizeErr,
-    shoulderSize === 0,
-    shoulderSize.toString().length < 2,
-    shoulderSize.toString().length > 3,
-    shoulderSizeErr
-  );
 
   return (
     <>
@@ -752,10 +751,14 @@ const FitCheckYourSize = ({
         <div className="flex flex-col items-center justify-center gap-4">
           <p className="px-10">
             As per Fitcheck Your T-shirt size is&nbsp;
-            {estimateTShirtSize(averageMeasurements.chestSize)}, Pant size
-            is&nbsp;
+            {estimateTShirtSize(
+              Number((averageMeasurements.chestSize * 2.54).toFixed(2))
+            )}
+            , Pant size is&nbsp;
             {Math.round(averageMeasurements.waistSize)} and Hoodie size is&nbsp;
-            {estimateHoddieSize(averageMeasurements.chestSize)}
+            {estimateHoddieSize(
+              Number((averageMeasurements.chestSize * 2.54).toFixed(2))
+            )}
           </p>
           <p className="border rounded-lg w-[70%] py-4 flex flex-col items-center justify-center gap-5">
             <b>Are you satisfied with this data?</b>
