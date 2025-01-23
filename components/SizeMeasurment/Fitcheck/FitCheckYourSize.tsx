@@ -92,6 +92,7 @@ const FitCheckYourSize = ({
 
   const startCamera = async () => {
     setId(0);
+    setCapturedImage(null);
     try {
       const userMediaStream = await navigator.mediaDevices.getUserMedia({
         video: { facingMode: "user" },
@@ -494,26 +495,6 @@ const FitCheckYourSize = ({
     }
   };
 
-  const estimateHoddieSize = (chestInCM: number) => {
-    if (sex === 0) {
-      if (chestInCM < 88) return "Check kids section";
-      if (chestInCM >= 88 && chestInCM < 92) return "Small (S)";
-      if (chestInCM >= 92 && chestInCM < 96) return "Medium (M)";
-      if (chestInCM >= 96 && chestInCM < 100) return "Large (L)";
-      if (chestInCM >= 100 && chestInCM < 104) return "XL";
-      if (chestInCM >= 104 && chestInCM < 108) return "XXL";
-      return "Too large size not available";
-    } else {
-      if (chestInCM < 76) return "Check kids section";
-      if (chestInCM >= 76 && chestInCM < 80) return "Small (S)";
-      if (chestInCM >= 80 && chestInCM < 84) return "Medium (M)";
-      if (chestInCM >= 84 && chestInCM < 88) return "Large (L)";
-      if (chestInCM >= 88 && chestInCM < 92) return "XL";
-      if (chestInCM >= 92 && chestInCM < 96) return "XXL";
-      return "Too large size not available";
-    }
-  };
-
   useEffect(() => {
     errorMessage.length > 0 && setMeasurements([]);
   }, [errorMessage]);
@@ -615,6 +596,7 @@ const FitCheckYourSize = ({
 
   const handleCloseMeasurementData = () => {
     setOpenMeasurementData(false);
+    setCapturedImage(null);
     setChestSize(0);
     setChestSizeErr(false);
     setShoulderSize(0);
@@ -640,11 +622,15 @@ const FitCheckYourSize = ({
           <Logo />
         </DialogTitle>
         <DialogContent>
-          <div className="flex items-center justify-around py-4">
-            <div className="flex flex-col items-start justify-center gap-2">
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-around py-2 md:py-4">
+            <div className="flex flex-col items-start justify-center gap-1 md:gap-2">
               <div>
-                <p className="text-[#28A745] text-lg">Correct Technique</p>
-                <span>(for best results)</span>
+                <p className="text-[#28A745] text-md lg:text-xl">
+                  Correct Technique
+                </p>
+                <span className="text-xs md:text-md lg:text-lg">
+                  (for best results)
+                </span>
               </div>
               {[
                 "Wear fitted clothes",
@@ -653,7 +639,7 @@ const FitCheckYourSize = ({
                 "Use good lighting",
               ].map((i, index) => (
                 <p
-                  className="flex items-center justify-center py-1"
+                  className="flex items-center justify-center py-1 text-xs md:text-md lg:text-lg"
                   key={index}
                 >
                   <Correct />
@@ -661,10 +647,14 @@ const FitCheckYourSize = ({
                 </p>
               ))}
             </div>
-            <div className="flex flex-col items-start justify-center gap-2">
+            <div className="flex flex-col items-start justify-center gap-1 md:gap-2">
               <div>
-                <p className="text-[#DC3545] text-lg">Incorrect Technique</p>
-                <span>(avoid these common mistakes)</span>
+                <p className="text-[#DC3545] text-md lg:text-xl">
+                  Incorrect Technique
+                </p>
+                <span className="text-xs md:text-md lg:text-lg">
+                  (avoid these common mistakes)
+                </span>
               </div>
               {[
                 "Avoid loose or baggy clothing",
@@ -673,7 +663,7 @@ const FitCheckYourSize = ({
                 "Avoid low lighting",
               ].map((i, index) => (
                 <p
-                  className="flex items-center justify-center py-1"
+                  className="flex items-center justify-center py-1 text-xs md:text-md lg:text-lg"
                   key={index}
                 >
                   <Incorrect />
@@ -703,28 +693,40 @@ const FitCheckYourSize = ({
                   className="hidden"
                 />
                 {hasCamera && userDetected ? (
-                  <div className="mt-4">
-                    <Typography variant="h6">User Detected</Typography>
+                  <div className="mt-4 flex flex-col items-center justify-center">
+                    <Typography variant="h6">
+                      <span className="text-sm md:text-md lg:text-xl">
+                        User Detected
+                      </span>
+                    </Typography>
                     {isCounting && (
                       <Typography variant="h6" color="primary">
-                        Countdown: {countdown} seconds
+                        <span className="text-sm md:text-md lg:text-xl">
+                          Countdown: {countdown} seconds
+                        </span>
                       </Typography>
                     )}
                   </div>
                 ) : (
                   <Typography variant="h6" color="error">
-                    No user detected. Please step into the frame.
+                    <span className="text-sm md:text-md lg:text-xl">
+                      No user detected. Please step into the frame.
+                    </span>
                   </Typography>
                 )}
                 {userDetected && errorMessage && (
                   <Typography variant="h6" color="error">
-                    {errorMessage}
+                    <span className="text-sm md:text-md lg:text-xl">
+                      {errorMessage}
+                    </span>
                   </Typography>
                 )}
               </div>
             ) : (
               <Typography variant="h6" color="error">
-                No Camera Found
+                <span className="text-sm md:text-md lg:text-xl">
+                  No Camera Found
+                </span>
               </Typography>
             )}
           </div>
