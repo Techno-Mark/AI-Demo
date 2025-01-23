@@ -32,6 +32,13 @@ export default function Home() {
           >
             V2
           </Button>
+          <Button
+            variant="contained"
+            className="my-4 !bg-[#1565c0]"
+            onClick={() => router.push("/size-measurement-capture/fitcheck")}
+          >
+            FITCHECK
+          </Button>
         </div>
       </main>
     </>
