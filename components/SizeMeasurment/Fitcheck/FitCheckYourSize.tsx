@@ -544,7 +544,7 @@ const FitCheckYourSize = ({
       sex: sex,
       yearOfBirth: dob,
       bodyType: body,
-      version: "v2",
+      version: "fitcheck",
       isSatisfied: isSatisfied,
       chestMeasure: chestSize === 0 ? null : chestSize,
       waistMeasure: waistSize === 0 ? null : waistSize,
