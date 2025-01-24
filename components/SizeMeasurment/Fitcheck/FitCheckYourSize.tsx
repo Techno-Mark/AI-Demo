@@ -755,7 +755,7 @@ const FitCheckYourSize = ({
                 color="error"
                 onClick={() => {
                   setOpenMeasurementData(true);
-                  handleClickSatisfied(true, false);
+                  handleClickSatisfied(false, false);
                 }}
                 className="my-4 "
               >
