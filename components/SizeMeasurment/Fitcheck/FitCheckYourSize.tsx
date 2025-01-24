@@ -87,10 +87,12 @@ const FitCheckYourSize = ({
   const [shoulderSize, setShoulderSize] = useState<number>(0);
   const [shoulderSizeErr, setShoulderSizeErr] = useState<boolean>(false);
   const [id, setId] = useState<number>(0);
+  const [loading, setLoading] = useState(false);
 
   const startCamera = async () => {
     setId(0);
     setCapturedImage(null);
+    setLoading(false);
     try {
       const userMediaStream = await navigator.mediaDevices.getUserMedia({
         video: { facingMode: "user" },
@@ -569,6 +571,7 @@ const FitCheckYourSize = ({
     success: boolean
   ) => {
     try {
+      setLoading(true);
       const response = await updateSatisfiedStatus(isSatisfied);
       if (response.status.toLowerCase() == "success") {
         setId(response.data.id);
@@ -577,6 +580,7 @@ const FitCheckYourSize = ({
             "Thank you for sharing your measurement!",
             toastOptions
           );
+        setLoading(false);
         success && setId(0);
         success && handleClose();
         success && setOpenMeasurementData(false);
@@ -586,8 +590,11 @@ const FitCheckYourSize = ({
         success && setCapturedImage(null);
         success && handleCloseMeasurementData();
         success && onClose();
+      } else {
+        setLoading(false);
       }
     } catch (error) {
+      setLoading(false);
       toast.error("There is some error. Please try again later.", toastOptions);
     }
   };
@@ -650,65 +657,65 @@ const FitCheckYourSize = ({
             ))}
           </div>
           <div className="flex items-start justify-center gap-5 md:w-[66%]">
-          {hasCamera ? (
-            <div className="!max-w-[300px] flex flex-col items-center justify-center">
-              <video
-                ref={videoRef}
-                width="100%"
-                height="fit"
-                style={{
-                  border:
-                    distance && (distance < 0.21 || distance > 0.25)
-                      ? "2px solid red"
-                      : "2px solid black",
-                }}
-              ></video>
-              <canvas
-                ref={canvasRef}
-                width={"0px"}
-                height={"0px"}
-                className="hidden"
-              />
-              {hasCamera && userDetected ? (
-                <div className="mt-4 flex flex-col items-center justify-center">
-                  <Typography variant="h6">
-                    <span className="text-sm md:text-md lg:text-xl">
-                      User Detected
-                    </span>
-                  </Typography>
-                  {isCounting && (
-                    <Typography variant="h6" color="primary">
+            {hasCamera ? (
+              <div className="!max-w-[400px] flex flex-col items-center justify-center">
+                <video
+                  ref={videoRef}
+                  width="100%"
+                  height="fit"
+                  style={{
+                    border:
+                      distance && (distance < 0.21 || distance > 0.25)
+                        ? "2px solid red"
+                        : "2px solid black",
+                  }}
+                ></video>
+                <canvas
+                  ref={canvasRef}
+                  width={"0px"}
+                  height={"0px"}
+                  className="hidden"
+                />
+                {hasCamera && userDetected ? (
+                  <div className="mt-4 flex flex-col items-center justify-center">
+                    <Typography variant="h6">
                       <span className="text-sm md:text-md lg:text-xl">
-                        Countdown: {countdown} seconds
+                        User Detected
                       </span>
                     </Typography>
-                  )}
-                </div>
-              ) : (
-                <Typography variant="h6" color="error">
-                  <span className="text-sm md:text-md lg:text-xl">
-                    No user detected. Please step into the frame.
-                  </span>
-                </Typography>
-              )}
-              {userDetected && errorMessage && (
-                <Typography variant="h6" color="error">
-                  <span className="text-sm md:text-md lg:text-xl">
-                    {errorMessage}
-                  </span>
-                </Typography>
-              )}
+                    {isCounting && (
+                      <Typography variant="h6" color="primary">
+                        <span className="text-sm md:text-md lg:text-xl">
+                          Countdown: {countdown} seconds
+                        </span>
+                      </Typography>
+                    )}
+                  </div>
+                ) : (
+                  <Typography variant="h6" color="error">
+                    <span className="text-sm md:text-md lg:text-xl">
+                      No user detected. Please step into the frame.
+                    </span>
+                  </Typography>
+                )}
+                {userDetected && errorMessage && (
+                  <Typography variant="h6" color="error">
+                    <span className="text-sm md:text-md lg:text-xl">
+                      {errorMessage}
+                    </span>
+                  </Typography>
+                )}
+              </div>
+            ) : (
+              <Typography variant="h6" color="error">
+                <span className="text-sm md:text-md lg:text-xl">
+                  No Camera Found
+                </span>
+              </Typography>
+            )}
+            <div className="w-[50%] flex items-center justify-end">
+              <img src="/pose.png" alt="pose" />
             </div>
-          ) : (
-            <Typography variant="h6" color="error">
-              <span className="text-sm md:text-md lg:text-xl">
-                No Camera Found
-              </span>
-            </Typography>
-          )}
-          <div className="w-[50%]">
-            <img src="/pose.png" alt="pose" />
-          </div>
           </div>
         </div>
       )}
@@ -745,8 +752,13 @@ const FitCheckYourSize = ({
             <div className="flex gap-5">
               <Button
                 variant="contained"
-                onClick={() => handleClickSatisfied(true, true)}
-                className="my-4 !bg-[#1565c0]"
+                onClick={() =>
+                  loading ? undefined : handleClickSatisfied(true, true)
+                }
+                className={`my-4 ${
+                  loading ? "bg-gray-500" : "!bg-[#1565c0] cursor-pointer"
+                }`}
+                disabled={loading}
               >
                 Yes
               </Button>
@@ -757,7 +769,8 @@ const FitCheckYourSize = ({
                   setOpenMeasurementData(true);
                   handleClickSatisfied(false, false);
                 }}
-                className="my-4 "
+                className="my-4"
+                disabled={loading}
               >
                 No
               </Button>
