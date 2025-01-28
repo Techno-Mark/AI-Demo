@@ -58,8 +58,8 @@ const FitCheckYourSize = ({
   setCamera,
   weight,
   sex,
-  dob,
-  body,
+  // dob,
+  // body,
   onClose,
 }: any) => {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -544,8 +544,8 @@ const FitCheckYourSize = ({
       height: height,
       weight: weight,
       sex: sex,
-      yearOfBirth: dob,
-      bodyType: body,
+      // yearOfBirth: dob,
+      // bodyType: body,
       version: "fitcheck",
       isSatisfied: isSatisfied,
       chestMeasure: chestSize === 0 ? null : chestSize,
