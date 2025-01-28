@@ -14,10 +14,10 @@ const FitCheckYou = ({
   weightErr,
   setWeight,
   setWeightErr,
-  dob,
-  dobErr,
-  setDOB,
-  setDOBErr,
+  // dob,
+  // dobErr,
+  // setDOB,
+  // setDOBErr,
 }: any) => {
   return (
     <>
@@ -126,7 +126,7 @@ const FitCheckYou = ({
               : ""
           }
         />
-        <TextField
+        {/* <TextField
           label="Year of Birth (YYYY)"
           onFocus={(e) =>
             e.target.addEventListener(
@@ -169,7 +169,7 @@ const FitCheckYou = ({
               ? "Maximum 4 digits allowed."
               : ""
           }
-        />
+        /> */}
       </div>
     </>
   );

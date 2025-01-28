@@ -10,7 +10,7 @@ import { ToastContainer } from "react-toastify";
 
 const tabs = [
   { label: "You", value: 1 },
-  { label: "Your body", value: 2 },
+  // { label: "Your body", value: 2 },
   { label: "Your Size", value: 3 },
 ];
 
@@ -20,11 +20,11 @@ const FindSize = () => {
   const [heightErr, setHeightErr] = useState(false);
   const [weight, setWeight] = useState(0);
   const [weightErr, setWeightErr] = useState(false);
-  const [dob, setDOB] = useState(0);
-  const [dobErr, setDOBErr] = useState(false);
+  // const [dob, setDOB] = useState(0);
+  // const [dobErr, setDOBErr] = useState(false);
   const [sex, setSex] = useState(0);
-  const [body, setBody] = useState(0);
-  const [bodyErr, setBodyErr] = useState(false);
+  // const [body, setBody] = useState(0);
+  // const [bodyErr, setBodyErr] = useState(false);
   const [camera, setCamera] = useState(false);
 
   const handleClickOpen = () => {
@@ -38,11 +38,11 @@ const FindSize = () => {
           weight.toString().trim().length < 1 ||
           weight.toString().trim().length > 3
       );
-      setDOBErr(
-        dob === 0 ||
-          dob.toString().trim().length < 4 ||
-          dob.toString().trim().length > 4
-      );
+      // setDOBErr(
+      //   dob === 0 ||
+      //     dob.toString().trim().length < 4 ||
+      //     dob.toString().trim().length > 4
+      // );
 
       if (
         height !== 0 &&
@@ -52,22 +52,25 @@ const FindSize = () => {
         weight !== 0 &&
         weight.toString().trim().length > 0 &&
         weight.toString().trim().length < 4 &&
-        !weightErr &&
-        dob !== 0 &&
-        dob.toString().trim().length > 3 &&
-        dob.toString().trim().length < 5 &&
-        !dobErr
+        !weightErr 
+        // &&
+        // dob !== 0 &&
+        // dob.toString().trim().length > 3 &&
+        // dob.toString().trim().length < 5 &&
+        // !dobErr
       ) {
-        setActiveTab(2);
-      }
-    } else if (activeTab === 2) {
-      setBodyErr(body === 0);
-
-      if (body > 0 && !bodyErr) {
+        // setActiveTab(2);
         setActiveTab(3);
       }
-    } else if (activeTab === 3) {
-    }
+    } 
+    // else if (activeTab === 2) {
+    //   setBodyErr(body === 0);
+
+    //   if (body > 0 && !bodyErr) {
+    //     setActiveTab(3);
+    //   }
+    // } else if (activeTab === 3) {
+    // }
   };
 
   const onClose = () => {
@@ -76,11 +79,11 @@ const FindSize = () => {
     setHeightErr(false);
     setWeight(0);
     setWeightErr(false);
-    setDOB(0);
-    setDOBErr(false);
+    // setDOB(0);
+    // setDOBErr(false);
     setSex(0);
-    setBody(0);
-    setBodyErr(false);
+    // setBody(0);
+    // setBodyErr(false);
     setCamera(false);
   };
 
@@ -127,20 +130,20 @@ const FindSize = () => {
             weightErr={weightErr}
             setWeight={setWeight}
             setWeightErr={setWeightErr}
-            dob={dob}
-            dobErr={dobErr}
-            setDOB={setDOB}
-            setDOBErr={setDOBErr}
+            // dob={dob}
+            // dobErr={dobErr}
+            // setDOB={setDOB}
+            // setDOBErr={setDOBErr}
           />
         )}
-        {activeTab === 2 && (
+        {/* {activeTab === 2 && (
           <FitCheckYourBody
             body={body}
             bodyErr={bodyErr}
             setBody={setBody}
             setBodyErr={setBodyErr}
           />
-        )}
+        )} */}
         {activeTab === 3 && (
           <FitCheckYourSize
             height={height}
@@ -148,8 +151,8 @@ const FindSize = () => {
             setCamera={setCamera}
             sex={sex}
             weight={weight}
-            dob={dob}
-            body={body}
+            // dob={dob}
+            // body={body}
             onClose={onClose}
           />
         )}
