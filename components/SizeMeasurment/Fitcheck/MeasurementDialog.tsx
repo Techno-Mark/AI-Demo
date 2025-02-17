@@ -55,7 +55,7 @@ const MeasurementDialog = ({
 
   return (
     <>
-      <DialogContent className="grid grid-cols-3 gap-5">
+      <DialogContent className="grid grid-cols-2 lg:grid-cols-3 gap-5">
         {measurementsList.map((key) => (
           <TextField
             key={key}
