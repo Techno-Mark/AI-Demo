@@ -79,10 +79,11 @@ const Admin: React.FC = () => {
     setLoading(true);
     try {
       const response = await axios.post(
-        "https://crm-stageapi.pacificabs.com:3021/measurementList",
+        `${process.env.NEXT_PUBLIC_SIZE_MEASUREMENT}/measurementList`,
         {
           page: page + 1,
           limit,
+          isSatisfied: false,
         }
       );
 

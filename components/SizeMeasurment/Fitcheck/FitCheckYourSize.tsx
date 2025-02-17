@@ -1,10 +1,14 @@
 import {
   Button,
   Dialog,
-  DialogActions,
-  DialogContent,
   DialogTitle,
-  TextField,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
   Typography,
 } from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
@@ -16,6 +20,7 @@ import { toast, ToastOptions } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 import Correct from "tsconfig.json/assets/icons/Correct`";
+import MeasurementDialog from "./MeasurementDialog";
 
 const toastOptions: ToastOptions = {
   position: "top-right",
@@ -80,19 +85,101 @@ const FitCheckYourSize = ({
   >({});
   const [openMeasurementData, setOpenMeasurementData] =
     useState<boolean>(false);
-  const [chestSize, setChestSize] = useState<number>(0);
-  const [chestSizeErr, setChestSizeErr] = useState<boolean>(false);
-  const [waistSize, setWaistSize] = useState<number>(0);
-  const [waistSizeErr, setWaistSizeErr] = useState<boolean>(false);
-  const [shoulderSize, setShoulderSize] = useState<number>(0);
-  const [shoulderSizeErr, setShoulderSizeErr] = useState<boolean>(false);
   const [id, setId] = useState<number>(0);
   const [loading, setLoading] = useState(false);
+  const measurementsList = [
+    "chestSize",
+    "waistSize",
+    "shoulderSize",
+    "armLength",
+    "forearmSize",
+    "upperarmSize",
+    "bicepSize",
+    "neckSize",
+    "thighSize",
+    "hipSize",
+    "legSize",
+    "kneeSize",
+    "calfSize",
+    "upperbodySize",
+    "lowerbodySize",
+  ] as const;
+  type MeasurementKey = (typeof measurementsList)[number];
+  const [measurementDialog, setMeasurementDialog] = useState<
+    Record<MeasurementKey, number>
+  >({
+    chestSize: 0,
+    waistSize: 0,
+    shoulderSize: 0,
+    armLength: 0,
+    forearmSize: 0,
+    upperarmSize: 0,
+    bicepSize: 0,
+    neckSize: 0,
+    thighSize: 0,
+    hipSize: 0,
+    legSize: 0,
+    kneeSize: 0,
+    calfSize: 0,
+    upperbodySize: 0,
+    lowerbodySize: 0,
+  });
+  const [errors, setErrors] = useState<Record<MeasurementKey, boolean>>({
+    chestSize: false,
+    waistSize: false,
+    shoulderSize: false,
+    armLength: false,
+    forearmSize: false,
+    upperarmSize: false,
+    bicepSize: false,
+    neckSize: false,
+    thighSize: false,
+    hipSize: false,
+    legSize: false,
+    kneeSize: false,
+    calfSize: false,
+    upperbodySize: false,
+    lowerbodySize: false,
+  });
 
   const startCamera = async () => {
     setId(0);
     setCapturedImage(null);
     setLoading(false);
+    setMeasurementDialog({
+      chestSize: 0,
+      waistSize: 0,
+      shoulderSize: 0,
+      armLength: 0,
+      forearmSize: 0,
+      upperarmSize: 0,
+      bicepSize: 0,
+      neckSize: 0,
+      thighSize: 0,
+      hipSize: 0,
+      legSize: 0,
+      kneeSize: 0,
+      calfSize: 0,
+      upperbodySize: 0,
+      lowerbodySize: 0,
+    });
+    setErrors({
+      chestSize: false,
+      waistSize: false,
+      shoulderSize: false,
+      armLength: false,
+      forearmSize: false,
+      upperarmSize: false,
+      bicepSize: false,
+      neckSize: false,
+      thighSize: false,
+      hipSize: false,
+      legSize: false,
+      kneeSize: false,
+      calfSize: false,
+      upperbodySize: false,
+      lowerbodySize: false,
+    });
     try {
       const userMediaStream = await navigator.mediaDevices.getUserMedia({
         video: { facingMode: "user" },
@@ -454,12 +541,6 @@ const FitCheckYourSize = ({
 
   const handleOpen = () => {
     setCamera(true);
-    setChestSize(0);
-    setChestSizeErr(false);
-    setShoulderSize(0);
-    setShoulderSizeErr(false);
-    setWaistSize(0);
-    setWaistSizeErr(false);
     startCamera();
   };
 
@@ -548,9 +629,46 @@ const FitCheckYourSize = ({
       // bodyType: body,
       version: "fitcheck",
       isSatisfied: isSatisfied,
-      chestMeasure: chestSize === 0 ? null : chestSize,
-      waistMeasure: waistSize === 0 ? null : waistSize,
-      shoulderMeasure: shoulderSize === 0 ? null : shoulderSize,
+      chestMeasure:
+        measurementDialog.chestSize === 0 ? null : measurementDialog.chestSize,
+      waistMeasure:
+        measurementDialog.waistSize === 0 ? null : measurementDialog.waistSize,
+      shoulderMeasure:
+        measurementDialog.shoulderSize === 0
+          ? null
+          : measurementDialog.shoulderSize,
+      armMeasure:
+        measurementDialog.armLength === 0 ? null : measurementDialog.armLength,
+      forearmMeasure:
+        measurementDialog.forearmSize === 0
+          ? null
+          : measurementDialog.forearmSize,
+      upperarmMeasure:
+        measurementDialog.upperarmSize === 0
+          ? null
+          : measurementDialog.upperarmSize,
+      bicepMeasure:
+        measurementDialog.bicepSize === 0 ? null : measurementDialog.bicepSize,
+      neckMeasure:
+        measurementDialog.neckSize === 0 ? null : measurementDialog.neckSize,
+      thighMeasure:
+        measurementDialog.thighSize === 0 ? null : measurementDialog.thighSize,
+      hipMeasure:
+        measurementDialog.hipSize === 0 ? null : measurementDialog.hipSize,
+      legMeasure:
+        measurementDialog.legSize === 0 ? null : measurementDialog.legSize,
+      kneeMeasure:
+        measurementDialog.kneeSize === 0 ? null : measurementDialog.kneeSize,
+      calfMeasure:
+        measurementDialog.calfSize === 0 ? null : measurementDialog.calfSize,
+      upperbodyMeasure:
+        measurementDialog.upperbodySize === 0
+          ? null
+          : measurementDialog.upperbodySize,
+      lowerbodyMeasure:
+        measurementDialog.lowerbodySize === 0
+          ? null
+          : measurementDialog.lowerbodySize,
       id: id,
       blob: capturedImage,
     };
@@ -602,13 +720,64 @@ const FitCheckYourSize = ({
   const handleCloseMeasurementData = () => {
     setOpenMeasurementData(false);
     setCapturedImage(null);
-    setChestSize(0);
-    setChestSizeErr(false);
-    setShoulderSize(0);
-    setShoulderSizeErr(false);
-    setWaistSize(0);
-    setWaistSizeErr(false);
+    setMeasurementDialog({
+      chestSize: 0,
+      waistSize: 0,
+      shoulderSize: 0,
+      armLength: 0,
+      forearmSize: 0,
+      upperarmSize: 0,
+      bicepSize: 0,
+      neckSize: 0,
+      thighSize: 0,
+      hipSize: 0,
+      legSize: 0,
+      kneeSize: 0,
+      calfSize: 0,
+      upperbodySize: 0,
+      lowerbodySize: 0,
+    });
+    setErrors({
+      chestSize: false,
+      waistSize: false,
+      shoulderSize: false,
+      armLength: false,
+      forearmSize: false,
+      upperarmSize: false,
+      bicepSize: false,
+      neckSize: false,
+      thighSize: false,
+      hipSize: false,
+      legSize: false,
+      kneeSize: false,
+      calfSize: false,
+      upperbodySize: false,
+      lowerbodySize: false,
+    });
   };
+
+  const measurementLabels: { [key: string]: string } = {
+    chestSize: "Chest",
+    waistSize: "Waist",
+    shoulderSize: "Shoulder",
+    armLength: "Arm Length",
+    bicepSize: "Bicep",
+    forearmSize: "Forearm",
+    upperArmSize: "Upper Arm",
+    neckSize: "Neck",
+    hipSize: "Hip",
+    legSize: "Leg",
+    thighSize: "Thigh",
+    upperBodySize: "Upper Body",
+    lowerBodySize: "Lower Body",
+    kneeSize: "Knee",
+    calfSize: "Calf",
+  };
+
+  const measurementEntries = Object.entries(averageMeasurements);
+  const chunkSize = 8; // Split into chunks of 8
+  const firstHalf = measurementEntries.slice(0, chunkSize);
+  const secondHalf = measurementEntries.slice(chunkSize);
 
   return (
     <>
@@ -776,19 +945,126 @@ const FitCheckYourSize = ({
               </Button>
             </div>
           </p>
-          <div className="flex flex-col lg:flex-row items-center justify-center gap-5">
+          {/* <div className="flex flex-col items-start justify-center gap-5">
             <p>
               Chest Size: {averageMeasurements.chestSize}inches,&nbsp;
               {(averageMeasurements.chestSize * 2.54).toFixed(2)}cm
+            </p>
+            <p>
+              Waist Size: {averageMeasurements.waistSize}inches,&nbsp;
+              {(averageMeasurements.waistSize * 2.54).toFixed(2)}cm
             </p>
             <p>
               Shoulder Size: {averageMeasurements.shoulderSize}inches,&nbsp;
               {(averageMeasurements.shoulderSize * 2.54).toFixed(2)}cm
             </p>
             <p>
-              Waist Size: {averageMeasurements.waistSize}inches,&nbsp;
-              {(averageMeasurements.waistSize * 2.54).toFixed(2)}cm
+              Arm Length: {averageMeasurements.armLength}inches,&nbsp;
+              {(averageMeasurements.armLength * 2.54).toFixed(2)}cm
             </p>
+            <p>
+              Bicep Size: {averageMeasurements.bicepSize}inches,&nbsp;
+              {(averageMeasurements.bicepSize * 2.54).toFixed(2)}cm
+            </p>
+            <p>
+              Forearm Size: {averageMeasurements.forearmSize}inches,&nbsp;
+              {(averageMeasurements.forearmSize * 2.54).toFixed(2)}cm
+            </p>
+            <p>
+              Neck Size: {averageMeasurements.neckSize}inches,&nbsp;
+              {(averageMeasurements.neckSize * 2.54).toFixed(2)}cm
+            </p>
+            <p>
+              Hip Size: {averageMeasurements.hipSize}inches,&nbsp;
+              {(averageMeasurements.hipSize * 2.54).toFixed(2)}cm
+            </p>
+            <p>
+              Leg Size: {averageMeasurements.legSize}inches,&nbsp;
+              {(averageMeasurements.legSize * 2.54).toFixed(2)}cm
+            </p>
+            <p>
+              Thigh Size: {averageMeasurements.thighSize}inches,&nbsp;
+              {(averageMeasurements.thighSize * 2.54).toFixed(2)}cm
+            </p>
+            <p>
+              Knee Size: {averageMeasurements.kneeSize}inches,&nbsp;
+              {(averageMeasurements.kneeSize * 2.54).toFixed(2)}cm
+            </p>
+            <p>
+              Calf Size: {averageMeasurements.calfSize}inches,&nbsp;
+              {(averageMeasurements.calfSize * 2.54).toFixed(2)}cm
+            </p>
+          </div> */}
+          <div className="w-full">
+            {/* Small Screen: Single Table */}
+            <div className="block md:hidden">
+              <TableContainer component={Paper}>
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>
+                        <b>Measurement</b>
+                      </TableCell>
+                      <TableCell align="center">
+                        <b>Size (inches)</b>
+                      </TableCell>
+                      <TableCell align="center">
+                        <b>Size (cm)</b>
+                      </TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {measurementEntries.map(([key, value]: any) => (
+                      <TableRow key={key}>
+                        <TableCell>{measurementLabels[key] || key}</TableCell>
+                        <TableCell align="center">{value}</TableCell>
+                        <TableCell align="center">
+                          {(value * 2.54).toFixed(2)} cm
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </div>
+
+            {/* Large Screen: Two Tables */}
+            <div className="hidden md:grid md:grid-cols-2 gap-4">
+              {[firstHalf, secondHalf].map((data, index) =>
+                data.length > 0 ? ( // Only render if there is data
+                  <TableContainer key={index} component={Paper}>
+                    <Table>
+                      <TableHead>
+                        <TableRow>
+                          <TableCell>
+                            <b>Measurement</b>
+                          </TableCell>
+                          <TableCell align="center">
+                            <b>Size (inches)</b>
+                          </TableCell>
+                          <TableCell align="center">
+                            <b>Size (cm)</b>
+                          </TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {data.map(([key, value]: any) => (
+                          <TableRow key={key}>
+                            <TableCell>
+                              {measurementLabels[key] || key}
+                            </TableCell>
+                            <TableCell align="center">{value}</TableCell>
+                            <TableCell align="center">
+                              {(value * 2.54).toFixed(2)} cm
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                ) : null
+              )}
+            </div>
           </div>
         </div>
       )}
@@ -800,155 +1076,14 @@ const FitCheckYourSize = ({
         fullWidth
       >
         <DialogTitle>Provide your sizes(In CM)</DialogTitle>
-        <DialogContent className="flex items-center justify-center gap-5">
-          <TextField
-            label="Chest size(In CM)"
-            className="pt-1"
-            value={chestSize === 0 ? null : chestSize}
-            onChange={(e) => {
-              const value = e.target.value;
-              if (/^\d*$/.test(value) && value.length <= 3) {
-                setChestSize(Number(value));
-                setChestSizeErr(false);
-              }
-            }}
-            margin="normal"
-            variant="standard"
-            onBlur={(e) => {
-              const value = e.target.value;
-              if (!value || Number(value) < 2 || value.length > 3) {
-                setChestSizeErr(true);
-              } else {
-                setChestSizeErr(false);
-              }
-            }}
-            error={chestSizeErr}
-            helperText={
-              chestSizeErr &&
-              chestSize !== null &&
-              (chestSize === 0 || chestSize.toString().trim().length < 2)
-                ? "Enter a valid Chest Size."
-                : chestSizeErr &&
-                  chestSize !== null &&
-                  chestSize.toString().length > 3
-                ? "Maximum 3 digits allowed."
-                : ""
-            }
-          />
-          <TextField
-            label="Waist size(In CM)"
-            className="pt-1"
-            value={waistSize === 0 ? null : waistSize}
-            onChange={(e) => {
-              const value = e.target.value;
-              if (/^\d*$/.test(value) && value.length <= 3) {
-                setWaistSize(Number(value));
-                setWaistSizeErr(false);
-              }
-            }}
-            margin="normal"
-            variant="standard"
-            onBlur={(e) => {
-              const value = e.target.value;
-              if (!value || Number(value) < 2 || value.length > 3) {
-                setWaistSizeErr(true);
-              } else {
-                setWaistSizeErr(false);
-              }
-            }}
-            error={waistSizeErr}
-            helperText={
-              waistSizeErr &&
-              waistSize !== null &&
-              (waistSize === 0 || waistSize.toString().trim().length < 2)
-                ? "Enter a valid Waist Size."
-                : waistSizeErr &&
-                  waistSize !== null &&
-                  waistSize.toString().length > 3
-                ? "Maximum 3 digits allowed."
-                : ""
-            }
-          />
-          <TextField
-            label="Shoulder size(In CM)"
-            className="pt-1"
-            value={shoulderSize === 0 ? null : shoulderSize}
-            onChange={(e) => {
-              const value = e.target.value;
-              if (/^\d*$/.test(value) && value.length <= 3) {
-                setShoulderSize(Number(value));
-                setShoulderSizeErr(false);
-              }
-            }}
-            margin="normal"
-            variant="standard"
-            onBlur={(e) => {
-              const value = e.target.value;
-              if (!value || Number(value) < 2 || value.length > 3) {
-                setShoulderSizeErr(true);
-              } else {
-                setShoulderSizeErr(false);
-              }
-            }}
-            error={shoulderSizeErr}
-            helperText={
-              shoulderSizeErr &&
-              shoulderSize !== null &&
-              (shoulderSize === 0 || shoulderSize.toString().trim().length < 2)
-                ? "Enter a valid Shoulder Size."
-                : shoulderSizeErr &&
-                  shoulderSize !== null &&
-                  shoulderSize.toString().length > 3
-                ? "Maximum 3 digits allowed."
-                : ""
-            }
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={() => handleClickSatisfied(false, true)}
-            variant="contained"
-            className={`${
-              chestSize === 0 ||
-              chestSize.toString().length < 2 ||
-              chestSize.toString().length > 3 ||
-              chestSizeErr ||
-              waistSize === 0 ||
-              waistSize.toString().length < 2 ||
-              waistSize.toString().length > 3 ||
-              waistSizeErr ||
-              shoulderSize === 0 ||
-              shoulderSize.toString().length < 2 ||
-              shoulderSize.toString().length > 3 ||
-              shoulderSizeErr
-                ? " bg-gray-500 cursor-not-allowed"
-                : "!bg-[#1565c0] cursor-pointer"
-            }`}
-            disabled={
-              chestSize === 0 ||
-              chestSize.toString().length < 2 ||
-              chestSize.toString().length > 3 ||
-              chestSizeErr ||
-              waistSize === 0 ||
-              waistSize.toString().length < 2 ||
-              waistSize.toString().length > 3 ||
-              waistSizeErr ||
-              shoulderSize === 0 ||
-              shoulderSize.toString().length < 2 ||
-              shoulderSize.toString().length > 3 ||
-              shoulderSizeErr
-            }
-          >
-            save
-          </Button>
-          <Button
-            onClick={() => handleCloseMeasurementData()}
-            variant="outlined"
-            color="error"
-          >
-            Close
-          </Button>
-        </DialogActions>
+        <MeasurementDialog
+          handleClickSatisfied={handleClickSatisfied}
+          handleCloseMeasurementData={handleCloseMeasurementData}
+          measurementDialog={measurementDialog}
+          setMeasurementDialog={setMeasurementDialog}
+          errors={errors}
+          setErrors={setErrors}
+        />
       </Dialog>
     </>
   );
