@@ -7,6 +7,7 @@ import FitCheckYou from "./FitCheckYou";
 import FitCheckYourBody from "./FitCheckYourBody";
 import FitCheckYourSize from "./FitCheckYourSize";
 import { ToastContainer } from "react-toastify";
+import FitCheckYourSize1 from "./FitCheckYourSize1";
 
 const tabs = [
   { label: "You", value: 1 },
@@ -145,7 +146,7 @@ const FindSize = () => {
           />
         )} */}
         {activeTab === 3 && (
-          <FitCheckYourSize
+          <FitCheckYourSize1
             height={height}
             camera={camera}
             setCamera={setCamera}
