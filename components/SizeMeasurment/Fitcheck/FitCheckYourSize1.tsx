@@ -66,6 +66,8 @@ const FitCheckYourSize1 = ({
   // dob,
   // body,
   onClose,
+  productName,
+  measurementMatrix,
 }: any) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -563,23 +565,24 @@ const FitCheckYourSize1 = ({
   };
 
   const estimateTShirtSize = (chestInCM: number) => {
-    if (sex === 0) {
-      if (chestInCM < 88) return "Check kids section";
-      if (chestInCM >= 88 && chestInCM < 92) return "Small (S)";
-      if (chestInCM >= 92 && chestInCM < 96) return "Medium (M)";
-      if (chestInCM >= 96 && chestInCM < 100) return "Large (L)";
-      if (chestInCM >= 100 && chestInCM < 104) return "XL";
-      if (chestInCM >= 104 && chestInCM < 108) return "XXL";
-      return "Too large size not available";
-    } else {
-      if (chestInCM < 76) return "Check kids section";
-      if (chestInCM >= 76 && chestInCM < 80) return "Small (S)";
-      if (chestInCM >= 80 && chestInCM < 84) return "Medium (M)";
-      if (chestInCM >= 84 && chestInCM < 88) return "Large (L)";
-      if (chestInCM >= 88 && chestInCM < 92) return "XL";
-      if (chestInCM >= 92 && chestInCM < 96) return "XXL";
-      return "Too large size not available";
-    }
+    const sizeChart = !!measurementMatrix
+      ? measurementMatrix
+      : [
+          { min: 0, max: 87.99, size: "Check kids section" },
+          { min: 88, max: 91.99, size: "Small (S)" },
+          { min: 92, max: 95.99, size: "Medium (M)" },
+          { min: 96, max: 99.99, size: "Large (L)" },
+          { min: 100, max: 103.99, size: "XL" },
+          { min: 104, max: 107.99, size: "XXL" },
+          { min: 108, max: null, size: "Too large size not available" },
+        ];
+
+    const size = sizeChart.find(
+      ({ min, max }: { min: number; max: number }) =>
+        chestInCM >= min && (max === null || chestInCM < max)
+    );
+
+    return size ? size.size : "Size not found";
   };
 
   useEffect(() => {
@@ -915,7 +918,7 @@ const FitCheckYourSize1 = ({
       {capturedImage && measurements.length > 0 && (
         <div className="flex flex-col items-center justify-center gap-4">
           <p className="px-10">
-            As per Fitcheck Your T-shirt size is&nbsp;
+            As per Fitcheck Your {productName} size is&nbsp;
             {estimateTShirtSize(
               Number((averageMeasurements.chestSize * 2.54).toFixed(2))
             )}
