@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 import { Button } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Logo from "tsconfig.json/assets/icons/Logo`";
 import FitCheckYou from "./FitCheckYou";
 import FitCheckYourBody from "./FitCheckYourBody";
@@ -27,6 +27,8 @@ const FindSize = () => {
   // const [body, setBody] = useState(0);
   // const [bodyErr, setBodyErr] = useState(false);
   const [camera, setCamera] = useState(false);
+  const [productName, setProductName] = useState("");
+  const [measurements, setMeasurements] = useState({});
 
   const handleClickOpen = () => {
     if (activeTab === 1) {
@@ -53,7 +55,7 @@ const FindSize = () => {
         weight !== 0 &&
         weight.toString().trim().length > 0 &&
         weight.toString().trim().length < 4 &&
-        !weightErr 
+        !weightErr
         // &&
         // dob !== 0 &&
         // dob.toString().trim().length > 3 &&
@@ -63,7 +65,7 @@ const FindSize = () => {
         // setActiveTab(2);
         setActiveTab(3);
       }
-    } 
+    }
     // else if (activeTab === 2) {
     //   setBodyErr(body === 0);
 
@@ -86,7 +88,23 @@ const FindSize = () => {
     // setBody(0);
     // setBodyErr(false);
     setCamera(false);
+    setProductName("");
+    setMeasurements({});
   };
+
+  useEffect(() => {
+    const handleMessage = (event: any) => {
+      const { type, productName, measurements } = event.data;
+      if (type === "PRODUCT_DETAILS_AND_MEASUREMENTS") {
+        setProductName(productName);
+        setMeasurements(measurements);
+      }
+    };
+
+    window.addEventListener("message", handleMessage);
+
+    return () => window.removeEventListener("message", handleMessage);
+  }, []);
 
   return (
     <>
@@ -155,6 +173,8 @@ const FindSize = () => {
             // dob={dob}
             // body={body}
             onClose={onClose}
+            productName={productName}
+            measurementMatrix={measurements}
           />
         )}
 
