@@ -29,6 +29,7 @@ const FindSize = () => {
   const [camera, setCamera] = useState(false);
   const [productName, setProductName] = useState("");
   const [measurements, setMeasurements] = useState({});
+  const [productPart, setProductPart] = useState("top");
 
   const handleClickOpen = () => {
     if (activeTab === 1) {
@@ -94,10 +95,11 @@ const FindSize = () => {
 
   useEffect(() => {
     const handleMessage = (event: any) => {
-      const { type, productName, measurements } = event.data;
+      const { type, productName, measurements, apparelType } = event.data;
       if (type === "PRODUCT_DETAILS_AND_MEASUREMENTS") {
         setProductName(productName);
         setMeasurements(measurements);
+        setProductPart(apparelType);
       }
     };
 
@@ -175,6 +177,7 @@ const FindSize = () => {
             onClose={onClose}
             productName={productName}
             measurementMatrix={measurements}
+            productPart={productPart}
           />
         )}
 

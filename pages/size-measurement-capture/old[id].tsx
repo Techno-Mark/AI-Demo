@@ -50,7 +50,6 @@ const id = () => {
         )}
       {params === "/size-measurement-capture/v1" && <SizeCapture1 />}
       {params === "/size-measurement-capture/v2" && <SizeCapture4 />}
-      {params === "/size-measurement-capture/fitcheck" && <FindSize />}
       {params === "/size-measurement-capture/admin" && <Admin />}
       {params === "/size-measurement-capture/test" && <SizeCapture5 />}
     </main>
