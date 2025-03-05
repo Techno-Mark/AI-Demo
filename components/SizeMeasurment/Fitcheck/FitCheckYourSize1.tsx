@@ -69,6 +69,8 @@ const FitCheckYourSize1 = ({
   productName,
   measurementMatrix,
   productPart,
+  setLogin,
+  getUserData,
 }: any) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -630,6 +632,7 @@ const FitCheckYourSize1 = ({
   }, [isCounting, countdown]);
 
   const updateSatisfiedStatus = async (isSatisfied: boolean) => {
+    const token = localStorage.getItem("token");
     const params = {
       ...averageMeasurements,
       height: height,
@@ -685,11 +688,15 @@ const FitCheckYourSize1 = ({
     try {
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_SIZE_MEASUREMENT}/measurements`,
-        params
+        params,
+        {
+          headers: {
+            Authorization: token ? `Bearer ${token}` : "",
+          },
+        }
       );
       return response.data;
     } catch (error) {
-      toast.error("There is some error. Please try again later.", toastOptions);
       throw error;
     }
   };
@@ -718,12 +725,30 @@ const FitCheckYourSize1 = ({
         success && setCapturedImage(null);
         success && handleCloseMeasurementData();
         success && onClose();
+        success && getUserData();
       } else {
         setLoading(false);
+        toast.error(response.data.message, toastOptions);
       }
     } catch (error) {
       setLoading(false);
-      toast.error("There is some error. Please try again later.", toastOptions);
+      if (axios.isAxiosError(error) && error.response) {
+        if (error.response.status === 401) {
+          toast.error("Unauthorized! Please log in again.", toastOptions);
+          localStorage.removeItem("token");
+          setLogin("");
+        } else {
+          toast.error(
+            `Error: ${error.response.data.message || "Something went wrong!"}`,
+            toastOptions
+          );
+        }
+      } else {
+        toast.error(
+          "There is some error. Please try again later.",
+          toastOptions
+        );
+      }
     }
   };
 

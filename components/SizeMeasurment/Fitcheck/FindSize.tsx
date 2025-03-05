@@ -6,7 +6,6 @@ import Logo from "tsconfig.json/assets/icons/Logo`";
 import FitCheckYou from "./FitCheckYou";
 import FitCheckYourBody from "./FitCheckYourBody";
 import FitCheckYourSize from "./FitCheckYourSize";
-import { ToastContainer } from "react-toastify";
 import FitCheckYourSize1 from "./FitCheckYourSize1";
 
 const tabs = [
@@ -15,7 +14,15 @@ const tabs = [
   { label: "Your Size", value: 3 },
 ];
 
-const FindSize = () => {
+const FindSize = ({
+  setLogin,
+  productPart,
+  productName,
+  measurementMatrix,
+  setProductName,
+  setMeasurementsMatrix,
+  getUserData,
+}: any) => {
   const [activeTab, setActiveTab] = useState(1);
   const [height, setHeight] = useState(0);
   const [heightErr, setHeightErr] = useState(false);
@@ -27,9 +34,6 @@ const FindSize = () => {
   // const [body, setBody] = useState(0);
   // const [bodyErr, setBodyErr] = useState(false);
   const [camera, setCamera] = useState(false);
-  const [productName, setProductName] = useState("");
-  const [measurements, setMeasurements] = useState({});
-  const [productPart, setProductPart] = useState("top");
 
   const handleClickOpen = () => {
     if (activeTab === 1) {
@@ -90,38 +94,11 @@ const FindSize = () => {
     // setBodyErr(false);
     setCamera(false);
     setProductName("");
-    setMeasurements({});
+    setMeasurementsMatrix(null);
   };
-
-  useEffect(() => {
-    const handleMessage = (event: any) => {
-      const { type, productName, measurements, apparelType } = event.data;
-      if (type === "PRODUCT_DETAILS_AND_MEASUREMENTS") {
-        setProductName(productName);
-        setMeasurements(measurements);
-        setProductPart(apparelType);
-      }
-    };
-
-    window.addEventListener("message", handleMessage);
-
-    return () => window.removeEventListener("message", handleMessage);
-  }, []);
 
   return (
     <>
-      <ToastContainer
-        position="top-center"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="light"
-      />
       <div className="flex flex-col items-center justify-center pt-5 md:gap-2">
         {/* <Logo /> */}
         <p className="text-2xl">Find Your Best Size</p>
@@ -176,8 +153,10 @@ const FindSize = () => {
             // body={body}
             onClose={onClose}
             productName={productName}
-            measurementMatrix={measurements}
+            measurementMatrix={measurementMatrix}
             productPart={productPart}
+            setLogin={setLogin}
+            getUserData={getUserData}
           />
         )}
 
