@@ -60,11 +60,16 @@ const UserData = ({
   getUserData: () => void;
 }) => {
   const [isEditing, setIsEditing] = useState(false);
-  const [editedData, setEditedData] = useState(userData);
+  const [editedData, setEditedData] = useState<{
+    [key: string]: string | number;
+  }>(userData);
 
   const handleChange = (key: string, value: string) => {
     if (/^\d{0,3}(\.\d{0,2})?$/.test(value)) {
-      setEditedData((prev: any) => ({ ...prev, [key]: value }));
+      setEditedData((prev) => ({
+        ...prev,
+        [key]: value, // Update editedData instead of userData
+      }));
     }
   };
 
@@ -348,7 +353,7 @@ const UserData = ({
                         <TableCell align="center">
                           {isEditing ? (
                             <TextField
-                              value={userData[key] || ""}
+                              value={editedData[key] || ""}
                               onChange={(e) =>
                                 handleChange(key, e.target.value)
                               }
