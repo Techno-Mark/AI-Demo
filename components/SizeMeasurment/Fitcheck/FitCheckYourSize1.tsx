@@ -809,10 +809,19 @@ const FitCheckYourSize1 = ({
     calfSize: "Calf",
   };
 
-  const measurementEntries = Object.entries(averageMeasurements);
-  const chunkSize = 8; // Split into chunks of 8
-  const firstHalf = measurementEntries.slice(0, chunkSize);
-  const secondHalf = measurementEntries.slice(chunkSize);
+  const measurementEntries = Object.entries(averageMeasurements).filter(
+    ([_, value]) => value !== 0
+  );
+
+  const sortedEntries = measurementEntries.sort(
+    ([keyA], [keyB]) =>
+      Object.keys(measurementLabels).indexOf(keyA) -
+      Object.keys(measurementLabels).indexOf(keyB)
+  );
+
+  const midIndex = Math.ceil(sortedEntries.length / 2);
+  const firstHalf = sortedEntries.slice(0, midIndex);
+  const secondHalf = sortedEntries.slice(midIndex);
 
   return (
     <>
@@ -1016,8 +1025,7 @@ const FitCheckYourSize1 = ({
               </TableContainer>
             </div>
 
-            {/* Large Screen: Two Tables */}
-            <div className="hidden md:grid md:grid-cols-2 gap-4">
+            <div className="hidden md:grid md:grid-cols-2 gap-4 mt-4">
               {[firstHalf, secondHalf].map((data, index) =>
                 data.length > 0 ? (
                   <TableContainer key={index} component={Paper}>
@@ -1036,14 +1044,16 @@ const FitCheckYourSize1 = ({
                         </TableRow>
                       </TableHead>
                       <TableBody>
-                        {data.map(([key, value]: any) => (
+                        {data.map(([key, value]) => (
                           <TableRow key={key}>
                             <TableCell>
                               {measurementLabels[key] || key}
                             </TableCell>
-                            <TableCell align="center">{value}</TableCell>
                             <TableCell align="center">
-                              {(value * 2.54).toFixed(2)} cm
+                              {value as number}
+                            </TableCell>
+                            <TableCell align="center">
+                              {((value as number) * 2.54).toFixed(2)} cm
                             </TableCell>
                           </TableRow>
                         ))}

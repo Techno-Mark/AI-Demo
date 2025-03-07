@@ -161,9 +161,9 @@ const UserData = ({
   const filteredEntries = Object.entries(editedData || {}).filter(
     ([key]) => key in measurementLabels
   );
-  const chunkSize = 8;
-  const firstHalf = filteredEntries.slice(0, chunkSize);
-  const secondHalf = filteredEntries.slice(chunkSize);
+  const measurementEntries = Object.entries(measurementLabels);
+  const firstHalf = measurementEntries.slice(0, 8);
+  const secondHalf = measurementEntries.slice(8, 16);
 
   const estimateTShirtSize = (chestInCM: number) => {
     const sizeChart = !!measurementMatrix
@@ -219,7 +219,22 @@ const UserData = ({
                 </TableRow>
               </TableHead>
               <TableBody>
-                {measurementMatrix.map(
+                {(!!measurementMatrix && measurementMatrix.length > 0
+                  ? measurementMatrix
+                  : [
+                      { min: 0, max: 87.99, size: "Check kids section" },
+                      { min: 88, max: 91.99, size: "Small (S)" },
+                      { min: 92, max: 95.99, size: "Medium (M)" },
+                      { min: 96, max: 99.99, size: "Large (L)" },
+                      { min: 100, max: 103.99, size: "XL" },
+                      { min: 104, max: 107.99, size: "XXL" },
+                      {
+                        min: 108,
+                        max: null,
+                        size: "Too large size not available",
+                      },
+                    ]
+                ).map(
                   (
                     i: { min: number; max: number; size: string },
                     index: number
@@ -281,28 +296,31 @@ const UserData = ({
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {filteredEntries.map(([key, value]) => (
-                    <TableRow key={key}>
-                      <TableCell>
-                        {
-                          measurementLabels[
-                            key as keyof typeof measurementLabels
-                          ]
-                        }
-                      </TableCell>
-                      <TableCell align="center">
-                        {isEditing ? (
-                          <TextField
-                            value={value}
-                            onChange={(e) => handleChange(key, e.target.value)}
-                            size="small"
-                          />
-                        ) : (
-                          (value as React.ReactNode)
-                        )}
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                  {Object.entries(measurementLabels).map(([key, label]) => {
+                    const entry = filteredEntries.find(
+                      ([entryKey]) => entryKey === key
+                    );
+                    const value = entry ? entry[1] : "-"; // Show "-" if no value is found
+
+                    return (
+                      <TableRow key={key}>
+                        <TableCell>{label}</TableCell>
+                        <TableCell align="center">
+                          {isEditing ? (
+                            <TextField
+                              value={value}
+                              onChange={(e) =>
+                                handleChange(key, e.target.value)
+                              }
+                              size="small"
+                            />
+                          ) : (
+                            value
+                          )}
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
                 </TableBody>
               </Table>
             </TableContainer>
@@ -324,26 +342,20 @@ const UserData = ({
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {data.map(([key, value]) => (
+                    {data.map(([key, label]) => (
                       <TableRow key={key}>
-                        <TableCell>
-                          {
-                            measurementLabels[
-                              key as keyof typeof measurementLabels
-                            ]
-                          }
-                        </TableCell>
+                        <TableCell>{label}</TableCell>
                         <TableCell align="center">
                           {isEditing ? (
                             <TextField
-                              value={value}
+                              value={userData[key] || ""}
                               onChange={(e) =>
                                 handleChange(key, e.target.value)
                               }
                               size="small"
                             />
                           ) : (
-                            (value as React.ReactNode)
+                            userData[key] || "-"
                           )}
                         </TableCell>
                       </TableRow>
