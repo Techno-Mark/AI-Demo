@@ -93,8 +93,8 @@ const FindSize = ({
     // setBody(0);
     // setBodyErr(false);
     setCamera(false);
-    setProductName("");
-    setMeasurementsMatrix(null);
+    // setProductName("");
+    // setMeasurementsMatrix(null);
   };
 
   return (

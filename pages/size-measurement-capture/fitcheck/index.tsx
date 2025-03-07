@@ -22,7 +22,7 @@ const Id = () => {
   const [login, setLogin] = useState<string | null>(null);
   const [userData, setUserData] = useState<Record<string, number> | null>(null);
   const [productName, setProductName] = useState("");
-  const [measurementMatrix, setMeasurementsMatrix] = useState(null);
+  const [measurementMatrix, setMeasurementsMatrix] = useState();
   const [productPart, setProductPart] = useState("top");
   const [isLoading, setIsLoading] = useState(false); // Track loading state
 
@@ -106,7 +106,9 @@ const Id = () => {
         {/* Show a loading state before switching components */}
         {isLoading ? (
           <div className="flex justify-center items-center min-h-[80vh]">
-            <p><Spinner /></p>
+            <p>
+              <Spinner />
+            </p>
           </div>
         ) : login ? (
           userData ? (
@@ -116,6 +118,8 @@ const Id = () => {
               productName={productName}
               productPart={productPart}
               measurementMatrix={measurementMatrix}
+              setLogin={setLogin}
+              getUserData={getUserData}
             />
           ) : (
             <FindSize
