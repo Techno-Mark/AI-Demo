@@ -882,6 +882,7 @@ const FitCheckYourSize2 = ({
                         ? "2px solid red"
                         : "2px solid black",
                   }}
+                  playsInline
                 ></video>
                 <canvas
                   ref={canvasRef}
