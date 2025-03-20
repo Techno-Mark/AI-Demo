@@ -14,11 +14,11 @@ const FitCheckYou = ({
   weightErr,
   setWeight,
   setWeightErr,
-  // dob,
-  // dobErr,
-  // setDOB,
-  // setDOBErr,
-}: any) => {
+}: // dob,
+// dobErr,
+// setDOB,
+// setDOBErr,
+any) => {
   return (
     <>
       <p className="md:text-lg lg:text-xl px-3 py-2 md:px-0 flex items-center justify-center md:max-w-[70%] lg:max-w-[50%] text-center">
@@ -42,6 +42,7 @@ const FitCheckYou = ({
       <div className="flex flex-col md:flex-row items-center justify-center md:gap-5">
         <TextField
           label="Height (In CM)"
+          type="text"
           onFocus={(e) =>
             e.target.addEventListener(
               "wheel",
@@ -53,9 +54,11 @@ const FitCheckYou = ({
           }
           value={height === 0 ? null : height}
           onChange={(e) => {
-            const value = e.target.value.replace(/[^0-9]/g, "");
-            if (value.length <= 3) {
-              setHeight(Number(value));
+            const value = e.target.value;
+            const regex = /^\d{0,3}(\.\d{0,2})?$/;
+
+            if (regex.test(value)) {
+              setHeight(value);
               setHeightErr(false);
             }
           }}
@@ -67,7 +70,7 @@ const FitCheckYou = ({
           }}
           onBlur={(e) => {
             const value = e.target.value;
-            if (!value || Number(value) < 2 || value.length > 3) {
+            if (!value || Number(value) < 2) {
               setHeightErr(true);
             } else {
               setHeightErr(false);
@@ -77,13 +80,12 @@ const FitCheckYou = ({
           helperText={
             heightErr && height !== null && height.toString().trim().length < 2
               ? "Enter a valid height in cm."
-              : heightErr && height !== null && height.toString().length > 3
-              ? "Maximum 3 digits allowed."
               : ""
           }
         />
         <TextField
           label="Weight (In KG)"
+          type="text"
           onFocus={(e) =>
             e.target.addEventListener(
               "wheel",
@@ -95,9 +97,11 @@ const FitCheckYou = ({
           }
           value={weight === 0 ? null : weight}
           onChange={(e) => {
-            const value = e.target.value.replace(/[^0-9]/g, "");
-            if (value.length <= 3) {
-              setWeight(Number(value));
+            const value = e.target.value;
+            const regex = /^\d{0,3}(\.\d{0,2})?$/;
+
+            if (regex.test(value)) {
+              setWeight(value);
               setWeightErr(false);
             }
           }}
@@ -109,7 +113,7 @@ const FitCheckYou = ({
           }}
           onBlur={(e) => {
             const value = e.target.value;
-            if (!value || Number(value) < 1 || value.length > 3) {
+            if (!value || Number(value) < 1) {
               setWeightErr(true);
             } else {
               setWeightErr(false);
@@ -121,8 +125,6 @@ const FitCheckYou = ({
             weight !== null &&
             (weight === 0 || weight.toString().trim().length < 1)
               ? "Enter a valid weight in KG."
-              : weightErr && weight !== null && weight.toString().length > 3
-              ? "Maximum 3 digits allowed."
               : ""
           }
         />
