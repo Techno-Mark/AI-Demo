@@ -11,7 +11,7 @@ import SizeCapture2 from "tsconfig.json/components/SizeMeasurment/SizeCapture2`"
 import SizeCapture4 from "tsconfig.json/components/SizeMeasurment/SizeCapture4`";
 import SizeCapture5 from "tsconfig.json/components/SizeMeasurment/SizeCapture5`";
 
-const id = () => {
+const id = () => { 
   const params = usePathname();
   const router = useRouter();
 
