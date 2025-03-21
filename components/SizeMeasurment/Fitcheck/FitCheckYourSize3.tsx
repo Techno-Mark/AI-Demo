@@ -911,7 +911,9 @@ const FitCheckYourSize3 = ({
                   height="fit"
                   style={{
                     border:
-                      distance && (distance < 0.31 || distance > 0.35)
+                      distance &&
+                      (distance < 0.31 || distance > 0.35) &&
+                      !capturedImage
                         ? "2px solid red"
                         : "2px solid black",
                   }}
@@ -930,7 +932,7 @@ const FitCheckYourSize3 = ({
                         User Detected
                       </span>
                     </Typography>
-                    {capturedImage && !sideCapturedImage && (
+                    {capturedImage && isCounting && (
                       <Typography variant="h6" color="primary">
                         <span className="text-sm md:text-md lg:text-xl">
                           Please rotate 90° for the side image.
