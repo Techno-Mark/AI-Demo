@@ -937,7 +937,7 @@ const FitCheckYourSize3 = ({
                         <span className="text-sm md:text-md lg:text-xl">
                           Please rotate 90° for the side image.
                         </span>
-                      </Typography>
+                      </Typography> 
                     )}
                     {isCounting && (
                       <Typography variant="h6" color="primary">
