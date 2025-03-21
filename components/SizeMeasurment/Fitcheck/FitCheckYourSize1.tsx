@@ -684,6 +684,7 @@ const FitCheckYourSize1 = ({
           : measurementDialog.lowerbodySize,
       id: id,
       blob: capturedImage,
+      sideBlob: null,
     };
     try {
       const response = await axios.post(
