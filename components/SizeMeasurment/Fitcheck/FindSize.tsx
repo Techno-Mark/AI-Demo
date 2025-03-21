@@ -8,6 +8,7 @@ import FitCheckYourBody from "./FitCheckYourBody";
 import FitCheckYourSize from "./FitCheckYourSize";
 import FitCheckYourSize1 from "./FitCheckYourSize1";
 import FitCheckYourSize2 from "./FitCheckYourSize2";
+import FitCheckYourSize3 from "./FitCheckYourSize3";
 
 const tabs = [
   { label: "You", value: 1 },
@@ -144,7 +145,7 @@ const FindSize = ({
           />
         )} */}
         {activeTab === 3 && (
-          <FitCheckYourSize2
+          <FitCheckYourSize3
             height={height}
             camera={camera}
             setCamera={setCamera}
