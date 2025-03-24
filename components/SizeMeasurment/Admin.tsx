@@ -109,18 +109,39 @@ const Admin: React.FC = () => {
     { field: "id", headerName: "ID", width: 70 },
     {
       field: "blob",
-      headerName: "Image",
+      headerName: "Front Image",
       width: 200,
-      renderCell: (params) =>
-        params.value ? (
-          <img
-            alt={`Image for ${params.row.id}`}
-            src={`${params.value}`}
-            className="w-full h-full object-contain"
-          />
-        ) : (
-          "-"
-        ),
+      renderCell: (params) => (
+        <div className="flex items-center justify-center h-full">
+          {params.value ? (
+            <img
+              alt={`Image for ${params.row.id}`}
+              src={`${params.value}`}
+              className="w-full h-full object-contain"
+            />
+          ) : (
+            "-"
+          )}
+        </div>
+      ),
+    },
+    {
+      field: "sideBlob",
+      headerName: "Side Image",
+      width: 200,
+      renderCell: (params) => (
+        <div className="flex items-center justify-center h-full">
+          {params.value ? (
+            <img
+              alt={`Image for ${params.row.id}`}
+              src={`${params.value}`}
+              className="w-full h-full object-contain"
+            />
+          ) : (
+            "-"
+          )}
+        </div>
+      ),
     },
     { field: "chestSize", headerName: "Chest", width: 150 },
     { field: "shoulderSize", headerName: "Shoulder", width: 150 },
