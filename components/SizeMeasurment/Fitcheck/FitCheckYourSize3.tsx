@@ -495,26 +495,31 @@ const FitCheckYourSize3 = ({
               bicepSize:
                 (calculateDistance(leftShoulder, leftElbow) * 1.6) /
                 distanceToEyes,
+              // thighSize:
+              //   (calculateDistance(leftWaist, leftKnee) * 4) / distanceToEyes,
               thighSize:
-                (calculateDistance(leftWaist, leftKnee) * 4) / distanceToEyes,
-              upperBodySize:
-                (calculateDistance(leftEye, leftWaist) * 2.4) / distanceToEyes,
-              lowerBodySize:
-                ((calculateDistance(leftWaist, leftKnee) +
-                  calculateDistance(leftKnee, leftAnkle)) *
-                  4) /
-                distanceToEyes,
+                (calculateDistance(leftWaist, leftKnee) * 2.6) / distanceToEyes,
+              // upperBodySize:
+              //   (calculateDistance(leftEye, leftWaist) * 2.4) / distanceToEyes,
+              // lowerBodySize:
+              //   ((calculateDistance(leftWaist, leftKnee) +
+              //     calculateDistance(leftKnee, leftAnkle)) *
+              //     4) /
+              //   distanceToEyes,
+              upperBodySize: ((height / 2.54) * 45) / 100,
+              lowerBodySize: ((height / 2.54) * 55) / 100,
               neckSize:
                 (calculateDistance(nose, leftShoulder) * 4.2) / distanceToEyes,
               hipSize:
                 ((calculateDistance(leftWaist, rightWaist) * 3.5) /
                   distanceToEyes) *
                 2,
-              legSize:
-                ((calculateDistance(leftWaist, leftKnee) +
-                  calculateDistance(leftKnee, leftAnkle)) *
-                  4) /
-                distanceToEyes,
+              // legSize:
+              //   ((calculateDistance(leftWaist, leftKnee) +
+              //     calculateDistance(leftKnee, leftAnkle)) *
+              //     4) /
+              //   distanceToEyes,
+              legSize: ((height / 2.54) * 55) / 100,
               kneeSize:
                 ((calculateDistance(leftWaist, leftKnee) +
                   calculateDistance(leftKnee, leftAnkle)) *
@@ -938,7 +943,7 @@ const FitCheckYourSize3 = ({
                         <span className="text-sm md:text-md lg:text-xl">
                           Please rotate 90° for the side image.
                         </span>
-                      </Typography> 
+                      </Typography>
                     )}
                     {isCounting && (
                       <Typography variant="h6" color="primary">
