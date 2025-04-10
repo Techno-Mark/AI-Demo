@@ -862,6 +862,12 @@ const FitCheckYourSize3 = ({
   const firstHalf = sortedEntries.slice(0, midIndex);
   const secondHalf = sortedEntries.slice(midIndex);
 
+  useEffect(() => {
+    const text = "Please rotate 90° for the side image.";
+    const value = new SpeechSynthesisUtterance(text);
+    capturedImage && isCounting && window.speechSynthesis.speak(value);
+  }, [capturedImage, isCounting]);
+
   return (
     <>
       {!camera && !capturedImage && (
