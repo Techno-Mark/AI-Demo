@@ -57,7 +57,7 @@ interface Measurements {
   calfSize: number;
 }
 
-const FitCheckYourSize3 = ({
+const FitCheckYourSize4 = ({
   height,
   camera,
   setCamera,
@@ -74,6 +74,7 @@ const FitCheckYourSize3 = ({
 }: any) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const lastSpokenTimeRef = useRef<Date | null>(null);
   const [hasCamera, setHasCamera] = useState<boolean>(true);
   const [distance, setDistance] = useState<number | null>(null);
   const [poseDetector, setPoseDetector] =
@@ -863,10 +864,44 @@ const FitCheckYourSize3 = ({
   const secondHalf = sortedEntries.slice(midIndex);
 
   useEffect(() => {
-    const text = "Please rotate 90° for the side image.";
+    const text = "Please rotate 90°.";
     const value = new SpeechSynthesisUtterance(text);
     capturedImage && isCounting && window.speechSynthesis.speak(value);
   }, [capturedImage, isCounting]);
+
+  useEffect(() => {
+    const now = new Date();
+
+    const timeDiffInSeconds = lastSpokenTimeRef.current
+      ? (now.getTime() - lastSpokenTimeRef.current.getTime()) / 1000
+      : Infinity;
+
+    let shouldSpeak = false;
+    let text = "";
+
+    if (
+      errorMessage.includes("go far") &&
+      !!distance &&
+      distance - 0.31 < -0.01
+    ) {
+      text = "Go Far";
+      shouldSpeak = true;
+    } else if (
+      errorMessage.includes("come closer") &&
+      !!distance &&
+      distance - 0.35 > 0.01
+    ) {
+      text = "Come Closer";
+      shouldSpeak = true;
+    }
+
+    if (shouldSpeak && timeDiffInSeconds > 5) {
+      const value = new SpeechSynthesisUtterance(text);
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(value);
+      lastSpokenTimeRef.current = now;
+    }
+  }, [errorMessage, distance]);
 
   return (
     <>
@@ -1150,4 +1185,4 @@ const FitCheckYourSize3 = ({
   );
 };
 
-export default FitCheckYourSize3;
+export default FitCheckYourSize4;
