@@ -21,7 +21,7 @@ const ResumeAutomationPage = () => {
   const [image, setImage] = useState("");
   const [disabled, setDisabled] = useState(false);
   const [uploadBtn, setUploadBtn] = useState(false);
-  const [response, setResponse] = useState<any[]>([]);
+  const [response, setResponse] = useState<any[] | null>(null);
   const [fileError, setFileError] = useState(false);
   const [fileErrMsg, setFileErrorMsg] = useState("");
 
@@ -61,7 +61,7 @@ const ResumeAutomationPage = () => {
     body.append("file", image);
     try {
       let response = await axios.post(
-        `${process.env.NEXT_PUBLIC_RESUME_BACKEND_BASE_URL}/compare_resumes`,
+        `https://pythonapi.pacificabs.com:5002/compare_resumes`,
         body
       );
       if (response.status === 200) {
@@ -201,7 +201,8 @@ const ResumeAutomationPage = () => {
                             {response.map((resume, index) => (
                               <div
                                 key={index}
-                                className="bg-gray-100 border border-gray-200 rounded-lg p-4 shadow-md transition-transform transform hover:scale-105"
+                                // className="bg-gray-100 border border-gray-200 rounded-lg p-4 shadow-md transition-transform transform hover:scale-105"
+                                className="bg-gray-100 border border-gray-200 rounded-lg p-4 shadow-md"
                               >
                                 <h3 className="text-lg font-semibold text-gray-800">
                                   {resume.Resume_name}
@@ -216,6 +217,17 @@ const ResumeAutomationPage = () => {
                               </div>
                             ))}
                           </div>
+                        </div>
+                      </td>
+                    </tr>
+                  )}
+                  {response && response.length === 0 && (
+                    <tr>
+                      <td colSpan={2}>
+                        <div className="bg-white py-4 px-5 rounded-lg shadow-md mt-3 m-auto">
+                          <h2 className="text-lg font-semibold text-gray-500 mb-4">
+                            No Matching Result Found
+                          </h2>
                         </div>
                       </td>
                     </tr>
