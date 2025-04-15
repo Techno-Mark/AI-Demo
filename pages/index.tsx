@@ -57,7 +57,7 @@ const HomePage = () => {
           </button>
         </Link>
 
-        <Link href="/product-recommendation" passHref>
+        {/* <Link href="/product-recommendation" passHref>
           <button className="flex items-center bg-white rounded-full px-4 py-2 shadow-md hover:scale-105 transform transition duration-200 ease-in-out cursor-pointer border border-gray-200">
             <FontAwesomeIcon
               icon={faLightbulb}
@@ -68,7 +68,7 @@ const HomePage = () => {
               Product Recommendation
             </span>
           </button>
-        </Link>
+        </Link> */}
 
         <Link href="/chat-summary" passHref>
           <button className="flex items-center bg-white rounded-full px-4 py-2 shadow-md hover:scale-105 transform transition duration-200 ease-in-out cursor-pointer border border-gray-200">
