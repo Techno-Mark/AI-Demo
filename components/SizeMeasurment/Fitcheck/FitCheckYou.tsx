@@ -14,16 +14,14 @@ const FitCheckYou = ({
   weightErr,
   setWeight,
   setWeightErr,
-}: // dob,
-// dobErr,
-// setDOB,
-// setDOBErr,
-any) => {
+}: any) => {
   return (
     <>
       <p className="md:text-lg lg:text-xl px-3 py-2 md:px-0 flex items-center justify-center md:max-w-[70%] lg:max-w-[50%] text-center">
-        Tell us about yourself, so that we can recommend the best size for you
-        Are you interested in buying men’s or women’s clothing?
+        {/* Tell us about yourself, so that we can recommend the best size for you
+        Are you interested in buying men’s or women’s clothing? */}
+        To help us find your size, tell us if you’re shopping for male or female
+        clothing
       </p>
       <div className="flex items-center justify-center gap-10">
         {["Male", "Female"].map((i, index) => (
@@ -52,13 +50,23 @@ any) => {
               { passive: false }
             )
           }
-          value={height === 0 ? null : height}
+          value={height === 0 ? "" : height}
           onChange={(e) => {
             const value = e.target.value;
-            const regex = /^\d{0,3}(\.\d{0,2})?$/;
 
-            if (regex.test(value)) {
-              setHeight(value);
+            // Only allow numbers and dot
+            const filteredValue = value.replace(/[^0-9.]/g, "");
+
+            // Ensure only one dot
+            const parts = filteredValue.split(".");
+            if (parts.length > 2) {
+              return;
+            }
+
+            // Optional: Limit to 3 digits before dot and 2 digits after dot
+            const regex = /^\d{0,3}(\.\d{0,2})?$/;
+            if (regex.test(filteredValue)) {
+              setHeight(filteredValue);
               setHeightErr(false);
             }
           }}
@@ -77,12 +85,9 @@ any) => {
             }
           }}
           error={heightErr}
-          helperText={
-            heightErr && height !== null && height.toString().trim().length < 2
-              ? "Enter a valid height in cm."
-              : ""
-          }
+          helperText={heightErr ? "Enter a valid height in cm." : ""}
         />
+
         <TextField
           label="Weight (In KG)"
           type="text"
@@ -95,13 +100,23 @@ any) => {
               { passive: false }
             )
           }
-          value={weight === 0 ? null : weight}
+          value={weight === 0 ? "" : weight}
           onChange={(e) => {
             const value = e.target.value;
-            const regex = /^\d{0,3}(\.\d{0,2})?$/;
 
-            if (regex.test(value)) {
-              setWeight(value);
+            // Only allow numbers and dot
+            const filteredValue = value.replace(/[^0-9.]/g, "");
+
+            // Ensure only one dot
+            const parts = filteredValue.split(".");
+            if (parts.length > 2) {
+              return;
+            }
+
+            // Optional: Limit to 3 digits before dot and 2 digits after dot
+            const regex = /^\d{0,3}(\.\d{0,2})?$/;
+            if (regex.test(filteredValue)) {
+              setWeight(filteredValue);
               setWeightErr(false);
             }
           }}
@@ -120,58 +135,8 @@ any) => {
             }
           }}
           error={weightErr}
-          helperText={
-            weightErr &&
-            weight !== null &&
-            (weight === 0 || weight.toString().trim().length < 1)
-              ? "Enter a valid weight in KG."
-              : ""
-          }
+          helperText={weightErr ? "Enter a valid weight in KG." : ""}
         />
-        {/* <TextField
-          label="Year of Birth (YYYY)"
-          onFocus={(e) =>
-            e.target.addEventListener(
-              "wheel",
-              function (e) {
-                e.preventDefault();
-              },
-              { passive: false }
-            )
-          }
-          value={dob === 0 ? null : dob}
-          onChange={(e) => {
-            const value = e.target.value.replace(/[^0-9]/g, "");
-            if (value.length <= 4) {
-              setDOB(Number(value));
-              setDOBErr(false);
-            }
-          }}
-          margin="normal"
-          variant="standard"
-          sx={{
-            width: 200,
-            mx: 0.75,
-          }}
-          onBlur={(e) => {
-            const value = e.target.value;
-            if (!value || Number(value) < 4 || value.length > 4) {
-              setDOBErr(true);
-            } else {
-              setDOBErr(false);
-            }
-          }}
-          error={dobErr}
-          helperText={
-            dobErr &&
-            dob !== null &&
-            (dob === 0 || dob.toString().trim().length < 4)
-              ? "Enter a valid Year in YYYY."
-              : dobErr && dob !== null && dob.toString().length > 4
-              ? "Maximum 4 digits allowed."
-              : ""
-          }
-        /> */}
       </div>
     </>
   );
