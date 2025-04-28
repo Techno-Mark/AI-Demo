@@ -190,7 +190,7 @@ const FindSize = ({
           <Button
             variant="contained"
             onClick={handleClickOpen}
-            className="mt-6 !bg-[#6B7CF6]"
+            className="mt-6 !bg-[#6B7CF6] !mb-10"
           >
             Continue
           </Button>

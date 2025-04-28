@@ -917,7 +917,7 @@ const FitCheckYourSize4 = ({
     <>
       {!camera && !capturedImage && (
         <div className="flex flex-col items-center justify-center gap-5">
-          <div className="flex flex-col items-start justify-center gap-1 md:gap-2 md:w-[33%]">
+          <div className="flex flex-col items-start justify-center gap-1 md:gap-2">
             <div>
               <p className="text-[#28A745] text-md lg:text-xl">
                 Correct Technique
@@ -979,7 +979,7 @@ const FitCheckYourSize4 = ({
           <Button
             variant="contained"
             onClick={() => handleOpen()}
-            className="mt-6 !bg-[#6B7CF6]"
+            className="mt-6 !bg-[#6B7CF6] !mb-10"
           >
             Open Camera
           </Button>
