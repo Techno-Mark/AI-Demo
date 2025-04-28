@@ -63,13 +63,14 @@ const FitCheckYourSize4 = ({
   setCamera,
   weight,
   sex,
-  // dob,
-  // body,
   onClose,
   productName,
   measurementMatrix,
   productPart,
+  login,
   setLogin,
+  setIsRegister,
+  setIsLoginClicked,
   getUserData,
 }: any) => {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -89,6 +90,7 @@ const FitCheckYourSize4 = ({
   const [averageMeasurements, setAverageMeasurements] = useState<
     Measurements | any
   >({});
+  const [avgGot, setAvgGot] = useState(false);
   const [openMeasurementData, setOpenMeasurementData] =
     useState<boolean>(false);
   const [id, setId] = useState<number>(0);
@@ -638,7 +640,12 @@ const FitCheckYourSize4 = ({
     setAverageMeasurements({
       ...average,
     });
+    setAvgGot(true);
   };
+
+  useEffect(() => {
+    avgGot && handleClickSatisfied(true, true);
+  }, [avgGot]);
 
   useEffect(() => {
     let countdownTimer: any;
@@ -726,7 +733,7 @@ const FitCheckYourSize4 = ({
       sideBlob: sideCapturedImage,
     };
     try {
-      const response = await axios.post(
+      const response = login ? await axios.post(
         `${process.env.NEXT_PUBLIC_SIZE_MEASUREMENT}/measurements`,
         params,
         {
@@ -734,6 +741,9 @@ const FitCheckYourSize4 = ({
             Authorization: token ? `Bearer ${token}` : "",
           },
         }
+      ) : await axios.post(
+        `${process.env.NEXT_PUBLIC_SIZE_MEASUREMENT}/measurements`,
+        params
       );
       return response.data;
     } catch (error) {
@@ -749,23 +759,23 @@ const FitCheckYourSize4 = ({
       setLoading(true);
       const response = await updateSatisfiedStatus(isSatisfied);
       if (response.status.toLowerCase() == "success") {
-        setId(response.data.id);
-        success &&
-          toast.success(
-            "Thank you for sharing your measurement!",
-            toastOptions
-          );
+        // setId(response.data.id);
+        // success &&
+        //   toast.success(
+        //     "Thank you for sharing your measurement!",
+        //     toastOptions
+        //   );
         setLoading(false);
-        success && setId(0);
+        // success && setId(0);
         success && handleClose();
-        success && setOpenMeasurementData(false);
-        success && setMeasurements([]);
-        success && setAverageMeasurements({});
-        success && setIsCounting(false);
-        success && setCapturedImage(null);
-        success && handleCloseMeasurementData();
+        // success && setOpenMeasurementData(false);
+        // success && setMeasurements([]);
+        // success && setAverageMeasurements({});
+        // success && setIsCounting(false);
+        // success && setCapturedImage(null);
+        // success && handleCloseMeasurementData();
         success && onClose();
-        success && getUserData();
+        // success && login && getUserData();
       } else {
         setLoading(false);
         toast.error(response.data.message, toastOptions);
@@ -774,9 +784,9 @@ const FitCheckYourSize4 = ({
       setLoading(false);
       if (axios.isAxiosError(error) && error.response) {
         if (error.response.status === 401) {
-          toast.error("Unauthorized! Please log in again.", toastOptions);
+          // toast.error("Unauthorized! Please log in again.", toastOptions);
           localStorage.removeItem("token");
-          setLogin("");
+          setLogin(null);
         } else {
           toast.error(
             `Error: ${error.response.data.message || "Something went wrong!"}`,
@@ -906,26 +916,7 @@ const FitCheckYourSize4 = ({
   return (
     <>
       {!camera && !capturedImage && (
-        <>
-          <p className="text-ml flex items-center justify-center">
-            Help us find your best fit.
-          </p>
-          <Button
-            variant="contained"
-            onClick={() => handleOpen()}
-            className="mt-6 !bg-[#6B7CF6]"
-          >
-            Open Camera
-          </Button>
-        </>
-      )}
-      {/* <Dialog open={camera} onClose={handleClose} maxWidth="lg" fullWidth> */}
-      {/* <DialogTitle className="border-b">
-          <Logo />
-        </DialogTitle>
-        <DialogContent> */}
-      {camera && (
-        <div className="flex flex-col md:flex-row items-center md:items-start justify-between py-10 gap-4 md:gap-10 md:py-4 !w-[70%]">
+        <div className="flex flex-col items-center justify-center gap-5">
           <div className="flex flex-col items-start justify-center gap-1 md:gap-2 md:w-[33%]">
             <div>
               <p className="text-[#28A745] text-md lg:text-xl">
@@ -949,9 +940,56 @@ const FitCheckYourSize4 = ({
               </p>
             ))}
           </div>
-          <div className="flex items-start justify-center gap-5 md:w-[66%]">
+          <div className="flex items-center justify-center py-4 px-4 mx-4 rounded-lg border border-gray gap-5">
+            <p>Turn up your volume to be guided during the scan</p>
+            <svg
+              stroke="currentColor"
+              fill="currentColor"
+              strokeWidth="0"
+              viewBox="0 0 512 512"
+              height="40px"
+              width="40px"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                fill="none"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="32"
+                d="M126 192H56a8 8 0 0 0-8 8v112a8 8 0 0 0 8 8h69.65a15.93 15.93 0 0 1 10.14 3.54l91.47 74.89A8 8 0 0 0 240 392V120a8 8 0 0 0-12.74-6.43l-91.47 74.89A15 15 0 0 1 126 192zm194 128c9.74-19.38 16-40.84 16-64 0-23.48-6-44.42-16-64m48 176c19.48-33.92 32-64.06 32-112s-12-77.74-32-112m48 272c30-46 48-91.43 48-160s-18-113-48-160"
+              ></path>
+            </svg>
+          </div>
+          <div className="flex items-center justify-center py-4 px-4 mx-4 rounded-lg border border-gray gap-5">
+            <p>
+              Set your phone straight onto a table, around your waist height
+            </p>
+            <svg
+              stroke="currentColor"
+              fill="currentColor"
+              stroke-width="0"
+              viewBox="0 0 320 512"
+              height="40px"
+              width="40px"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path d="M272 0H48C21.5 0 0 21.5 0 48v416c0 26.5 21.5 48 48 48h224c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48zM160 480c-17.7 0-32-14.3-32-32s14.3-32 32-32 32 14.3 32 32-14.3 32-32 32zm112-108c0 6.6-5.4 12-12 12H60c-6.6 0-12-5.4-12-12V60c0-6.6 5.4-12 12-12h200c6.6 0 12 5.4 12 12v312z"></path>
+            </svg>
+          </div>
+          <Button
+            variant="contained"
+            onClick={() => handleOpen()}
+            className="mt-6 !bg-[#6B7CF6]"
+          >
+            Open Camera
+          </Button>
+        </div>
+      )}
+      {camera && (
+        <div className="flex flex-col md:flex-row items-center md:items-start justify-between py-10 gap-4 md:gap-10 md:py-4">
+          <div className="flex items-start justify-center gap-5">
             {hasCamera ? (
-              <div className="!max-w-[400px] flex flex-col items-center justify-center">
+              <div className="flex flex-col items-center justify-center">
                 <video
                   ref={videoRef}
                   width="100%"
@@ -1016,20 +1054,13 @@ const FitCheckYourSize4 = ({
                 </span>
               </Typography>
             )}
-            <div className="w-[50%] flex items-center justify-end">
+            {/* <div className="w-[50%] flex items-center justify-end">
               <img src="/pose.png" alt="pose" />
-            </div>
+            </div> */}
           </div>
         </div>
       )}
-      {/* </DialogContent> */}
-      {/* <DialogActions>
-          <Button onClick={handleClose} variant="outlined" color="error">
-            Close
-          </Button>
-        </DialogActions> */}
-      {/* </Dialog> */}
-      {capturedImage && sideCapturedImage && !isCounting && (
+      {/* {capturedImage && sideCapturedImage && !isCounting && (
         <div className="flex flex-col lg:flex-row items-center justify-center gap-4">
           <img
             src={capturedImage}
@@ -1043,7 +1074,7 @@ const FitCheckYourSize4 = ({
             style={{ width: "200px", maxHeight: "200px" }}
           />
         </div>
-      )}
+      )} */}
 
       {capturedImage &&
         sideCapturedImage &&
@@ -1051,7 +1082,16 @@ const FitCheckYourSize4 = ({
         measurements.length > 0 && (
           <div className="flex flex-col items-center justify-center gap-4">
             <p className="px-10">
-              As per Fitcheck Your {productName} size is&nbsp;
+              {/* As per Fitcheck Your {productName} size is&nbsp;
+              {estimateTShirtSize(
+                Number(
+                  (productPart === "top"
+                    ? averageMeasurements.chestSize * 2.54
+                    : averageMeasurements.waistSize * 2.54
+                  ).toFixed(2)
+                )
+              )} */}
+              We recommend you get size{" "}
               {estimateTShirtSize(
                 Number(
                   (productPart === "top"
@@ -1062,7 +1102,7 @@ const FitCheckYourSize4 = ({
               )}
               .
             </p>
-            <p className="border rounded-lg w-[70%] py-4 flex flex-col items-center justify-center gap-5">
+            {/* <p className="border rounded-lg w-[70%] py-4 flex flex-col items-center justify-center gap-5">
               <b>Are you satisfied with this data?</b>
               <div className="flex gap-5">
                 <Button
@@ -1090,8 +1130,8 @@ const FitCheckYourSize4 = ({
                   No
                 </Button>
               </div>
-            </p>
-            <div className="w-full">
+            </p> */}
+            {/* <div className="w-full">
               <div className="block md:hidden">
                 <TableContainer component={Paper}>
                   <Table>
@@ -1161,7 +1201,51 @@ const FitCheckYourSize4 = ({
                   ) : null
                 )}
               </div>
-            </div>
+            </div> */}
+            {/* <Button
+              variant="contained"
+              onClick={() => {
+                parent.postMessage({ type: "addItemToCart" }, "*");
+              }}
+              className="mt-6 !bg-[#6B7CF6]"
+            >
+              Add{" "}
+              {estimateTShirtSize(
+                Number(
+                  (productPart === "top"
+                    ? averageMeasurements.chestSize * 2.54
+                    : averageMeasurements.waistSize * 2.54
+                  ).toFixed(2)
+                )
+              )}{" "}
+              Size to Cart
+            </Button> */}
+            <Button
+              variant="contained"
+              onClick={() => {
+                parent.postMessage({ type: "closeIframeWindow" }, "*");
+              }}
+              className="mt-6 !bg-[#6B7CF6]"
+            >
+              Return to shopping
+            </Button>
+            {!login && (
+              <>
+                <Button
+                  variant="contained"
+                  onClick={() => {
+                    localStorage.removeItem("token");
+                    setLogin(null);
+                    setIsRegister(true);
+                    setIsLoginClicked(1);
+                  }}
+                  className="mt-6 !bg-[#6B7CF6]"
+                >
+                  Create an account
+                </Button>
+                <p>To use your measurements anytime you shop online</p>
+              </>
+            )}
           </div>
         )}
 

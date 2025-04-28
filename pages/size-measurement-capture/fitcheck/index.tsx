@@ -1,3 +1,4 @@
+import { Button } from "@mui/material";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { toast, ToastContainer, ToastOptions } from "react-toastify";
@@ -24,14 +25,36 @@ const Id = () => {
   const [productName, setProductName] = useState("");
   const [measurementMatrix, setMeasurementsMatrix] = useState();
   const [productPart, setProductPart] = useState("top");
-  const [isLoading, setIsLoading] = useState(false); // Track loading state
+  const [isLoading, setIsLoading] = useState(false);
+  const [isLoginClicked, setIsLoginClicked] = useState(0);
+  const [isRegister, setIsRegister] = useState(false);
+  const [windowSize, setWindowSize] = useState({
+    width: 0,
+    height: 0,
+  });
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const token = localStorage.getItem("token");
-      setLogin(token);
-    }
+    if (typeof window === "undefined") return;
+
+    const handleResize = () => {
+      setWindowSize({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    };
+
+    handleResize();
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  // useEffect(() => {
+  //   if (typeof window !== "undefined") {
+  //     const token = localStorage.getItem("token");
+  //     setLogin(token);
+  //   }
+  // }, []);
 
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
@@ -96,14 +119,13 @@ const Id = () => {
   return (
     <>
       <ToastContainer />
-      <main className="min-h-screen bg-[#FAF9F6] text-black">
+      <main className="min-h-screen bg-white text-black !font-poppins">
         <div className="py-2.5 border-b">
-          <div className="mx-auto px-8 lg:px-20">
-            <Logo />
+          <div className="mx-auto px-8 lg:px-20 flex items-center justify-center">
+            <Logo width={windowSize?.width < 1024 ? 100 : 200} />
           </div>
         </div>
 
-        {/* Show a loading state before switching components */}
         {isLoading ? (
           <div className="flex justify-center items-center min-h-[80vh]">
             <p>
@@ -123,17 +145,71 @@ const Id = () => {
             />
           ) : (
             <FindSize
+              login={login}
               setLogin={setLogin}
               productName={productName}
               productPart={productPart}
               measurementMatrix={measurementMatrix}
-              setProductName={setProductName}
-              setMeasurementsMatrix={setMeasurementsMatrix}
               getUserData={getUserData}
+              setIsRegister={setIsRegister}
+              setIsLoginClicked={(val: number) => setIsLoginClicked(val)}
             />
           )
         ) : (
-          <Login setLogin={setLogin} setIsLoading={setIsLoading} />
+          <></>
+        )}
+        {!login && isLoginClicked === 0 ? (
+          <div className="flex flex-col items-center justify-center h-[94vh] px-5">
+            <p className="text-lg">
+              Welcome to your personal sizing assistant. Set it up once and have
+              fun shopping!
+            </p>
+            <div className="flex items-center justify-center gap-4">
+              <Button
+                type="button"
+                color="primary"
+                variant="contained"
+                className="rounded-full !w-fit !font-semibold mt-[35px] bg-[#1565C0] cursor-pointer"
+                onClick={() => setIsLoginClicked(1)}
+              >
+                Login
+              </Button>
+              <Button
+                type="button"
+                color="primary"
+                variant="contained"
+                className="rounded-full !w-fit !font-semibold mt-[35px] bg-[#1565C0] cursor-pointer"
+                onClick={() => {
+                  setIsLoginClicked(2);
+                  setLogin(null);
+                }}
+              >
+                Get started
+              </Button>
+            </div>
+          </div>
+        ) : !login && isLoginClicked === 1 ? (
+          <Login
+            setLogin={setLogin}
+            setIsLoading={setIsLoading}
+            setIsLoginClicked={(val: number) => setIsLoginClicked(val)}
+            isRegister={isRegister}
+            setIsRegister={setIsRegister}
+          />
+        ) : (
+          !login &&
+          isLoginClicked === 2 && (
+            <FindSize
+              login={login}
+              setLogin={setLogin}
+              productName={productName}
+              productPart={productPart}
+              measurementMatrix={measurementMatrix}
+              getUserData={getUserData}
+              setIsLoginClicked={(val: number) => setIsLoginClicked(val)}
+              setIsRegister={setIsRegister}
+            />
+          )
         )}
       </main>
     </>

@@ -18,9 +18,8 @@ const toastOptions: ToastOptions = {
   theme: "light",
 };
 
-const Auth = ({ setLogin, setIsLoading }: any) => {
+const Auth = ({ setLogin, setIsLoading, setIsLoginClicked, isRegister, setIsRegister }: any) => {
   const [loading, setLoading] = useState(false);
-  const [isRegister, setIsRegister] = useState(false);
   const [email, setEmail] = useState("");
   const [emailError, setEmailError] = useState(false);
   const [password, setPassword] = useState("");
@@ -69,116 +68,124 @@ const Auth = ({ setLogin, setIsLoading }: any) => {
   };
 
   return (
-    <div className="flex flex-col justify-center items-center bg-white text-black h-[94vh]">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center justify-center font-normal p-20 rounded-xl lg:border border-lightSilver">
-          <form
-            className="text-start w-full max-w-3xl py-5 px-3 flex flex-col items-center justify-center"
-            onSubmit={handleAuth}
-          >
-            <h2 className="text-xl font-semibold mb-5">
-              {isRegister ? "Create an Account" : "Sign In"}
-            </h2>
-
-            {/* Email Field */}
-            <div className="mb-4 w-[300px] lg:w-[356px]">
-              <span className="text-gray-500 text-sm">
-                Email<span className="!text-defaultRed"> *</span>
-              </span>
-              <TextField
-                type="email"
-                sx={{ mt: "-3px" }}
-                fullWidth
-                value={email}
-                onChange={(e) => {
-                  setEmail(e.target.value);
-                  setEmailError(false);
-                }}
-                onBlur={() =>
-                  setEmailError(
-                    !regex.test(email) ||
-                      email.trim().length < 1 ||
-                      email.trim().length > 100
-                  )
-                }
-                error={emailError}
-                helperText={
-                  emailError
-                    ? email.length > 100
-                      ? "Maximum 100 characters allowed."
-                      : "Please enter a valid email."
-                    : ""
-                }
-                margin="normal"
-                variant="standard"
-              />
-            </div>
-
-            {/* Password Field */}
-            <div className="mb-5 w-[300px] lg:w-[356px]">
-              <span className="text-gray-500 text-sm">
-                Password<span className="!text-defaultRed"> *</span>
-              </span>
-              <TextField
-                type={showPassword ? "text" : "password"}
-                sx={{ mt: "-3px" }}
-                fullWidth
-                value={password}
-                onChange={(e) => {
-                  setPassword(e.target.value);
-                  setPasswordError(false);
-                }}
-                onBlur={() => setPasswordError(password.trim().length < 1)}
-                error={passwordError}
-                helperText={passwordError ? "This is a required field." : ""}
-                margin="normal"
-                variant="standard"
-                InputProps={{
-                  endAdornment: (
-                    <span
-                      className="absolute top-1 right-2 text-slatyGrey cursor-pointer"
-                      onClick={() => setShowPassword(!showPassword)}
-                    >
-                      {showPassword ? (
-                        <VisibilityOff className="text-[18px]" />
-                      ) : (
-                        <Visibility className="text-[18px]" />
-                      )}
-                    </span>
-                  ),
-                }}
-              />
-            </div>
-
-            {/* Submit Button */}
-
-            <Button
-              type="submit"
-              color="primary"
-              variant="contained"
-              className={`rounded-full !w-[300px] !font-semibold mt-[35px] ${
-                loading
-                  ? "bg-gray-400 hover:bg-gray-400 cursor-not-allowed"
-                  : "bg-[#1565C0] cursor-pointer"
-              }`}
-              disabled={loading}
+    <div className="flex flex-col bg-white text-black h-[94vh]">
+      <div
+        className="flex items-start justify-start ml-2 cursor-pointer px-2 my-2 bg-blue-600 text-white rounded-lg w-fit"
+        onClick={() => setIsLoginClicked(0)}
+      >
+        &lt;
+      </div>
+      <div className="flex flex-col justify-center items-center bg-white text-black h-[94vh]">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center justify-center font-normal p-20 rounded-xl lg:border border-lightSilver">
+            <form
+              className="text-start w-full max-w-3xl py-5 px-3 flex flex-col items-center justify-center"
+              onSubmit={handleAuth}
             >
-              {isRegister ? "REGISTER" : "SIGN IN"}
-            </Button>
+              <h2 className="text-xl font-semibold mb-5">
+                {isRegister ? "Create an Account" : "Sign In"}
+              </h2>
 
-            {/* Toggle Between Login/Register */}
-            <p className="mt-4 text-sm">
-              {isRegister
-                ? "Already have an account?"
-                : "Don't have an account?"}
-              <span
-                className="text-blue-600 cursor-pointer ml-1"
-                onClick={() => setIsRegister(!isRegister)}
+              {/* Email Field */}
+              <div className="mb-4 w-[300px] lg:w-[356px]">
+                <span className="text-gray-500 text-sm">
+                  Email<span className="!text-defaultRed"> *</span>
+                </span>
+                <TextField
+                  type="email"
+                  sx={{ mt: "-3px" }}
+                  fullWidth
+                  value={email}
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    setEmailError(false);
+                  }}
+                  onBlur={() =>
+                    setEmailError(
+                      !regex.test(email) ||
+                        email.trim().length < 1 ||
+                        email.trim().length > 100
+                    )
+                  }
+                  error={emailError}
+                  helperText={
+                    emailError
+                      ? email.length > 100
+                        ? "Maximum 100 characters allowed."
+                        : "Please enter a valid email."
+                      : ""
+                  }
+                  margin="normal"
+                  variant="standard"
+                />
+              </div>
+
+              {/* Password Field */}
+              <div className="mb-5 w-[300px] lg:w-[356px]">
+                <span className="text-gray-500 text-sm">
+                  Password<span className="!text-defaultRed"> *</span>
+                </span>
+                <TextField
+                  type={showPassword ? "text" : "password"}
+                  sx={{ mt: "-3px" }}
+                  fullWidth
+                  value={password}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    setPasswordError(false);
+                  }}
+                  onBlur={() => setPasswordError(password.trim().length < 1)}
+                  error={passwordError}
+                  helperText={passwordError ? "This is a required field." : ""}
+                  margin="normal"
+                  variant="standard"
+                  InputProps={{
+                    endAdornment: (
+                      <span
+                        className="absolute top-1 right-2 text-slatyGrey cursor-pointer"
+                        onClick={() => setShowPassword(!showPassword)}
+                      >
+                        {showPassword ? (
+                          <VisibilityOff className="text-[18px]" />
+                        ) : (
+                          <Visibility className="text-[18px]" />
+                        )}
+                      </span>
+                    ),
+                  }}
+                />
+              </div>
+
+              {/* Submit Button */}
+
+              <Button
+                type="submit"
+                color="primary"
+                variant="contained"
+                className={`rounded-full !w-[300px] !font-semibold mt-[35px] ${
+                  loading
+                    ? "bg-gray-400 hover:bg-gray-400 cursor-not-allowed"
+                    : "bg-[#1565C0] cursor-pointer"
+                }`}
+                disabled={loading}
               >
-                {isRegister ? "Sign In" : "Register"}
-              </span>
-            </p>
-          </form>
+                {isRegister ? "REGISTER" : "SIGN IN"}
+              </Button>
+
+              {/* Toggle Between Login/Register */}
+              <p className="mt-4 text-sm">
+                {isRegister
+                  ? "Already have an account?"
+                  : "Don't have an account?"}
+                <span
+                  className="text-blue-600 cursor-pointer ml-1"
+                  onClick={() => setIsRegister(!isRegister)}
+                >
+                  {isRegister ? "Sign In" : "Register"}
+                </span>
+              </p>
+            </form>
+          </div>
         </div>
       </div>
     </div>

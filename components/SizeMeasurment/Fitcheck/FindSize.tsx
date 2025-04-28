@@ -12,29 +12,26 @@ import FitCheckYourSize3 from "./FitCheckYourSize3";
 
 const tabs = [
   { label: "You", value: 1 },
-  // { label: "Your body", value: 2 },
-  { label: "Your Size", value: 3 },
+  { label: "Your Size", value: 2 },
+  { label: "Camera", value: 3 },
 ];
 
 const FindSize = ({
+  login,
   setLogin,
   productPart,
   productName,
   measurementMatrix,
-  setProductName,
-  setMeasurementsMatrix,
   getUserData,
+  setIsLoginClicked,
+  setIsRegister,
 }: any) => {
   const [activeTab, setActiveTab] = useState(1);
   const [height, setHeight] = useState(0);
   const [heightErr, setHeightErr] = useState(false);
   const [weight, setWeight] = useState(0);
   const [weightErr, setWeightErr] = useState(false);
-  // const [dob, setDOB] = useState(0);
-  // const [dobErr, setDOBErr] = useState(false);
   const [sex, setSex] = useState(0);
-  // const [body, setBody] = useState(0);
-  // const [bodyErr, setBodyErr] = useState(false);
   const [camera, setCamera] = useState(false);
 
   const handleClickOpen = () => {
@@ -48,11 +45,6 @@ const FindSize = ({
           weight.toString().trim().length < 1 ||
           weight.toString().trim().length > 3
       );
-      // setDOBErr(
-      //   dob === 0 ||
-      //     dob.toString().trim().length < 4 ||
-      //     dob.toString().trim().length > 4
-      // );
 
       if (
         height !== 0 &&
@@ -63,60 +55,91 @@ const FindSize = ({
         weight.toString().trim().length > 0 &&
         weight.toString().trim().length < 4 &&
         !weightErr
-        // &&
-        // dob !== 0 &&
-        // dob.toString().trim().length > 3 &&
-        // dob.toString().trim().length < 5 &&
-        // !dobErr
       ) {
-        // setActiveTab(2);
-        setActiveTab(3);
+        setActiveTab(2);
       }
+    } else {
+      setActiveTab(3);
     }
-    // else if (activeTab === 2) {
-    //   setBodyErr(body === 0);
-
-    //   if (body > 0 && !bodyErr) {
-    //     setActiveTab(3);
-    //   }
-    // } else if (activeTab === 3) {
-    // }
   };
 
   const onClose = () => {
-    setActiveTab(1);
     setHeight(0);
     setHeightErr(false);
     setWeight(0);
     setWeightErr(false);
-    // setDOB(0);
-    // setDOBErr(false);
     setSex(0);
-    // setBody(0);
-    // setBodyErr(false);
     setCamera(false);
-    // setProductName("");
-    // setMeasurementsMatrix(null);
   };
 
   return (
     <>
+      {!login && (
+        <div
+          className="flex items-start justify-start ml-2 cursor-pointer px-2 my-2 bg-blue-600 text-white rounded-lg w-fit"
+          onClick={() =>
+            activeTab === 3
+              ? setActiveTab(2)
+              : activeTab === 2
+              ? setActiveTab(1)
+              : setIsLoginClicked(0)
+          }
+        >
+          &lt;
+        </div>
+      )}
+      {login && activeTab !== 1 && (
+        <div
+          className="flex items-start justify-start ml-2 cursor-pointer px-2 my-2 bg-blue-600 text-white rounded-lg w-fit"
+          onClick={() =>
+            activeTab === 3
+              ? setActiveTab(2)
+              : activeTab === 2 && setActiveTab(1)
+          }
+        >
+          &lt;
+        </div>
+      )}
       <div className="flex flex-col items-center justify-center pt-5 md:gap-2">
-        {/* <Logo /> */}
-        <p className="text-2xl">Find Your Best Size</p>
-        <div className="flex items-center justify-center gap-8 md:gap-16 lg:gap-20 py-4 lg:py-4">
-          {tabs.map((tab) => (
-            <p
-              className={`border-b-4 text-2xl md:text-3xl pb-2 ${
-                tab.value === activeTab
-                  ? "border-[#6B7CF6]"
-                  : "border-[#D9D9D9]"
-              }`}
-              key={tab.value}
-            >
-              {tab.label}
-            </p>
-          ))}
+        <div className="flex items-center justify-center py-6">
+          <div className="flex items-center gap-4 md:gap-10">
+            {tabs.map((tab, index) => {
+              const isCompleted = tab.value < activeTab;
+              const isActive = tab.value === activeTab;
+
+              return (
+                <React.Fragment key={tab.value}>
+                  <div className="flex flex-col items-center">
+                    <div
+                      className={`flex items-center justify-center w-10 h-10 rounded-full text-white font-bold 
+                    ${
+                      isCompleted
+                        ? "bg-[#6B7CF6]"
+                        : isActive
+                        ? "bg-[#6B7CF6]"
+                        : "bg-gray-300"
+                    }
+                    border-4 ${
+                      isActive ? "border-[#6B7CF6]" : "border-gray-300"
+                    }`}
+                    >
+                      {isCompleted ? "✔" : index + 1}
+                    </div>
+                    <span className="mt-2 text-sm text-gray-700">
+                      {tab.label}
+                    </span>
+                  </div>
+                  {index < tabs.length - 1 && (
+                    <div
+                      className={`h-1 w-10 md:w-20 ${
+                        tab.value < activeTab ? "bg-[#6B7CF6]" : "bg-gray-300"
+                      }`}
+                    ></div>
+                  )}
+                </React.Fragment>
+              );
+            })}
+          </div>
         </div>
         {activeTab === 1 && (
           <FitCheckYou
@@ -130,20 +153,19 @@ const FindSize = ({
             weightErr={weightErr}
             setWeight={setWeight}
             setWeightErr={setWeightErr}
-            // dob={dob}
-            // dobErr={dobErr}
-            // setDOB={setDOB}
-            // setDOBErr={setDOBErr}
           />
         )}
-        {/* {activeTab === 2 && (
-          <FitCheckYourBody
-            body={body}
-            bodyErr={bodyErr}
-            setBody={setBody}
-            setBodyErr={setBodyErr}
-          />
-        )} */}
+        {activeTab === 2 && (
+          <>
+            <p className="text-ml flex items-center justify-center text-center">
+              We will use your camera to capture your measurements and find your
+              perfect size.
+            </p>
+            {/* <p className="flex items-center justify-center text-center mt-2">
+              This is how you get the best results
+            </p> */}
+          </>
+        )}
         {activeTab === 3 && (
           <FitCheckYourSize3
             height={height}
@@ -151,14 +173,16 @@ const FindSize = ({
             setCamera={setCamera}
             sex={sex}
             weight={weight}
-            // dob={dob}
-            // body={body}
             onClose={onClose}
             productName={productName}
             measurementMatrix={measurementMatrix}
             productPart={productPart}
+            login={login}
             setLogin={setLogin}
             getUserData={getUserData}
+            setActiveTab={setActiveTab}
+            setIsRegister={setIsRegister}
+            setIsLoginClicked={(val: number) => setIsLoginClicked(val)}
           />
         )}
 
