@@ -916,7 +916,7 @@ const FitCheckYourSize4 = ({
   return (
     <>
       {!camera && !capturedImage && (
-        <div className="flex flex-col items-center justify-center gap-5">
+        <div className="flex flex-col items-center justify-center gap-5 overflow-y-auto">
           <div className="flex flex-col items-start justify-center gap-1 md:gap-2">
             <div>
               <p className="text-[#28A745] text-md lg:text-xl">
@@ -979,14 +979,14 @@ const FitCheckYourSize4 = ({
           <Button
             variant="contained"
             onClick={() => handleOpen()}
-            className="mt-6 !bg-[#6B7CF6] !mb-10"
+            className="mt-4 !bg-[#6B7CF6] !mb-10"
           >
             Open Camera
           </Button>
         </div>
       )}
       {camera && (
-        <div className="flex flex-col md:flex-row items-center md:items-start justify-between py-10 gap-4 md:gap-10 md:py-4">
+        <div className="flex flex-col md:flex-row items-center md:items-start justify-between py-5 gap-4 md:gap-10 md:py-4">
           <div className="flex items-start justify-center gap-5">
             {hasCamera ? (
               <div className="flex flex-col items-center justify-center">
