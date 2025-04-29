@@ -101,7 +101,7 @@ const FindSize = ({
         </div>
       )}
       <div className="flex flex-col items-center justify-center pt-5 md:gap-2">
-        <div className="flex items-center justify-center py-6">
+        <div className="flex items-center justify-center pb-6">
           <div className="flex items-center gap-4 md:gap-10">
             {tabs.map((tab, index) => {
               const isCompleted = tab.value < activeTab;

@@ -192,7 +192,7 @@ const UserData = ({
   };
 
   return (
-    <div className="flex flex-col items-center justify-center gap-4 mt-5">
+    <div className="flex flex-col items-center justify-center gap-4 mt-5 pb-5">
       <div className="flex items-center justify-center w-full mx-10">
         <p className="font-bold">
           As per Fitcheck, your {productName} size is{" "}
