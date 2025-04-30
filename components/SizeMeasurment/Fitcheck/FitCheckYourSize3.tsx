@@ -589,7 +589,7 @@ const FitCheckYourSize4 = ({
 
   const handleOpen = () => {
     setCamera(true);
-    startSpeaking()
+    startSpeaking();
     startCamera();
   };
 
@@ -742,18 +742,20 @@ const FitCheckYourSize4 = ({
       sideBlob: sideCapturedImage,
     };
     try {
-      const response = login ? await axios.post(
-        `${process.env.NEXT_PUBLIC_SIZE_MEASUREMENT}/measurements`,
-        params,
-        {
-          headers: {
-            Authorization: token ? `Bearer ${token}` : "",
-          },
-        }
-      ) : await axios.post(
-        `${process.env.NEXT_PUBLIC_SIZE_MEASUREMENT}/measurements`,
-        params
-      );
+      const response = login
+        ? await axios.post(
+            `${process.env.NEXT_PUBLIC_SIZE_MEASUREMENT}/measurements`,
+            params,
+            {
+              headers: {
+                Authorization: token ? `Bearer ${token}` : "",
+              },
+            }
+          )
+        : await axios.post(
+            `${process.env.NEXT_PUBLIC_SIZE_MEASUREMENT}/measurements`,
+            params
+          );
       return response.data;
     } catch (error) {
       throw error;
@@ -888,13 +890,14 @@ const FitCheckYourSize4 = ({
     capturedImage && isCounting && window.speechSynthesis.speak(value);
   }, [capturedImage, isCounting]);
 
-  const speakText = (text: string) => {
+  const speakText = (text: string, now: any) => {
     const synth = window.speechSynthesis;
 
     const speak = () => {
       const utterance = new SpeechSynthesisUtterance(text);
       synth.cancel();
       synth.speak(utterance);
+      lastSpokenTimeRef.current = now;
     };
 
     const voices = synth.getVoices();
@@ -939,7 +942,7 @@ const FitCheckYourSize4 = ({
       // window.speechSynthesis.cancel();
       // window.speechSynthesis.speak(value);
       // lastSpokenTimeRef.current = now;
-      speakText(text);
+      speakText(text, now);
     }
   }, [errorMessage, distance]);
 
