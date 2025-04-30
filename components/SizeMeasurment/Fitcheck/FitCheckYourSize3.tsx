@@ -153,6 +153,7 @@ const FitCheckYourSize4 = ({
     null
   );
   const [isSideCapture, setIsSideCapture] = useState<boolean>(false);
+  const [started, setStarted] = useState(false);
 
   const startCamera = async () => {
     setId(0);
@@ -579,8 +580,16 @@ const FitCheckYourSize4 = ({
     return () => clearInterval(interval);
   }, [poseDetector, hasCamera, capturedImage]);
 
+  const startSpeaking = () => {
+    if (started) return;
+    setStarted(true);
+
+    speakText("");
+  };
+
   const handleOpen = () => {
     setCamera(true);
+    startSpeaking()
     startCamera();
   };
 
@@ -879,6 +888,26 @@ const FitCheckYourSize4 = ({
     capturedImage && isCounting && window.speechSynthesis.speak(value);
   }, [capturedImage, isCounting]);
 
+  const speakText = (text: string) => {
+    const synth = window.speechSynthesis;
+
+    const speak = () => {
+      const utterance = new SpeechSynthesisUtterance(text);
+      synth.cancel();
+      synth.speak(utterance);
+    };
+
+    const voices = synth.getVoices();
+    if (voices.length > 0) {
+      speak();
+    } else {
+      // Wait for voices to load on iOS
+      synth.onvoiceschanged = () => {
+        speak();
+      };
+    }
+  };
+
   useEffect(() => {
     const now = new Date();
 
@@ -904,26 +933,6 @@ const FitCheckYourSize4 = ({
       text = "Come Closer";
       shouldSpeak = true;
     }
-
-    const speakText = (text: string) => {
-      const synth = window.speechSynthesis;
-  
-      const speak = () => {
-        const utterance = new SpeechSynthesisUtterance(text);
-        synth.cancel();
-        synth.speak(utterance);
-      };
-  
-      const voices = synth.getVoices();
-      if (voices.length > 0) {
-        speak();
-      } else {
-        // Wait for voices to load on iOS
-        synth.onvoiceschanged = () => {
-          speak();
-        };
-      }
-    };
 
     if (shouldSpeak && timeDiffInSeconds > 5) {
       // const value = new SpeechSynthesisUtterance(text);

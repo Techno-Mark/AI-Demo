@@ -28,10 +28,8 @@ export default function Home() {
     if (started) return;
     setStarted(true);
 
-    // First speech triggered by a real user interaction
     speakText("Hello");
 
-    // Then start interval
     intervalRef.current = setInterval(() => {
       speakText("Hello");
     }, 5000);
