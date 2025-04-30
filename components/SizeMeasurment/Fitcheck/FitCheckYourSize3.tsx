@@ -905,11 +905,32 @@ const FitCheckYourSize4 = ({
       shouldSpeak = true;
     }
 
+    const speakText = (text: string) => {
+      const synth = window.speechSynthesis;
+  
+      const speak = () => {
+        const utterance = new SpeechSynthesisUtterance(text);
+        synth.cancel();
+        synth.speak(utterance);
+      };
+  
+      const voices = synth.getVoices();
+      if (voices.length > 0) {
+        speak();
+      } else {
+        // Wait for voices to load on iOS
+        synth.onvoiceschanged = () => {
+          speak();
+        };
+      }
+    };
+
     if (shouldSpeak && timeDiffInSeconds > 5) {
-      const value = new SpeechSynthesisUtterance(text);
-      window.speechSynthesis.cancel();
-      window.speechSynthesis.speak(value);
-      lastSpokenTimeRef.current = now;
+      // const value = new SpeechSynthesisUtterance(text);
+      // window.speechSynthesis.cancel();
+      // window.speechSynthesis.speak(value);
+      // lastSpokenTimeRef.current = now;
+      speakText(text);
     }
   }, [errorMessage, distance]);
 
