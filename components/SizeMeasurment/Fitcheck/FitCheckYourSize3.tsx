@@ -584,7 +584,7 @@ const FitCheckYourSize4 = ({
     if (started) return;
     setStarted(true);
 
-    speakText("");
+    speakText("", new Date());
   };
 
   const handleOpen = () => {
