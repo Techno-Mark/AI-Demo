@@ -104,7 +104,7 @@ const FindSize = ({
           &lt;
         </div>
       )} */}
-      <div className="flex flex-col items-center justify-center pt-5 md:gap-2 min-h-[88vh]">
+      <div className="flex flex-col items-center justify-start pt-5 md:gap-2 min-h-[88vh]">
         {!camera && (
           <div className="flex items-center justify-center pb-6">
             <div className="flex items-center gap-4 md:gap-10">
