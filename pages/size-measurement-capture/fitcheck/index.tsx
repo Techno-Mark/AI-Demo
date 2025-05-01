@@ -249,7 +249,7 @@ const Id = () => {
           <></>
         )}
         {!login && isLoginClicked === 0 ? (
-          <div className="flex flex-col items-center justify-center h-[94vh] px-5">
+          <div className="flex flex-col items-center justify-center h-[88vh] px-5">
             <p className="text-2xl text-center">
               Welcome to your personal sizing assistant. Scan yourself once and
               have fun shopping!
