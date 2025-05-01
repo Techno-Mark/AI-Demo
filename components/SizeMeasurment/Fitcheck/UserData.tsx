@@ -287,7 +287,7 @@ const UserData = ({
           </div>
 
           {/* Table for Mobile */}
-          <div className="block md:hidden mt-4">
+          <div className="block md:hidden my-4">
             <TableContainer component={Paper}>
               <Table>
                 <TableHead>
@@ -332,7 +332,7 @@ const UserData = ({
           </div>
 
           {/* Table for Desktop */}
-          <div className="hidden md:grid md:grid-cols-2 gap-4 mt-4">
+          <div className="hidden md:grid md:grid-cols-2 gap-4 my-4">
             {[firstHalf, secondHalf].map((data, index) => (
               <TableContainer key={index} component={Paper}>
                 <Table>
