@@ -258,7 +258,7 @@ const UserData = ({
         {/* Fitcheck Size Matrix */}
         <div className="w-full md:w-[60%] flex flex-col">
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between">
-            <p className="font-bold">Fitcheck Size Matrix</p>
+            <p className="font-bold my-4">Fitcheck Size Matrix</p>
             <div className="flex items-center justify-end w-full md:w-auto gap-4">
               <Button
                 variant="contained"

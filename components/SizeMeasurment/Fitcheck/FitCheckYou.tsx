@@ -17,7 +17,7 @@ const FitCheckYou = ({
 }: any) => {
   return (
     <>
-      <p className="md:text-lg lg:text-xl px-3 py-2 md:px-0 flex items-center justify-center md:max-w-[70%] lg:max-w-[50%] text-center">
+      <p className="md:text-lg lg:text-xl px-3 py-2 pb-6 md:px-0 flex items-center justify-center md:max-w-[70%] lg:max-w-[50%] text-center">
         {/* Tell us about yourself, so that we can recommend the best size for you
         Are you interested in buying men’s or women’s clothing? */}
         To help us find your size, tell us if you’re shopping for male or female

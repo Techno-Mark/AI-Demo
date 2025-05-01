@@ -975,7 +975,7 @@ const FitCheckYourSize2 = ({
                   loading ? undefined : handleClickSatisfied(true, true)
                 }
                 className={`my-4 ${
-                  loading ? "bg-gray-500" : "!bg-[#1565c0] cursor-pointer"
+                  loading ? "bg-gray-500" : "!bg-[#6B7CF6] hover:bg-[#6B7CF6] cursor-pointer"
                 }`}
                 disabled={loading}
               >

@@ -72,8 +72,8 @@ const FitCheckYourSize4 = ({
   setIsRegister,
   setIsLoginClicked,
   getUserData,
+  videoRef,
 }: any) => {
-  const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const lastSpokenTimeRef = useRef<Date | null>(null);
   const [hasCamera, setHasCamera] = useState<boolean>(true);
@@ -153,6 +153,21 @@ const FitCheckYourSize4 = ({
     null
   );
   const [isSideCapture, setIsSideCapture] = useState<boolean>(false);
+  const [device, setDevice] = useState("desktop");
+  const [started, setStarted] = useState(false);
+
+  useEffect(() => {
+    function updateDevice() {
+      const width = window.innerWidth;
+      if (width <= 768) setDevice("mobile");
+      else if (width <= 1024) setDevice("tablet");
+      else setDevice("desktop");
+    }
+
+    updateDevice();
+    window.addEventListener("resize", updateDevice);
+    return () => window.removeEventListener("resize", updateDevice);
+  }, []);
 
   const startCamera = async () => {
     setId(0);
@@ -555,9 +570,9 @@ const FitCheckYourSize4 = ({
               ).toFixed(2)}
                ${
                  distanceToCamera < 0.31
-                   ? "go far."
+                   ? "Step back."
                    : distanceToCamera > 0.35
-                   ? "come closer."
+                   ? "Step forward."
                    : ""
                }`
             );
@@ -579,8 +594,16 @@ const FitCheckYourSize4 = ({
     return () => clearInterval(interval);
   }, [poseDetector, hasCamera, capturedImage]);
 
+  const startSpeaking = () => {
+    if (started) return;
+    setStarted(true);
+
+    speakText("", new Date());
+  };
+
   const handleOpen = () => {
     setCamera(true);
+    startSpeaking();
     startCamera();
   };
 
@@ -733,18 +756,20 @@ const FitCheckYourSize4 = ({
       sideBlob: sideCapturedImage,
     };
     try {
-      const response = login ? await axios.post(
-        `${process.env.NEXT_PUBLIC_SIZE_MEASUREMENT}/measurements`,
-        params,
-        {
-          headers: {
-            Authorization: token ? `Bearer ${token}` : "",
-          },
-        }
-      ) : await axios.post(
-        `${process.env.NEXT_PUBLIC_SIZE_MEASUREMENT}/measurements`,
-        params
-      );
+      const response = login
+        ? await axios.post(
+            `${process.env.NEXT_PUBLIC_SIZE_MEASUREMENT}/measurements`,
+            params,
+            {
+              headers: {
+                Authorization: token ? `Bearer ${token}` : "",
+              },
+            }
+          )
+        : await axios.post(
+            `${process.env.NEXT_PUBLIC_SIZE_MEASUREMENT}/measurements`,
+            params
+          );
       return response.data;
     } catch (error) {
       throw error;
@@ -879,6 +904,27 @@ const FitCheckYourSize4 = ({
     capturedImage && isCounting && window.speechSynthesis.speak(value);
   }, [capturedImage, isCounting]);
 
+  const speakText = (text: string, now: any) => {
+    const synth = window.speechSynthesis;
+
+    const speak = () => {
+      const utterance = new SpeechSynthesisUtterance(text);
+      synth.cancel();
+      synth.speak(utterance);
+      lastSpokenTimeRef.current = now;
+    };
+
+    const voices = synth.getVoices();
+    if (voices.length > 0) {
+      speak();
+    } else {
+      // Wait for voices to load on iOS
+      synth.onvoiceschanged = () => {
+        speak();
+      };
+    }
+  };
+
   useEffect(() => {
     const now = new Date();
 
@@ -890,26 +936,27 @@ const FitCheckYourSize4 = ({
     let text = "";
 
     if (
-      errorMessage.includes("go far") &&
+      errorMessage.includes("Step back") &&
       !!distance &&
       distance - 0.31 < -0.01
     ) {
-      text = "Go Far";
+      text = "Step back";
       shouldSpeak = true;
     } else if (
-      errorMessage.includes("come closer") &&
+      errorMessage.includes("Step forward") &&
       !!distance &&
       distance - 0.35 > 0.01
     ) {
-      text = "Come Closer";
+      text = "Step forward";
       shouldSpeak = true;
     }
 
     if (shouldSpeak && timeDiffInSeconds > 5) {
-      const value = new SpeechSynthesisUtterance(text);
-      window.speechSynthesis.cancel();
-      window.speechSynthesis.speak(value);
-      lastSpokenTimeRef.current = now;
+      // const value = new SpeechSynthesisUtterance(text);
+      // window.speechSynthesis.cancel();
+      // window.speechSynthesis.speak(value);
+      // lastSpokenTimeRef.current = now;
+      speakText(text, now);
     }
   }, [errorMessage, distance]);
 
@@ -917,7 +964,7 @@ const FitCheckYourSize4 = ({
     <>
       {!camera && !capturedImage && (
         <div className="flex flex-col items-center justify-center gap-5 overflow-y-auto">
-          <div className="flex flex-col items-start justify-center gap-1 md:gap-2">
+          {/* <div className="flex flex-col items-start justify-center gap-1 md:gap-2">
             <div>
               <p className="text-[#28A745] text-md lg:text-xl">
                 Correct Technique
@@ -939,7 +986,7 @@ const FitCheckYourSize4 = ({
                 &nbsp;{i}
               </p>
             ))}
-          </div>
+          </div> */}
           <div className="flex items-center justify-center py-4 px-4 mx-4 rounded-lg border border-gray gap-5">
             <p>Turn up your volume to be guided during the scan</p>
             <svg
@@ -989,63 +1036,85 @@ const FitCheckYourSize4 = ({
         <div className="flex flex-col md:flex-row items-center md:items-start justify-between py-5 gap-4 md:gap-10 md:py-4">
           <div className="flex items-start justify-center gap-5">
             {hasCamera ? (
-              <div className="flex flex-col items-center justify-center">
+              <div
+                className={
+                  device === "desktop"
+                    ? "flex flex-col items-center justify-center"
+                    : "relative w-screen h-screen"
+                }
+              >
                 <video
                   ref={videoRef}
-                  width="100%"
-                  height="fit"
                   style={{
+                    position: device === "desktop" ? "static" : "fixed",
+                    top: device === "desktop" ? undefined : "7vh",
+                    left: 0,
+                    width: "100%",
+                    height: device === "desktop" ? "auto" : "93vh",
+                    objectFit: "fill",
                     border:
                       distance &&
                       (distance < 0.31 || distance > 0.35) &&
                       !capturedImage
                         ? "2px solid red"
                         : "2px solid black",
+                    zIndex: device === "desktop" ? 0 : 1,
                   }}
                   playsInline
-                ></video>
+                  autoPlay
+                  muted
+                />
                 <canvas
                   ref={canvasRef}
-                  width={"0px"}
-                  height={"0px"}
+                  width="0px"
+                  height="0px"
                   className="hidden"
                 />
-                {hasCamera && userDetected ? (
-                  <div className="mt-4 flex flex-col items-center justify-center">
-                    <Typography variant="h6">
-                      <span className="text-sm md:text-md lg:text-xl">
-                        User Detected
+                <div
+                  className={`space-y-2 ${
+                    device !== "desktop"
+                      ? "absolute top-0 left-4 z-10 text-black"
+                      : "mt-4 flex flex-col items-center justify-center"
+                  }`}
+                >
+                  {hasCamera && userDetected ? (
+                    <>
+                      <Typography variant="h6">
+                        <span className="text-md lg:text-xl font-bold">
+                          User Detected
+                        </span>
+                      </Typography>
+                      {capturedImage && isCounting && (
+                        <Typography variant="h6" color="primary">
+                          <span className="text-md lg:text-xl">
+                            Turn to the side
+                          </span>
+                        </Typography>
+                      )}
+                      {isCounting && (
+                        <Typography variant="h6" color="primary">
+                          <span className="text-md lg:text-xl">
+                            Countdown: {countdown} seconds
+                          </span>
+                        </Typography>
+                      )}
+                    </>
+                  ) : (
+                    <Typography variant="h6" color="error">
+                      <span className="text-md lg:text-xl">
+                        No user detected. Please step into the frame.
                       </span>
                     </Typography>
-                    {capturedImage && isCounting && (
-                      <Typography variant="h6" color="primary">
-                        <span className="text-sm md:text-md lg:text-xl">
-                          Please rotate 90° for the side image.
-                        </span>
-                      </Typography>
-                    )}
-                    {isCounting && (
-                      <Typography variant="h6" color="primary">
-                        <span className="text-sm md:text-md lg:text-xl">
-                          Countdown: {countdown} seconds
-                        </span>
-                      </Typography>
-                    )}
-                  </div>
-                ) : (
-                  <Typography variant="h6" color="error">
-                    <span className="text-sm md:text-md lg:text-xl">
-                      No user detected. Please step into the frame.
-                    </span>
-                  </Typography>
-                )}
-                {userDetected && errorMessage && (
-                  <Typography variant="h6" color="error">
-                    <span className="text-sm md:text-md lg:text-xl">
-                      {errorMessage}
-                    </span>
-                  </Typography>
-                )}
+                  )}
+
+                  {userDetected && errorMessage && (
+                    <Typography variant="h6" color="error">
+                      <span className="text-md lg:text-xl">
+                        {errorMessage}
+                      </span>
+                    </Typography>
+                  )}
+                </div>
               </div>
             ) : (
               <Typography variant="h6" color="error">
@@ -1111,7 +1180,7 @@ const FitCheckYourSize4 = ({
                     loading ? undefined : handleClickSatisfied(true, true)
                   }
                   className={`my-4 ${
-                    loading ? "bg-gray-500" : "!bg-[#1565c0] cursor-pointer"
+                    loading ? "bg-gray-500" : "!bg-[#6B7CF6] hover:bg-[#6B7CF6] cursor-pointer"
                   }`}
                   disabled={loading}
                 >
