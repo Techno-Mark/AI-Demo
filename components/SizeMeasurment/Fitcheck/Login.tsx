@@ -69,12 +69,12 @@ const Auth = ({ setLogin, setIsLoading, setIsLoginClicked, isRegister, setIsRegi
 
   return (
     <div className="flex flex-col bg-white text-black h-[94vh]">
-      <div
-        className="flex items-start justify-start ml-2 cursor-pointer px-2 my-2 bg-blue-600 text-white rounded-lg w-fit"
+      {/* <div
+        className="flex items-start justify-start ml-2 cursor-pointer px-2 my-2 bg-[#6B7CF6] text-white rounded-lg w-fit"
         onClick={() => setIsLoginClicked(0)}
       >
         &lt;
-      </div>
+      </div> */}
       <div className="flex flex-col justify-center items-center bg-white text-black h-[94vh]">
         <div className="flex items-center justify-between">
           <div className="flex items-center justify-center font-normal p-20 rounded-xl lg:border border-lightSilver">
@@ -165,7 +165,7 @@ const Auth = ({ setLogin, setIsLoading, setIsLoginClicked, isRegister, setIsRegi
                 className={`rounded-full !w-[300px] !font-semibold mt-[35px] ${
                   loading
                     ? "bg-gray-400 hover:bg-gray-400 cursor-not-allowed"
-                    : "bg-[#1565C0] cursor-pointer"
+                    : "bg-[#6B7CF6] hover:bg-[#6B7CF6] cursor-pointer"
                 }`}
                 disabled={loading}
               >
@@ -178,7 +178,7 @@ const Auth = ({ setLogin, setIsLoading, setIsLoginClicked, isRegister, setIsRegi
                   ? "Already have an account?"
                   : "Don't have an account?"}
                 <span
-                  className="text-blue-600 cursor-pointer ml-1"
+                  className="text-[#6B7CF6] cursor-pointer ml-1"
                   onClick={() => setIsRegister(!isRegister)}
                 >
                   {isRegister ? "Sign In" : "Register"}
