@@ -1037,46 +1037,40 @@ const FitCheckYourSize4 = ({
           <div className="flex items-start justify-center gap-5">
             {hasCamera ? (
               <div
-                className={
-                  device === "desktop"
-                    ? "flex flex-col items-center justify-center"
-                    : "relative w-screen h-screen"
-                }
+                className={`fixed ${
+                  device !== "desktop" ? "top-[7%]" : "top-[50.70px]"
+                } left-0 w-screen h-screen overflow-hidden`}
               >
+                {/* Video Stream */}
                 <video
                   ref={videoRef}
+                  className={`w-full ${
+                    device !== "desktop" ? "h-[93%]" : "h-[94.5%]"
+                  } object-fill`}
                   style={{
-                    position: device === "desktop" ? "static" : "fixed",
-                    top: device === "desktop" ? undefined : "7vh",
-                    left: 0,
-                    width: "100%",
-                    height: device === "desktop" ? "auto" : "93vh",
-                    objectFit: "fill",
                     border:
                       distance &&
                       (distance < 0.31 || distance > 0.35) &&
                       !capturedImage
                         ? "2px solid red"
                         : "2px solid black",
-                    zIndex: device === "desktop" ? 0 : 1,
+                    zIndex: 1,
                   }}
                   playsInline
                   autoPlay
                   muted
                 />
+
+                {/* Hidden Canvas */}
                 <canvas
                   ref={canvasRef}
                   width="0px"
                   height="0px"
                   className="hidden"
                 />
-                <div
-                  className={`space-y-2 ${
-                    device !== "desktop"
-                      ? "absolute top-0 left-4 z-10 text-black"
-                      : "mt-4 flex flex-col items-center justify-center"
-                  }`}
-                >
+
+                {/* Overlay Messages */}
+                <div className="absolute top-4 z-10 text-start text-white px-4 py-2 rounded-md">
                   {hasCamera && userDetected ? (
                     <>
                       <Typography variant="h6">
@@ -1109,9 +1103,7 @@ const FitCheckYourSize4 = ({
 
                   {userDetected && errorMessage && (
                     <Typography variant="h6" color="error">
-                      <span className="text-md lg:text-xl">
-                        {errorMessage}
-                      </span>
+                      <span className="text-md lg:text-xl">{errorMessage}</span>
                     </Typography>
                   )}
                 </div>
@@ -1123,6 +1115,7 @@ const FitCheckYourSize4 = ({
                 </span>
               </Typography>
             )}
+
             {/* <div className="w-[50%] flex items-center justify-end">
               <img src="/pose.png" alt="pose" />
             </div> */}
