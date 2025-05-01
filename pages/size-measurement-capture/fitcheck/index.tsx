@@ -122,7 +122,7 @@ const Id = () => {
   return (
     <>
       <ToastContainer />
-      <main className="min-h-screen bg-white text-black !font-poppins">
+      <main className="min-h-[95vh] bg-white text-black !font-poppins">
         <div className="py-2.5 border-b flex items-center justify-between px-6">
           {isLoginClicked === 1 ||
           (login && activeTab !== 1 && isLoginClicked === 2) ||
