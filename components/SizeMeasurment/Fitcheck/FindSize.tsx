@@ -76,6 +76,8 @@ const FindSize = ({
     setCamera(false);
   };
 
+  console.log(sex);
+
   return (
     <>
       {/* {!login && (
@@ -167,7 +169,13 @@ const FindSize = ({
               For the optimal scan, wear tight clothing, choose a clear
               background, and make sure the lighting is bright and even.
             </p>
-            {/* <Image src="/image.png" alt="img" width={250} height={250} className="mt-4" /> */}
+            <Image
+              src={`${sex === 0 ? "/men.png" : "/women.png"}`}
+              alt="img"
+              width={250}
+              height={250}
+              className="mt-4"
+            />
             {/* <p className="flex items-center justify-center text-center mt-2">
               This is how you get the best results
             </p> */}
