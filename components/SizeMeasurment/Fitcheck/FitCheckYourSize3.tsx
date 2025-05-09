@@ -1097,14 +1097,14 @@ const FitCheckYourSize4 = ({
                       </Typography> */}
                       {capturedImage && isCounting && (
                         <Typography variant="h6" color="primary">
-                          <span className="text-lg md:text-4xl lg:text-5xl font-bold">
+                          <span className="text-2xl md:text-6xl lg:text-7xl font-bold">
                             ROTATE TO THE SIDE
                           </span>
                         </Typography>
                       )}
                       {isCounting && (
                         <Typography variant="h6" color="primary">
-                          <span className="text-lg md:text-4xl lg:text-5xl font-bold">
+                          <span className="text-2xl md:text-6xl lg:text-7xl font-bold">
                             Countdown: {countdown} seconds
                           </span>
                         </Typography>
@@ -1112,7 +1112,7 @@ const FitCheckYourSize4 = ({
                     </>
                   ) : (
                     <Typography variant="h6" color="error">
-                      <span className="text-lg md:text-4xl lg:text-5xl font-bold">
+                      <span className="text-2xl md:text-6xl lg:text-7xl font-bold">
                         No user detected. Please step into the frame.
                       </span>
                     </Typography>
@@ -1120,7 +1120,7 @@ const FitCheckYourSize4 = ({
 
                   {userDetected && errorMessage && (
                     <Typography variant="h6" color="error">
-                      <span className="text-lg md:text-4xl lg:text-5xl font-bold">
+                      <span className="text-2xl md:text-6xl lg:text-7xl font-bold">
                         {errorMessage}
                       </span>
                     </Typography>
@@ -1129,7 +1129,9 @@ const FitCheckYourSize4 = ({
               </div>
             ) : (
               <Typography variant="h6" color="error">
-                <span className="text-lg md:text-4xl lg:text-5xl font-bold">No Camera Found</span>
+                <span className="text-lg md:text-4xl lg:text-5xl font-bold">
+                  No Camera Found
+                </span>
               </Typography>
             )}
 
@@ -1308,13 +1310,15 @@ const FitCheckYourSize4 = ({
             >
               Return to shopping
             </Button>
-            <Button
-              variant="contained"
-              onClick={() => setActiveTab(1)}
-              className="mt-6 !bg-[#6B7CF6] hover:!bg-[#4e5ab6]"
-            >
-              Change my metrics
-            </Button>
+            {login && (
+              <Button
+                variant="contained"
+                onClick={() => getUserData()}
+                className="mt-6 !bg-[#6B7CF6] hover:!bg-[#4e5ab6]"
+              >
+                Change my metrics
+              </Button>
+            )}
             {!login && (
               <>
                 <Button
