@@ -906,19 +906,40 @@ const FitCheckYourSize4 = ({
   const firstHalf = sortedEntries.slice(0, midIndex);
   const secondHalf = sortedEntries.slice(midIndex);
 
+  const speck = (file: string, now: any) => {
+    const audio = new Audio(`/audio/${file}`);
+    audio.play().catch((error) => {
+      console.error("Audio play error:", error);
+    });
+    lastSpokenTimeRef.current = now;
+  };
+
   useEffect(() => {
-    const text = "Turn to the side";
-    const value = new SpeechSynthesisUtterance(text);
-    capturedImage && isCounting && window.speechSynthesis.speak(value);
+    // const text = "Turn to the side";
+    // const value = new SpeechSynthesisUtterance(text);
+    // capturedImage && isCounting && window.speechSynthesis.speak(value);
+    const audio = new Audio(`/audio/Please_turn_to_the_side.mp3`);
+    capturedImage &&
+      isCounting &&
+      audio.play().catch((error) => {
+        console.error("Audio play error:", error);
+      });
   }, [capturedImage, isCounting]);
 
   useEffect(() => {
-    const text = "Scan Completed";
-    const value = new SpeechSynthesisUtterance(text);
+    // const text = "Scan Completed";
+    // const value = new SpeechSynthesisUtterance(text);
+    // capturedImage &&
+    //   !isCounting &&
+    //   sideCapturedImage &&
+    //   window.speechSynthesis.speak(value);
+    const audio = new Audio(`/audio/Your_scan_is_completed.mp3`);
     capturedImage &&
       !isCounting &&
       sideCapturedImage &&
-      window.speechSynthesis.speak(value);
+      audio.play().catch((error) => {
+        console.error("Audio play error:", error);
+      });
   }, [capturedImage, isCounting, sideCapturedImage]);
 
   const speakText = (text: string, now: any) => {
@@ -957,14 +978,16 @@ const FitCheckYourSize4 = ({
       !!distance &&
       distance - 0.31 < -0.01
     ) {
-      text = "STEP BACK";
+      // text = "STEP BACK"
+      text = "Please_step_back.mp3";
       shouldSpeak = true;
     } else if (
       errorMessage.includes("STEP FORWARD") &&
       !!distance &&
       distance - 0.35 > 0.01
     ) {
-      text = "STEP FORWARD";
+      // text = "STEP FORWARD";
+      text = "Please_step_forward.mp3";
       shouldSpeak = true;
     }
 
@@ -973,7 +996,8 @@ const FitCheckYourSize4 = ({
       // window.speechSynthesis.cancel();
       // window.speechSynthesis.speak(value);
       // lastSpokenTimeRef.current = now;
-      speakText(text, now);
+      // speakText(text, now);
+      speck(text, now);
     }
   }, [errorMessage, distance]);
 
