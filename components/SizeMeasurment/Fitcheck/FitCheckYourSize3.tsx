@@ -73,6 +73,7 @@ const FitCheckYourSize4 = ({
   setIsLoginClicked,
   getUserData,
   videoRef,
+  setActiveTab,
 }: any) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const lastSpokenTimeRef = useRef<Date | null>(null);
@@ -562,19 +563,26 @@ const FitCheckYourSize4 = ({
             setIsCounting(false);
             setCountdown(5);
             setErrorMessage(
-              `Distance is ${(distanceToCamera < 0.31
-                ? distanceToCamera - 0.31
-                : distanceToCamera > 0.35
-                ? distanceToCamera - 0.35
-                : 0
-              ).toFixed(2)}
-               ${
-                 distanceToCamera < 0.31
-                   ? "Step back."
-                   : distanceToCamera > 0.35
-                   ? "Step forward."
-                   : ""
-               }`
+              `${
+                distanceToCamera < 0.31
+                  ? "STEP BACK"
+                  : distanceToCamera > 0.35
+                  ? "STEP FORWARD"
+                  : ""
+              }`
+              // `Distance is ${(distanceToCamera < 0.31
+              //   ? distanceToCamera - 0.31
+              //   : distanceToCamera > 0.35
+              //   ? distanceToCamera - 0.35
+              //   : 0
+              // ).toFixed(2)}
+              //  ${
+              //    distanceToCamera < 0.31
+              //      ? "STEP BACK"
+              //      : distanceToCamera > 0.35
+              //      ? "STEP FORWARD"
+              //      : ""
+              //  }`
             );
           }
         }
@@ -899,10 +907,19 @@ const FitCheckYourSize4 = ({
   const secondHalf = sortedEntries.slice(midIndex);
 
   useEffect(() => {
-    const text = "Please rotate 90°.";
+    const text = "Turn to the side";
     const value = new SpeechSynthesisUtterance(text);
     capturedImage && isCounting && window.speechSynthesis.speak(value);
   }, [capturedImage, isCounting]);
+
+  useEffect(() => {
+    const text = "Scan Completed";
+    const value = new SpeechSynthesisUtterance(text);
+    capturedImage &&
+      !isCounting &&
+      sideCapturedImage &&
+      window.speechSynthesis.speak(value);
+  }, [capturedImage, isCounting, sideCapturedImage]);
 
   const speakText = (text: string, now: any) => {
     const synth = window.speechSynthesis;
@@ -936,18 +953,18 @@ const FitCheckYourSize4 = ({
     let text = "";
 
     if (
-      errorMessage.includes("Step back") &&
+      errorMessage.includes("STEP BACK") &&
       !!distance &&
       distance - 0.31 < -0.01
     ) {
-      text = "Step back";
+      text = "STEP BACK";
       shouldSpeak = true;
     } else if (
-      errorMessage.includes("Step forward") &&
+      errorMessage.includes("STEP FORWARD") &&
       !!distance &&
       distance - 0.35 > 0.01
     ) {
-      text = "Step forward";
+      text = "STEP FORWARD";
       shouldSpeak = true;
     }
 
@@ -963,7 +980,7 @@ const FitCheckYourSize4 = ({
   return (
     <>
       {!camera && !capturedImage && (
-        <div className="flex flex-col items-center justify-center gap-5 overflow-y-auto">
+        <div className="flex flex-col items-center justify-center gap-5 overflow-y-auto my-5">
           {/* <div className="flex flex-col items-start justify-center gap-1 md:gap-2">
             <div>
               <p className="text-[#28A745] text-md lg:text-xl">
@@ -1026,7 +1043,7 @@ const FitCheckYourSize4 = ({
           <Button
             variant="contained"
             onClick={() => handleOpen()}
-            className="mt-4 !bg-[#6B7CF6] !mb-10"
+            className="mt-4 !bg-[#6B7CF6] hover:!bg-[#4e5ab6] !mb-10"
           >
             Open Camera
           </Button>
@@ -1073,21 +1090,21 @@ const FitCheckYourSize4 = ({
                 <div className="absolute top-4 z-10 text-start text-white px-4 py-2 rounded-md">
                   {hasCamera && userDetected ? (
                     <>
-                      <Typography variant="h6">
-                        <span className="text-md lg:text-xl font-bold">
+                      {/* <Typography variant="h6">
+                        <span className="text-lg lg:text-xl font-bold">
                           User Detected
                         </span>
-                      </Typography>
+                      </Typography> */}
                       {capturedImage && isCounting && (
                         <Typography variant="h6" color="primary">
-                          <span className="text-md lg:text-xl">
-                            Turn to the side
+                          <span className="text-lg lg:text-2xl">
+                            ROTATE TO THE SIDE
                           </span>
                         </Typography>
                       )}
                       {isCounting && (
                         <Typography variant="h6" color="primary">
-                          <span className="text-md lg:text-xl">
+                          <span className="text-lg lg:text-2xl">
                             Countdown: {countdown} seconds
                           </span>
                         </Typography>
@@ -1095,7 +1112,7 @@ const FitCheckYourSize4 = ({
                     </>
                   ) : (
                     <Typography variant="h6" color="error">
-                      <span className="text-md lg:text-xl">
+                      <span className="text-lg lg:text-2xl">
                         No user detected. Please step into the frame.
                       </span>
                     </Typography>
@@ -1103,14 +1120,14 @@ const FitCheckYourSize4 = ({
 
                   {userDetected && errorMessage && (
                     <Typography variant="h6" color="error">
-                      <span className="text-md lg:text-xl">{errorMessage}</span>
+                      <span className="text-lg lg:text-2xl">{errorMessage}</span>
                     </Typography>
                   )}
                 </div>
               </div>
             ) : (
               <Typography variant="h6" color="error">
-                <span className="text-sm md:text-md lg:text-xl">
+                <span className="text-lg lg:text-2xl">
                   No Camera Found
                 </span>
               </Typography>
@@ -1143,7 +1160,7 @@ const FitCheckYourSize4 = ({
         !isCounting &&
         measurements.length > 0 && (
           <div className="flex flex-col items-center justify-center gap-4">
-            <p className="px-10">
+            <p className="px-10 pt-6">
               {/* As per Fitcheck Your {productName} size is&nbsp;
               {estimateTShirtSize(
                 Number(
@@ -1173,7 +1190,7 @@ const FitCheckYourSize4 = ({
                     loading ? undefined : handleClickSatisfied(true, true)
                   }
                   className={`my-4 ${
-                    loading ? "bg-gray-500" : "!bg-[#6B7CF6] hover:bg-[#6B7CF6] cursor-pointer"
+                    loading ? "bg-gray-500" : "!bg-[#6B7CF6] hover:!bg-[#4e5ab6] cursor-pointer"
                   }`}
                   disabled={loading}
                 >
@@ -1269,7 +1286,7 @@ const FitCheckYourSize4 = ({
               onClick={() => {
                 parent.postMessage({ type: "addItemToCart" }, "*");
               }}
-              className="mt-6 !bg-[#6B7CF6]"
+              className="mt-6 !bg-[#6B7CF6] hover:!bg-[#4e5ab6]"
             >
               Add{" "}
               {estimateTShirtSize(
@@ -1287,9 +1304,16 @@ const FitCheckYourSize4 = ({
               onClick={() => {
                 parent.postMessage({ type: "closeIframeWindow" }, "*");
               }}
-              className="mt-6 !bg-[#6B7CF6]"
+              className="mt-6 !bg-[#6B7CF6] hover:!bg-[#4e5ab6]"
             >
               Return to shopping
+            </Button>
+            <Button
+              variant="contained"
+              onClick={() => setActiveTab(1)}
+              className="mt-6 !bg-[#6B7CF6] hover:!bg-[#4e5ab6]"
+            >
+              Change my metrics
             </Button>
             {!login && (
               <>
@@ -1300,12 +1324,14 @@ const FitCheckYourSize4 = ({
                     setLogin(null);
                     setIsRegister(true);
                     setIsLoginClicked(1);
+                    setActiveTab(1);
                   }}
-                  className="mt-6 !bg-[#6B7CF6]"
+                  className="mt-6 !bg-[#6B7CF6] hover:!bg-[#4e5ab6]"
                 >
                   Create an account
                 </Button>
-                <p>To use your measurements anytime you shop online</p>
+                <p>To always have your size.</p>
+                {/* <p>To use your measurements anytime you shop online</p> */}
               </>
             )}
           </div>

@@ -122,9 +122,10 @@ const Id = () => {
   return (
     <>
       <ToastContainer />
-      <main className="min-h-[95vh] h-[100vh] bg-white text-black !font-poppins">
+      <main className="min-h-[95vh] h-screen bg-white text-black !font-poppins">
         <div className="py-2.5 border-b flex items-center justify-between px-6">
           {isLoginClicked === 1 ||
+          (login && activeTab !== 1) ||
           (login && activeTab !== 1 && isLoginClicked === 2) ||
           (!login && isLoginClicked === 2) ? (
             <svg
@@ -250,16 +251,20 @@ const Id = () => {
         )}
         {!login && isLoginClicked === 0 ? (
           <div className="flex flex-col items-center justify-center h-[88vh] px-5">
-            <p className="text-2xl text-center">
-              Welcome to your personal sizing assistant. Scan yourself once and
-              have fun shopping!
+            <p className="text-md text-center lg:hidden">
+              Welcome to your personal sizing assistant. Scan your body and have
+              fun shopping!
+            </p>
+            <p className="text-3xl text-center hidden lg:flex flex-col gap-2 items-center justify-center">
+              <span>Welcome to your personal sizing assistant.</span>
+              <span>Scan your body and have fun shopping!</span>
             </p>
             <div className="flex items-center justify-center gap-4">
               <Button
                 type="button"
                 color="primary"
                 variant="contained"
-                className="rounded-full !w-fit !font-semibold mt-[35px] bg-[#6B7CF6] hover:bg-[#6B7CF6] cursor-pointer"
+                className="rounded-full !w-fit !font-semibold mt-[10px] lg:mt-[35px] bg-[#6B7CF6] hover:bg-[#6B7CF6] cursor-pointer"
                 onClick={() => setIsLoginClicked(1)}
               >
                 Login
@@ -268,7 +273,7 @@ const Id = () => {
                 type="button"
                 color="primary"
                 variant="contained"
-                className="rounded-full !w-fit !font-semibold mt-[35px] bg-[#6B7CF6] hover:bg-[#6B7CF6] cursor-pointer"
+                className="rounded-full !w-fit !font-semibold mt-[10px] lg:mt-[35px] bg-[#6B7CF6] hover:bg-[#6B7CF6] cursor-pointer"
                 onClick={() => {
                   setIsLoginClicked(2);
                   setLogin(null);

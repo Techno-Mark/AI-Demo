@@ -87,7 +87,7 @@ const MeasurementDialog = ({
           className={`${
             measurementsList.some(isInvalid)
               ? " bg-gray-500 cursor-not-allowed"
-              : "!bg-[#6B7CF6] hover:bg-[#6B7CF6] cursor-pointer"
+              : "!bg-[#6B7CF6] hover:!bg-[#4e5ab6] cursor-pointer"
           }`}
           disabled={measurementsList.some(isInvalid)}
         >

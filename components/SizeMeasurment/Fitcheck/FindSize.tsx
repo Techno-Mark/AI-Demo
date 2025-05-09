@@ -33,6 +33,7 @@ const FindSize = ({
   videoRef,
 }: any) => {
   const [height, setHeight] = useState(0);
+  const [isHeightInInch, setIsHeightInInch] = useState(false);
   const [heightErr, setHeightErr] = useState(false);
   const [weight, setWeight] = useState(0);
   const [weightErr, setWeightErr] = useState(false);
@@ -40,24 +41,19 @@ const FindSize = ({
 
   const handleClickOpen = () => {
     if (activeTab === 1) {
-      setHeightErr(
-        height.toString().trim().length < 2 ||
-          height.toString().trim().length > 3
-      );
-      setWeightErr(
-        weight === 0 ||
-          weight.toString().trim().length < 1 ||
-          weight.toString().trim().length > 3
-      );
+      const regex = isHeightInInch
+        ? /^\d{0,2}(\.\d{0,2})?$/
+        : /^\d{0,3}(\.\d{0,2})?$/;
+      setHeightErr(height === 0 || !regex.test(height.toString()));
+      const regexWeight = /^\d{0,3}(\.\d{0,2})?$/;
+      setWeightErr(weight === 0 || !regexWeight.test(weight.toString()));
 
       if (
         height !== 0 &&
-        height.toString().trim().length > 1 &&
-        height.toString().trim().length < 4 &&
+        regex.test(height.toString()) &&
         !heightErr &&
         weight !== 0 &&
-        weight.toString().trim().length > 0 &&
-        weight.toString().trim().length < 4 &&
+        regexWeight.test(weight.toString()) &&
         !weightErr
       ) {
         setActiveTab(2);
@@ -75,8 +71,6 @@ const FindSize = ({
     setSex(0);
     setCamera(false);
   };
-
-  console.log(sex);
 
   return (
     <>
@@ -157,6 +151,8 @@ const FindSize = ({
             heightErr={heightErr}
             setHeight={setHeight}
             setHeightErr={setHeightErr}
+            isHeightInInch={isHeightInInch}
+            setIsHeightInInch={setIsHeightInInch}
             weight={weight}
             weightErr={weightErr}
             setWeight={setWeight}
@@ -165,7 +161,7 @@ const FindSize = ({
         )}
         {activeTab === 2 && (
           <>
-            <p className="text-ml flex items-center justify-center text-center">
+            <p className="text-ml flex items-center justify-center text-center py-4">
               For the optimal scan, wear tight clothing, choose a clear
               background, and make sure the lighting is bright and even.
             </p>
@@ -174,7 +170,7 @@ const FindSize = ({
               alt="img"
               width={250}
               height={250}
-              className="mt-4"
+              className="my-4"
             />
             {/* <p className="flex items-center justify-center text-center mt-2">
               This is how you get the best results
@@ -206,7 +202,7 @@ const FindSize = ({
           <Button
             variant="contained"
             onClick={handleClickOpen}
-            className="mt-6 !bg-[#6B7CF6] !mb-10"
+            className="mt-6 !bg-[#6B7CF6] hover:!bg-[#4e5ab6] !mb-10 !shadow-none"
           >
             Continue
           </Button>

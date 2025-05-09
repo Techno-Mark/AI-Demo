@@ -263,7 +263,7 @@ const UserData = ({
               <Button
                 variant="contained"
                 onClick={() => setIsEditing(!isEditing)}
-                className="!bg-[#6B7CF6]"
+                className="!bg-[#6B7CF6] hover:!bg-[#4e5ab6]"
               >
                 {isEditing ? "Cancel" : "Edit"}
               </Button>
@@ -279,7 +279,7 @@ const UserData = ({
               <Button
                 variant="contained"
                 onClick={() => setUserData(null)}
-                className="!bg-[#6B7CF6]"
+                className="!bg-[#6B7CF6] hover:!bg-[#4e5ab6]"
               >
                 Re Check
               </Button>
