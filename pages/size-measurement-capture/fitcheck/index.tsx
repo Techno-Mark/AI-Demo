@@ -251,11 +251,11 @@ const Id = () => {
         )}
         {!login && isLoginClicked === 0 ? (
           <div className="flex flex-col items-center justify-center h-[88vh] px-5">
-            <p className="text-md text-center lg:hidden">
+            {/* <p className="text-md text-center lg:hidden">
               Welcome to your personal sizing assistant. Scan your body and have
               fun shopping!
-            </p>
-            <p className="text-3xl text-center hidden lg:flex flex-col gap-2 items-center justify-center">
+            </p> */}
+            <p className="text-3xl text-center flex flex-col gap-2 items-center justify-center">
               <span>Welcome to your personal sizing assistant.</span>
               <span>Scan your body and have fun shopping!</span>
             </p>
