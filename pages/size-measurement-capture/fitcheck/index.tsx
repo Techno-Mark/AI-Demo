@@ -122,7 +122,7 @@ const Id = () => {
   return (
     <>
       <ToastContainer />
-      <main className="min-h-[95vh] h-screen bg-white text-black !font-poppins">
+      <main className="min-h-[95vh] h-[100%] bg-white text-black !font-poppins">
         <div className="py-2.5 border-b flex items-center justify-between px-6">
           {isLoginClicked === 1 ||
           (login && activeTab !== 1) ||
@@ -213,7 +213,7 @@ const Id = () => {
         </div>
 
         {isLoading ? (
-          <div className="flex justify-center items-center min-h-[80vh]">
+          <div className="flex justify-center items-center min-h-[80vh] h-full">
             <p>
               <Spinner />
             </p>
@@ -250,12 +250,12 @@ const Id = () => {
           <></>
         )}
         {!login && isLoginClicked === 0 ? (
-          <div className="flex flex-col items-center justify-center h-[88vh] px-5">
+          <div className="flex flex-col items-center justify-center min-h-[88vh] h-full px-5">
             {/* <p className="text-md text-center lg:hidden">
               Welcome to your personal sizing assistant. Scan your body and have
               fun shopping!
             </p> */}
-            <p className="text-3xl text-center flex flex-col gap-2 items-center justify-center">
+            <p className="text-md lg:text-3xl text-center flex flex-col gap-2 items-center justify-center">
               <span>Welcome to your personal sizing assistant.</span>
               <span>Scan your body and have fun shopping!</span>
             </p>

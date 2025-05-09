@@ -192,7 +192,7 @@ const UserData = ({
   };
 
   return (
-    <div className="flex flex-col items-center justify-center gap-4 mt-5 pb-5">
+    <div className="flex flex-col items-center justify-center gap-4 mt-5 pb-5 h-full">
       <div className="flex items-center justify-center w-full mx-10">
         <p className="font-bold">
           As per Fitcheck, your {productName} size is{" "}
@@ -258,7 +258,7 @@ const UserData = ({
         {/* Fitcheck Size Matrix */}
         <div className="w-full md:w-[60%] flex flex-col">
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between">
-            <p className="font-bold my-4">Fitcheck Size Matrix</p>
+            <p className="font-bold my-4 lg:mt-0">Fitcheck Size Matrix</p>
             <div className="flex items-center justify-end w-full md:w-auto gap-4">
               <Button
                 variant="contained"
