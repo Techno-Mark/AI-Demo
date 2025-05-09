@@ -789,7 +789,7 @@ const FitCheckYourSize = ({
           <Button
             variant="contained"
             onClick={() => handleOpen()}
-            className="mt-6 !bg-[#6B7CF6]"
+            className="mt-6 !bg-[#6B7CF6] hover:!bg-[#4e5ab6]"
           >
             Open Camera
           </Button>
@@ -925,7 +925,7 @@ const FitCheckYourSize = ({
                   loading ? undefined : handleClickSatisfied(true, true)
                 }
                 className={`my-4 ${
-                  loading ? "bg-gray-500" : "!bg-[#6B7CF6] hover:bg-[#6B7CF6] cursor-pointer"
+                  loading ? "bg-gray-500" : "!bg-[#6B7CF6]  hover:!bg-[#4e5ab6] cursor-pointer"
                 }`}
                 disabled={loading}
               >
