@@ -1097,14 +1097,14 @@ const FitCheckYourSize4 = ({
                       </Typography> */}
                       {capturedImage && isCounting && (
                         <Typography variant="h6" color="primary">
-                          <span className="text-lg lg:text-4xl">
+                          <span className="text-2xl lg:text-5xl">
                             ROTATE TO THE SIDE
                           </span>
                         </Typography>
                       )}
                       {isCounting && (
                         <Typography variant="h6" color="primary">
-                          <span className="text-lg lg:text-4xl">
+                          <span className="text-2xl lg:text-5xl">
                             Countdown: {countdown} seconds
                           </span>
                         </Typography>
@@ -1112,7 +1112,7 @@ const FitCheckYourSize4 = ({
                     </>
                   ) : (
                     <Typography variant="h6" color="error">
-                      <span className="text-lg lg:text-4xl">
+                      <span className="text-2xl lg:text-5xl">
                         No user detected. Please step into the frame.
                       </span>
                     </Typography>
@@ -1120,7 +1120,7 @@ const FitCheckYourSize4 = ({
 
                   {userDetected && errorMessage && (
                     <Typography variant="h6" color="error">
-                      <span className="text-lg lg:text-4xl">
+                      <span className="text-2xl lg:text-5xl">
                         {errorMessage}
                       </span>
                     </Typography>
@@ -1129,7 +1129,7 @@ const FitCheckYourSize4 = ({
               </div>
             ) : (
               <Typography variant="h6" color="error">
-                <span className="text-lg lg:text-4xl">No Camera Found</span>
+                <span className="text-2xl lg:text-5xl">No Camera Found</span>
               </Typography>
             )}
 
