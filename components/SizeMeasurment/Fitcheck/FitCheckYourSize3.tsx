@@ -1087,7 +1087,7 @@ const FitCheckYourSize4 = ({
                 />
 
                 {/* Overlay Messages */}
-                <div className="absolute top-4 z-10 text-start text-white px-4 py-2 rounded-md">
+                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10 w-full text-center text-white px-4 py-2 rounded-md">
                   {hasCamera && userDetected ? (
                     <>
                       {/* <Typography variant="h6">
@@ -1097,14 +1097,14 @@ const FitCheckYourSize4 = ({
                       </Typography> */}
                       {capturedImage && isCounting && (
                         <Typography variant="h6" color="primary">
-                          <span className="text-lg lg:text-2xl">
+                          <span className="text-lg lg:text-4xl">
                             ROTATE TO THE SIDE
                           </span>
                         </Typography>
                       )}
                       {isCounting && (
                         <Typography variant="h6" color="primary">
-                          <span className="text-lg lg:text-2xl">
+                          <span className="text-lg lg:text-4xl">
                             Countdown: {countdown} seconds
                           </span>
                         </Typography>
@@ -1112,7 +1112,7 @@ const FitCheckYourSize4 = ({
                     </>
                   ) : (
                     <Typography variant="h6" color="error">
-                      <span className="text-lg lg:text-2xl">
+                      <span className="text-lg lg:text-4xl">
                         No user detected. Please step into the frame.
                       </span>
                     </Typography>
@@ -1120,16 +1120,16 @@ const FitCheckYourSize4 = ({
 
                   {userDetected && errorMessage && (
                     <Typography variant="h6" color="error">
-                      <span className="text-lg lg:text-2xl">{errorMessage}</span>
+                      <span className="text-lg lg:text-4xl">
+                        {errorMessage}
+                      </span>
                     </Typography>
                   )}
                 </div>
               </div>
             ) : (
               <Typography variant="h6" color="error">
-                <span className="text-lg lg:text-2xl">
-                  No Camera Found
-                </span>
+                <span className="text-lg lg:text-4xl">No Camera Found</span>
               </Typography>
             )}
 

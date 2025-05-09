@@ -161,7 +161,7 @@ const FindSize = ({
         )}
         {activeTab === 2 && (
           <>
-            <p className="text-ml flex items-center justify-center text-center py-4">
+            <p className="text-ml flex items-center justify-center text-center py-4 max-w-[70%]">
               For the optimal scan, wear tight clothing, choose a clear
               background, and make sure the lighting is bright and even.
             </p>
