@@ -22,6 +22,7 @@ export default function Home() {
 
   const handleOpen = () => {
     startSpeaking();
+    speck("Please_step_back.mp3", new Date());
   };
 
   const speakText = (text: string, now: any) => {
