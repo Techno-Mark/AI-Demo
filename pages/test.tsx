@@ -2,50 +2,70 @@ import { useEffect, useRef, useState } from "react";
 
 export default function Home() {
   const [started, setStarted] = useState(false);
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const lastSpokenTimeRef = useRef<Date | null>(null);
 
-  const speakText = (text: string) => {
-    const synth = window.speechSynthesis;
-
-    const speak = () => {
-      const audio = new Audio(`/audio/Please_step_forward.mp3`);
-      audio.play().catch((error) => {
-        console.error("Audio play error:", error);
-      });
-    };
-
-    const voices = synth.getVoices();
-    if (voices.length > 0) {
-      speak();
-    } else {
-      // Wait for voices to load on iOS
-      synth.onvoiceschanged = () => {
-        speak();
-      };
-    }
+  const speck = (file: string, now: any) => {
+    const audio = new Audio(`/audio/${file}`);
+    audio.play().catch((error) => {
+      console.error("Audio play error:", error);
+    });
+    lastSpokenTimeRef.current = now;
   };
 
   const startSpeaking = () => {
     if (started) return;
     setStarted(true);
 
-    speakText("Hello");
+    speakText("", new Date());
+    speck("", new Date());
+  };
 
-    intervalRef.current = setInterval(() => {
-      speakText("Hello");
-    }, 5000);
+  const handleOpen = () => {
+    startSpeaking();
+  };
+
+  const speakText = (text: string, now: any) => {
+    const synth = window.speechSynthesis;
+
+    const speak = () => {
+      const utterance = new SpeechSynthesisUtterance(text);
+      synth.cancel();
+      synth.speak(utterance);
+      lastSpokenTimeRef.current = now;
+    };
+
+    const voices = synth.getVoices();
+    if (voices.length > 0) {
+      speak();
+    } else {
+      synth.onvoiceschanged = () => {
+        speak();
+      };
+    }
   };
 
   useEffect(() => {
-    return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
-    };
+    const now = new Date();
+
+    const timeDiffInSeconds = lastSpokenTimeRef.current
+      ? (now.getTime() - lastSpokenTimeRef.current.getTime()) / 1000
+      : Infinity;
+
+    let shouldSpeak = false;
+    let text = "";
+
+    text = "Please_step_back.mp3";
+    shouldSpeak = true;
+
+    if (shouldSpeak && timeDiffInSeconds > 5) {
+      speck(text, now);
+    }
   }, []);
 
   return (
     <main
       className="min-h-screen bg-black text-white flex items-center justify-center"
-      onClick={startSpeaking}
+      onClick={handleOpen}
     >
       <p className="text-lg cursor-pointer">
         Tap anywhere to start speaking every 5 seconds...
