@@ -3,27 +3,15 @@ import { useEffect, useRef, useState } from "react";
 export default function Home() {
   const [started, setStarted] = useState(false);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
-  const audioContextRef = useRef<AudioContext | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  // Unlock audio context (iOS requirement)
-  const unlockAudioContext = () => {
-    if (audioContextRef.current) return;
+  const playAudio = (src: string) => {
+    if (!audioRef.current) return;
 
-    const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
-    const audioContext = new AudioContextClass();
-    const buffer = audioContext.createBuffer(1, 1, 22050);
-    const source = audioContext.createBufferSource();
-    source.buffer = buffer;
-    source.connect(audioContext.destination);
-    source.start(0);
-
-    audioContextRef.current = audioContext;
-  };
-
-  const speck = (file: string) => {
-    const audio = new Audio(`/audio/${file}`);
-    audio.play().catch((error) => {
-      console.error("Audio play error:", error);
+    audioRef.current.src = `/audio/${src}`;
+    audioRef.current.load();
+    audioRef.current.play().catch((err) => {
+      console.error("Audio play error:", err);
     });
   };
 
@@ -31,26 +19,33 @@ export default function Home() {
     if (started) return;
     setStarted(true);
 
-    unlockAudioContext(); // 👈 VERY important on iOS
+    // First message
+    playAudio("Hello.mp3");
 
-    speck("Hello.mp3");
-
+    // Then speak every 5 seconds
     intervalRef.current = setInterval(() => {
-      speck("Please_step_back.mp3");
+      playAudio("Please_step_back.mp3");
     }, 5000);
   };
 
   useEffect(() => {
+    // Create <audio> tag once and append to DOM
+    const audio = document.createElement("audio");
+    audioRef.current = audio;
+    audio.setAttribute("playsinline", "true"); // Required for iOS
+    document.body.appendChild(audio);
+
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
+      if (audioRef.current) document.body.removeChild(audioRef.current);
     };
   }, []);
 
   return (
     <main
       className="min-h-screen bg-black text-white flex items-center justify-center"
-      onTouchStart={unlockAudioContext} // 👈 help with iOS interaction
       onClick={startSpeaking}
+      onTouchStart={startSpeaking} // ensure iOS picks it up
     >
       <p className="text-lg cursor-pointer">
         Tap anywhere to start speaking every 5 seconds...
