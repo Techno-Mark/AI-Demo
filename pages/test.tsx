@@ -3,41 +3,41 @@ import { useEffect, useRef, useState } from "react";
 export default function Home() {
   const [started, setStarted] = useState(false);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  const speakText = (text: string) => {
-    const synth = window.speechSynthesis;
+  const playAudio = (src: string) => {
+    if (!audioRef.current) return;
 
-    const speak = () => {
-      const utterance = new SpeechSynthesisUtterance(text);
-      synth.cancel();
-      synth.speak(utterance);
-    };
-
-    const voices = synth.getVoices();
-    if (voices.length > 0) {
-      speak();
-    } else {
-      // Wait for voices to load on iOS
-      synth.onvoiceschanged = () => {
-        speak();
-      };
-    }
+    audioRef.current.src = `/audio/${src}`;
+    audioRef.current.load();
+    audioRef.current.play().catch((err) => {
+      console.error("Audio play error:", err);
+    });
   };
 
   const startSpeaking = () => {
     if (started) return;
     setStarted(true);
 
-    speakText("Hello");
+    // First message
+    playAudio("Hello.mp3");
 
+    // Then speak every 5 seconds
     intervalRef.current = setInterval(() => {
-      speakText("Hello");
+      playAudio("Please_step_back.mp3");
     }, 5000);
   };
 
   useEffect(() => {
+    // Create <audio> tag once and append to DOM
+    const audio = document.createElement("audio");
+    audioRef.current = audio;
+    audio.setAttribute("playsinline", "true"); // Required for iOS
+    document.body.appendChild(audio);
+
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
+      if (audioRef.current) document.body.removeChild(audioRef.current);
     };
   }, []);
 
@@ -45,6 +45,7 @@ export default function Home() {
     <main
       className="min-h-screen bg-black text-white flex items-center justify-center"
       onClick={startSpeaking}
+      onTouchStart={startSpeaking} // ensure iOS picks it up
     >
       <p className="text-lg cursor-pointer">
         Tap anywhere to start speaking every 5 seconds...

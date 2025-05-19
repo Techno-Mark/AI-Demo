@@ -1,16 +1,4 @@
-import {
-  Button,
-  Dialog,
-  DialogTitle,
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Typography,
-} from "@mui/material";
+import { Button, Typography } from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
 import "@tensorflow/tfjs";
 import * as tf from "@tensorflow/tfjs";
@@ -19,8 +7,6 @@ import "@tensorflow/tfjs-backend-webgl";
 import { toast, ToastOptions } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
-import Correct from "tsconfig.json/assets/icons/Correct`";
-import MeasurementDialog from "./MeasurementDialog";
 
 const toastOptions: ToastOptions = {
   position: "top-right",
@@ -56,27 +42,59 @@ interface Measurements {
   kneeSize: number;
   calfSize: number;
 }
+const measurementsList = [
+  "chestSize",
+  "waistSize",
+  "shoulderSize",
+  "armLength",
+  "forearmSize",
+  "upperarmSize",
+  "bicepSize",
+  "neckSize",
+  "thighSize",
+  "hipSize",
+  "legSize",
+  "kneeSize",
+  "calfSize",
+  "upperbodySize",
+  "lowerbodySize",
+] as const;
+type MeasurementKey = (typeof measurementsList)[number];
+
+const calculateDistance = (point1: Keypoint, point2: Keypoint) => {
+  if (!point1 || !point2) return 0;
+  const dx = point2.x - point1.x;
+  const dy = point2.y - point1.y;
+  return Math.sqrt(dx * dx + dy * dy);
+};
+
+const estimateDistance = (shoulderLeft: Keypoint, shoulderRight: Keypoint) => {
+  const shoulderWidth = calculateDistance(shoulderLeft, shoulderRight);
+  const scalingFactor = 0.15;
+  const estimatedDistance = 200 / shoulderWidth;
+  return estimatedDistance * scalingFactor;
+};
 
 const FitCheckYourSize4 = ({
-  height,
+  login,
+  setLogin,
   camera,
   setCamera,
+  videoRef,
+  height,
   weight,
   sex,
   onClose,
-  productName,
   measurementMatrix,
   productPart,
-  login,
-  setLogin,
   setIsRegister,
   setIsLoginClicked,
   getUserData,
-  videoRef,
   setActiveTab,
 }: any) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const lastSpokenTimeRef = useRef<Date | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
   const [hasCamera, setHasCamera] = useState<boolean>(true);
   const [distance, setDistance] = useState<number | null>(null);
   const [poseDetector, setPoseDetector] =
@@ -87,33 +105,16 @@ const FitCheckYourSize4 = ({
   const [countdown, setCountdown] = useState<number>(5);
   const [isCounting, setIsCounting] = useState<boolean>(false);
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
+  const [sideCapturedImage, setSideCapturedImage] = useState<string | null>(
+    null
+  );
+  const [isSideCapture, setIsSideCapture] = useState<boolean>(false);
   const [measurements, setMeasurements] = useState<any[]>([]);
   const [averageMeasurements, setAverageMeasurements] = useState<
     Measurements | any
   >({});
   const [avgGot, setAvgGot] = useState(false);
-  const [openMeasurementData, setOpenMeasurementData] =
-    useState<boolean>(false);
   const [id, setId] = useState<number>(0);
-  const [loading, setLoading] = useState(false);
-  const measurementsList = [
-    "chestSize",
-    "waistSize",
-    "shoulderSize",
-    "armLength",
-    "forearmSize",
-    "upperarmSize",
-    "bicepSize",
-    "neckSize",
-    "thighSize",
-    "hipSize",
-    "legSize",
-    "kneeSize",
-    "calfSize",
-    "upperbodySize",
-    "lowerbodySize",
-  ] as const;
-  type MeasurementKey = (typeof measurementsList)[number];
   const [measurementDialog, setMeasurementDialog] = useState<
     Record<MeasurementKey, number>
   >({
@@ -133,27 +134,6 @@ const FitCheckYourSize4 = ({
     upperbodySize: 0,
     lowerbodySize: 0,
   });
-  const [errors, setErrors] = useState<Record<MeasurementKey, boolean>>({
-    chestSize: false,
-    waistSize: false,
-    shoulderSize: false,
-    armLength: false,
-    forearmSize: false,
-    upperarmSize: false,
-    bicepSize: false,
-    neckSize: false,
-    thighSize: false,
-    hipSize: false,
-    legSize: false,
-    kneeSize: false,
-    calfSize: false,
-    upperbodySize: false,
-    lowerbodySize: false,
-  });
-  const [sideCapturedImage, setSideCapturedImage] = useState<string | null>(
-    null
-  );
-  const [isSideCapture, setIsSideCapture] = useState<boolean>(false);
   const [device, setDevice] = useState("desktop");
   const [started, setStarted] = useState(false);
 
@@ -174,7 +154,6 @@ const FitCheckYourSize4 = ({
     setId(0);
     setCapturedImage(null);
     setSideCapturedImage(null);
-    setLoading(false);
     setMeasurementDialog({
       chestSize: 0,
       waistSize: 0,
@@ -191,23 +170,6 @@ const FitCheckYourSize4 = ({
       calfSize: 0,
       upperbodySize: 0,
       lowerbodySize: 0,
-    });
-    setErrors({
-      chestSize: false,
-      waistSize: false,
-      shoulderSize: false,
-      armLength: false,
-      forearmSize: false,
-      upperarmSize: false,
-      bicepSize: false,
-      neckSize: false,
-      thighSize: false,
-      hipSize: false,
-      legSize: false,
-      kneeSize: false,
-      calfSize: false,
-      upperbodySize: false,
-      lowerbodySize: false,
     });
     try {
       const userMediaStream = await navigator.mediaDevices.getUserMedia({
@@ -268,23 +230,6 @@ const FitCheckYourSize4 = ({
     const sideImageData = canvas.toDataURL("image/png");
     setSideCapturedImage(sideImageData);
     setIsSideCapture(false);
-  };
-
-  const calculateDistance = (point1: Keypoint, point2: Keypoint) => {
-    if (!point1 || !point2) return 0;
-    const dx = point2.x - point1.x;
-    const dy = point2.y - point1.y;
-    return Math.sqrt(dx * dx + dy * dy);
-  };
-
-  const estimateDistance = (
-    shoulderLeft: Keypoint,
-    shoulderRight: Keypoint
-  ) => {
-    const shoulderWidth = calculateDistance(shoulderLeft, shoulderRight);
-    const scalingFactor = 0.15;
-    const estimatedDistance = 200 / shoulderWidth;
-    return estimatedDistance * scalingFactor;
   };
 
   const detectPose = async () => {
@@ -444,35 +389,17 @@ const FitCheckYourSize4 = ({
         const rightChest: any = poses[0].keypoints.find(
           (keypoint) => keypoint.name === "right_shoulder"
         );
-        const leftHip: any = poses[0].keypoints.find(
-          (keypoint) => keypoint.name === "left_hip"
-        );
-        const rightHip: any = poses[0].keypoints.find(
-          (keypoint) => keypoint.name === "right_hip"
-        );
         const leftElbow: any = poses[0].keypoints.find(
           (keypoint) => keypoint.name === "left_elbow"
-        );
-        const rightElbow: any = poses[0].keypoints.find(
-          (keypoint) => keypoint.name === "right_elbow"
         );
         const leftWrist: any = poses[0].keypoints.find(
           (keypoint) => keypoint.name === "left_wrist"
         );
-        const rightWrist: any = poses[0].keypoints.find(
-          (keypoint) => keypoint.name === "right_wrist"
-        );
         const leftKnee: any = poses[0].keypoints.find(
           (keypoint) => keypoint.name === "left_knee"
         );
-        const rightKnee: any = poses[0].keypoints.find(
-          (keypoint) => keypoint.name === "right_knee"
-        );
         const leftAnkle: any = poses[0].keypoints.find(
           (keypoint) => keypoint.name === "left_ankle"
-        );
-        const rightAnkle: any = poses[0].keypoints.find(
-          (keypoint) => keypoint.name === "right_ankle"
         );
         const leftWaist: any = poses[0].keypoints.find(
           (keypoint) => keypoint.name === "left_waist"
@@ -514,17 +441,8 @@ const FitCheckYourSize4 = ({
               bicepSize:
                 (calculateDistance(leftShoulder, leftElbow) * 1.6) /
                 distanceToEyes,
-              // thighSize:
-              //   (calculateDistance(leftWaist, leftKnee) * 4) / distanceToEyes,
               thighSize:
                 (calculateDistance(leftWaist, leftKnee) * 2.6) / distanceToEyes,
-              // upperBodySize:
-              //   (calculateDistance(leftEye, leftWaist) * 2.4) / distanceToEyes,
-              // lowerBodySize:
-              //   ((calculateDistance(leftWaist, leftKnee) +
-              //     calculateDistance(leftKnee, leftAnkle)) *
-              //     4) /
-              //   distanceToEyes,
               upperBodySize: ((height / 2.54) * 45) / 100,
               lowerBodySize: ((height / 2.54) * 55) / 100,
               neckSize:
@@ -533,11 +451,6 @@ const FitCheckYourSize4 = ({
                 ((calculateDistance(leftWaist, rightWaist) * 3.5) /
                   distanceToEyes) *
                 2,
-              // legSize:
-              //   ((calculateDistance(leftWaist, leftKnee) +
-              //     calculateDistance(leftKnee, leftAnkle)) *
-              //     4) /
-              //   distanceToEyes,
               legSize: ((height / 2.54) * 55) / 100,
               kneeSize:
                 ((calculateDistance(leftWaist, leftKnee) +
@@ -570,19 +483,6 @@ const FitCheckYourSize4 = ({
                   ? "STEP FORWARD"
                   : ""
               }`
-              // `Distance is ${(distanceToCamera < 0.31
-              //   ? distanceToCamera - 0.31
-              //   : distanceToCamera > 0.35
-              //   ? distanceToCamera - 0.35
-              //   : 0
-              // ).toFixed(2)}
-              //  ${
-              //    distanceToCamera < 0.31
-              //      ? "STEP BACK"
-              //      : distanceToCamera > 0.35
-              //      ? "STEP FORWARD"
-              //      : ""
-              //  }`
             );
           }
         }
@@ -607,6 +507,7 @@ const FitCheckYourSize4 = ({
     setStarted(true);
 
     speakText("", new Date());
+    speck("", new Date());
   };
 
   const handleOpen = () => {
@@ -614,44 +515,6 @@ const FitCheckYourSize4 = ({
     startSpeaking();
     startCamera();
   };
-
-  const handleClose = () => {
-    setCamera(false);
-    if (videoRef.current) {
-      const tracks: any = stream?.getTracks();
-      tracks?.forEach((track: any) => track.stop());
-    }
-    setHasCamera(true);
-    setUserDetected(false);
-    setErrorMessage("");
-    setCountdown(5);
-    setIsCounting(false);
-  };
-
-  const estimateTShirtSize = (chestInCM: number) => {
-    const sizeChart = !!measurementMatrix
-      ? measurementMatrix
-      : [
-          { min: 0, max: 87.99, size: "Check kids section" },
-          { min: 88, max: 91.99, size: "Small (S)" },
-          { min: 92, max: 95.99, size: "Medium (M)" },
-          { min: 96, max: 99.99, size: "Large (L)" },
-          { min: 100, max: 103.99, size: "XL" },
-          { min: 104, max: 107.99, size: "XXL" },
-          { min: 108, max: null, size: "Too large size not available" },
-        ];
-
-    const size = sizeChart.find(
-      ({ min, max }: { min: number; max: number }) =>
-        chestInCM >= min && (max === null || chestInCM < max)
-    );
-
-    return size ? size.size : "Size not found";
-  };
-
-  useEffect(() => {
-    errorMessage.length > 0 && setMeasurements([]);
-  }, [errorMessage]);
 
   const calculateAverageMeasurements = () => {
     const average: any = {};
@@ -675,7 +538,7 @@ const FitCheckYourSize4 = ({
   };
 
   useEffect(() => {
-    avgGot && handleClickSatisfied(true, true);
+    avgGot && handleClickSatisfied();
   }, [avgGot]);
 
   useEffect(() => {
@@ -708,17 +571,15 @@ const FitCheckYourSize4 = ({
     return () => clearInterval(countdownTimer);
   }, [isCounting, countdown, isSideCapture, capturedImage]);
 
-  const updateSatisfiedStatus = async (isSatisfied: boolean) => {
+  const updateSatisfiedStatus = async () => {
     const token = localStorage.getItem("token");
     const params = {
       ...averageMeasurements,
       height: height,
       weight: weight,
       sex: sex,
-      // yearOfBirth: dob,
-      // bodyType: body,
       version: "fitcheck",
-      isSatisfied: isSatisfied,
+      isSatisfied: true,
       chestMeasure:
         measurementDialog.chestSize === 0 ? null : measurementDialog.chestSize,
       waistMeasure:
@@ -784,40 +645,18 @@ const FitCheckYourSize4 = ({
     }
   };
 
-  const handleClickSatisfied = async (
-    isSatisfied: boolean,
-    success: boolean
-  ) => {
+  const handleClickSatisfied = async () => {
     try {
-      setLoading(true);
-      const response = await updateSatisfiedStatus(isSatisfied);
+      const response = await updateSatisfiedStatus();
       if (response.status.toLowerCase() == "success") {
-        // setId(response.data.id);
-        // success &&
-        //   toast.success(
-        //     "Thank you for sharing your measurement!",
-        //     toastOptions
-        //   );
-        setLoading(false);
-        // success && setId(0);
-        success && handleClose();
-        // success && setOpenMeasurementData(false);
-        // success && setMeasurements([]);
-        // success && setAverageMeasurements({});
-        // success && setIsCounting(false);
-        // success && setCapturedImage(null);
-        // success && handleCloseMeasurementData();
-        success && onClose();
-        // success && login && getUserData();
+        handleClose();
+        onClose();
       } else {
-        setLoading(false);
         toast.error(response.data.message, toastOptions);
       }
     } catch (error) {
-      setLoading(false);
       if (axios.isAxiosError(error) && error.response) {
         if (error.response.status === 401) {
-          // toast.error("Unauthorized! Please log in again.", toastOptions);
           localStorage.removeItem("token");
           setLogin(null);
         } else {
@@ -835,111 +674,69 @@ const FitCheckYourSize4 = ({
     }
   };
 
-  const handleCloseMeasurementData = () => {
-    setOpenMeasurementData(false);
-    setCapturedImage(null);
-    setMeasurementDialog({
-      chestSize: 0,
-      waistSize: 0,
-      shoulderSize: 0,
-      armLength: 0,
-      forearmSize: 0,
-      upperarmSize: 0,
-      bicepSize: 0,
-      neckSize: 0,
-      thighSize: 0,
-      hipSize: 0,
-      legSize: 0,
-      kneeSize: 0,
-      calfSize: 0,
-      upperbodySize: 0,
-      lowerbodySize: 0,
-    });
-    setErrors({
-      chestSize: false,
-      waistSize: false,
-      shoulderSize: false,
-      armLength: false,
-      forearmSize: false,
-      upperarmSize: false,
-      bicepSize: false,
-      neckSize: false,
-      thighSize: false,
-      hipSize: false,
-      legSize: false,
-      kneeSize: false,
-      calfSize: false,
-      upperbodySize: false,
-      lowerbodySize: false,
-    });
+  const handleClose = () => {
+    setCamera(false);
+    if (videoRef.current) {
+      const tracks: any = stream?.getTracks();
+      tracks?.forEach((track: any) => track.stop());
+    }
+    setHasCamera(true);
+    setUserDetected(false);
+    setErrorMessage("");
+    setCountdown(5);
+    setIsCounting(false);
   };
 
-  const measurementLabels: { [key: string]: string } = {
-    chestSize: "Chest",
-    waistSize: "Waist",
-    shoulderSize: "Shoulder",
-    armLength: "Arm Length",
-    bicepSize: "Bicep",
-    forearmSize: "Forearm",
-    upperArmSize: "Upper Arm",
-    neckSize: "Neck",
-    hipSize: "Hip",
-    legSize: "Leg",
-    thighSize: "Thigh",
-    upperBodySize: "Upper Body",
-    lowerBodySize: "Lower Body",
-    kneeSize: "Knee",
-    calfSize: "Calf",
+  const estimateTShirtSize = (chestInCM: number) => {
+    const sizeChart = !!measurementMatrix
+      ? measurementMatrix
+      : [
+          { min: 0, max: 87.99, size: "Check kids section" },
+          { min: 88, max: 91.99, size: "Small (S)" },
+          { min: 92, max: 95.99, size: "Medium (M)" },
+          { min: 96, max: 99.99, size: "Large (L)" },
+          { min: 100, max: 103.99, size: "XL" },
+          { min: 104, max: 107.99, size: "XXL" },
+          { min: 108, max: null, size: "Too large size not available" },
+        ];
+
+    const size = sizeChart.find(
+      ({ min, max }: { min: number; max: number }) =>
+        chestInCM >= min && (max === null || chestInCM < max)
+    );
+
+    return size ? size.size : "Size not found";
   };
 
-  const measurementEntries = Object.entries(averageMeasurements).filter(
-    ([_, value]) => value !== 0
-  );
+  useEffect(() => {
+    errorMessage.length > 0 && setMeasurements([]);
+  }, [errorMessage]);
 
-  const sortedEntries = measurementEntries.sort(
-    ([keyA], [keyB]) =>
-      Object.keys(measurementLabels).indexOf(keyA) -
-      Object.keys(measurementLabels).indexOf(keyB)
-  );
-
-  const midIndex = Math.ceil(sortedEntries.length / 2);
-  const firstHalf = sortedEntries.slice(0, midIndex);
-  const secondHalf = sortedEntries.slice(midIndex);
-
-  const speck = (file: string, now: any) => {
-    const audio = new Audio(`/audio/${file}`);
-    audio.play().catch((error) => {
+  const playAudio = (src: string) => {
+    if (!audioRef.current) return;
+    audioRef.current.src = `/audio/${src}`;
+    audioRef.current.load();
+    audioRef.current.play().catch((error) => {
       console.error("Audio play error:", error);
     });
+  };
+
+  const speck = (file: string, now: Date) => {
+    playAudio(file);
     lastSpokenTimeRef.current = now;
   };
 
   useEffect(() => {
-    // const text = "Turn to the side";
-    // const value = new SpeechSynthesisUtterance(text);
-    // capturedImage && isCounting && window.speechSynthesis.speak(value);
-    const audio = new Audio(`/audio/Please_turn_to_the_side.mp3`);
     capturedImage &&
       isCounting &&
-      audio.play().catch((error) => {
-        console.error("Audio play error:", error);
-      });
+      playAudio(`/audio/Please_turn_to_the_side.mp3`);
   }, [capturedImage, isCounting]);
 
   useEffect(() => {
-    // const text = "Scan Completed";
-    // const value = new SpeechSynthesisUtterance(text);
-    // capturedImage &&
-    //   !isCounting &&
-    //   sideCapturedImage &&
-    //   window.speechSynthesis.speak(value);
-    const audio = new Audio(`/audio/Your_scan_is_completed.mp3`);
     capturedImage &&
       !isCounting &&
       sideCapturedImage &&
-      audio.play().catch((error) => {
-        console.error("Audio play error:", error);
-      });
+      playAudio(`/audio/Your_scan_is_completed.mp3`);
   }, [capturedImage, isCounting, sideCapturedImage]);
 
   const speakText = (text: string, now: any) => {
@@ -956,7 +753,6 @@ const FitCheckYourSize4 = ({
     if (voices.length > 0) {
       speak();
     } else {
-      // Wait for voices to load on iOS
       synth.onvoiceschanged = () => {
         speak();
       };
@@ -978,7 +774,6 @@ const FitCheckYourSize4 = ({
       !!distance &&
       distance - 0.31 < -0.01
     ) {
-      // text = "STEP BACK"
       text = "Please_step_back.mp3";
       shouldSpeak = true;
     } else if (
@@ -986,48 +781,32 @@ const FitCheckYourSize4 = ({
       !!distance &&
       distance - 0.35 > 0.01
     ) {
-      // text = "STEP FORWARD";
       text = "Please_step_forward.mp3";
       shouldSpeak = true;
     }
 
     if (shouldSpeak && timeDiffInSeconds > 5) {
-      // const value = new SpeechSynthesisUtterance(text);
-      // window.speechSynthesis.cancel();
-      // window.speechSynthesis.speak(value);
-      // lastSpokenTimeRef.current = now;
-      // speakText(text, now);
       speck(text, now);
     }
   }, [errorMessage, distance]);
 
+  useEffect(() => {
+    const audio = document.createElement("audio");
+    audioRef.current = audio;
+    audio.setAttribute("playsinline", "true"); // for iOS
+    document.body.appendChild(audio);
+
+    return () => {
+      if (audioRef.current) {
+        document.body.removeChild(audioRef.current);
+      }
+    };
+  }, []);
+
   return (
-    <>
+    <div className="flex flex-col items-center justify-between w-full h-full min-h-[60vh]">
       {!camera && !capturedImage && (
-        <div className="flex flex-col items-center justify-center gap-5 overflow-y-auto my-5">
-          {/* <div className="flex flex-col items-start justify-center gap-1 md:gap-2">
-            <div>
-              <p className="text-[#28A745] text-md lg:text-xl">
-                Correct Technique
-              </p>
-              <span className="text-xs md:text-md lg:text-lg">
-                (for best results)
-              </span>
-            </div>
-            {[
-              "Wear fitted clothes",
-              "Stretch your arms outward",
-              "Use good lighting",
-            ].map((i, index) => (
-              <p
-                className="flex items-center justify-center py-1 text-xs md:text-md lg:text-lg"
-                key={index}
-              >
-                <Correct />
-                &nbsp;{i}
-              </p>
-            ))}
-          </div> */}
+        <div className="flex flex-col items-center justify-center py-10 md:py-0 gap-8 overflow-y-auto my-16">
           <div className="flex items-center justify-center py-4 px-4 mx-4 rounded-lg border border-gray gap-5">
             <p>Turn up your volume to be guided during the scan</p>
             <svg
@@ -1067,7 +846,8 @@ const FitCheckYourSize4 = ({
           <Button
             variant="contained"
             onClick={() => handleOpen()}
-            className="mt-4 !bg-[#6B7CF6] hover:!bg-[#4e5ab6] !mb-10"
+            onTouchStart={handleOpen}
+            className="!bg-[#6B7CF6] hover:!bg-[#4e5ab6] !mb-10 mt-8"
           >
             Open Camera
           </Button>
@@ -1082,7 +862,6 @@ const FitCheckYourSize4 = ({
                   device !== "desktop" ? "top-[7%]" : "top-[50.70px]"
                 } left-0 w-screen h-screen overflow-hidden`}
               >
-                {/* Video Stream */}
                 <video
                   ref={videoRef}
                   className={`w-full ${
@@ -1101,27 +880,18 @@ const FitCheckYourSize4 = ({
                   autoPlay
                   muted
                 />
-
-                {/* Hidden Canvas */}
                 <canvas
                   ref={canvasRef}
                   width="0px"
                   height="0px"
                   className="hidden"
                 />
-
-                {/* Overlay Messages */}
-                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10 w-full text-center text-white px-4 py-2 rounded-md">
+                <div className="absolute top-8 z-10 w-full text-center px-4 py-2 rounded-md">
                   {hasCamera && userDetected ? (
                     <>
-                      {/* <Typography variant="h6">
-                        <span className="text-lg lg:text-xl font-bold">
-                          User Detected
-                        </span>
-                      </Typography> */}
                       {capturedImage && isCounting && (
                         <Typography variant="h6" color="primary">
-                          <span className="text-2xl md:text-6xl lg:text-7xl font-bold">
+                          <span className="text-2xl md:text-6xl lg:text-7xl font-bold text-white">
                             ROTATE TO THE SIDE
                           </span>
                         </Typography>
@@ -1136,7 +906,7 @@ const FitCheckYourSize4 = ({
                     </>
                   ) : (
                     <Typography variant="h6" color="error">
-                      <span className="text-2xl md:text-6xl lg:text-7xl font-bold">
+                      <span className="text-2xl md:text-6xl lg:text-7xl font-bold text-white">
                         No user detected. Please step into the frame.
                       </span>
                     </Typography>
@@ -1144,7 +914,7 @@ const FitCheckYourSize4 = ({
 
                   {userDetected && errorMessage && (
                     <Typography variant="h6" color="error">
-                      <span className="text-2xl md:text-6xl lg:text-7xl font-bold">
+                      <span className="text-2xl md:text-6xl lg:text-7xl font-bold text-white">
                         {errorMessage}
                       </span>
                     </Typography>
@@ -1158,173 +928,29 @@ const FitCheckYourSize4 = ({
                 </span>
               </Typography>
             )}
-
-            {/* <div className="w-[50%] flex items-center justify-end">
-              <img src="/pose.png" alt="pose" />
-            </div> */}
           </div>
         </div>
       )}
-      {/* {capturedImage && sideCapturedImage && !isCounting && (
-        <div className="flex flex-col lg:flex-row items-center justify-center gap-4">
-          <img
-            src={capturedImage}
-            alt="Captured"
-            style={{ width: "200px", maxHeight: "200px" }}
-            className="mb-4"
-          />
-          <img
-            src={sideCapturedImage}
-            alt="Side Image"
-            style={{ width: "200px", maxHeight: "200px" }}
-          />
-        </div>
-      )} */}
 
       {capturedImage &&
         sideCapturedImage &&
         !isCounting &&
         measurements.length > 0 && (
           <div className="flex flex-col items-center justify-center gap-4">
-            <p className="px-10 pt-6">
-              {/* As per Fitcheck Your {productName} size is&nbsp;
-              {estimateTShirtSize(
-                Number(
-                  (productPart === "top"
-                    ? averageMeasurements.chestSize * 2.54
-                    : averageMeasurements.waistSize * 2.54
-                  ).toFixed(2)
-                )
-              )} */}
+            <p className="px-8 pt-6 text-lg lg:text-3xl">
               We recommend you get size{" "}
-              {estimateTShirtSize(
-                Number(
-                  (productPart === "top"
-                    ? averageMeasurements.chestSize * 2.54
-                    : averageMeasurements.waistSize * 2.54
-                  ).toFixed(2)
-                )
-              )}
+              <span className="text-[#6B7CF6]">
+                {estimateTShirtSize(
+                  Number(
+                    (productPart === "top"
+                      ? averageMeasurements.chestSize * 2.54
+                      : averageMeasurements.waistSize * 2.54
+                    ).toFixed(2)
+                  )
+                )}
+              </span>
               .
             </p>
-            {/* <p className="border rounded-lg w-[70%] py-4 flex flex-col items-center justify-center gap-5">
-              <b>Are you satisfied with this data?</b>
-              <div className="flex gap-5">
-                <Button
-                  variant="contained"
-                  onClick={() =>
-                    loading ? undefined : handleClickSatisfied(true, true)
-                  }
-                  className={`my-4 ${
-                    loading ? "bg-gray-500" : "!bg-[#6B7CF6] hover:!bg-[#4e5ab6] cursor-pointer"
-                  }`}
-                  disabled={loading}
-                >
-                  Yes
-                </Button>
-                <Button
-                  variant="outlined"
-                  color="error"
-                  onClick={() => {
-                    setOpenMeasurementData(true);
-                    handleClickSatisfied(false, false);
-                  }}
-                  className="my-4"
-                  disabled={loading}
-                >
-                  No
-                </Button>
-              </div>
-            </p> */}
-            {/* <div className="w-full">
-              <div className="block md:hidden">
-                <TableContainer component={Paper}>
-                  <Table>
-                    <TableHead>
-                      <TableRow>
-                        <TableCell>
-                          <b>Measurement</b>
-                        </TableCell>
-                        <TableCell align="center">
-                          <b>Size (inches)</b>
-                        </TableCell>
-                        <TableCell align="center">
-                          <b>Size (cm)</b>
-                        </TableCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {measurementEntries.map(([key, value]: any) => (
-                        <TableRow key={key}>
-                          <TableCell>{measurementLabels[key] || key}</TableCell>
-                          <TableCell align="center">{value}</TableCell>
-                          <TableCell align="center">
-                            {(value * 2.54).toFixed(2)} cm
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </TableContainer>
-              </div>
-
-              <div className="hidden md:grid md:grid-cols-2 gap-4 mt-4">
-                {[firstHalf, secondHalf].map((data, index) =>
-                  data.length > 0 ? (
-                    <TableContainer key={index} component={Paper}>
-                      <Table>
-                        <TableHead>
-                          <TableRow>
-                            <TableCell>
-                              <b>Measurement</b>
-                            </TableCell>
-                            <TableCell align="center">
-                              <b>Size (inches)</b>
-                            </TableCell>
-                            <TableCell align="center">
-                              <b>Size (cm)</b>
-                            </TableCell>
-                          </TableRow>
-                        </TableHead>
-                        <TableBody>
-                          {data.map(([key, value]) => (
-                            <TableRow key={key}>
-                              <TableCell>
-                                {measurementLabels[key] || key}
-                              </TableCell>
-                              <TableCell align="center">
-                                {value as number}
-                              </TableCell>
-                              <TableCell align="center">
-                                {((value as number) * 2.54).toFixed(2)} cm
-                              </TableCell>
-                            </TableRow>
-                          ))}
-                        </TableBody>
-                      </Table>
-                    </TableContainer>
-                  ) : null
-                )}
-              </div>
-            </div> */}
-            {/* <Button
-              variant="contained"
-              onClick={() => {
-                parent.postMessage({ type: "addItemToCart" }, "*");
-              }}
-              className="mt-6 !bg-[#6B7CF6] hover:!bg-[#4e5ab6]"
-            >
-              Add{" "}
-              {estimateTShirtSize(
-                Number(
-                  (productPart === "top"
-                    ? averageMeasurements.chestSize * 2.54
-                    : averageMeasurements.waistSize * 2.54
-                  ).toFixed(2)
-                )
-              )}{" "}
-              Size to Cart
-            </Button> */}
             <Button
               variant="contained"
               onClick={() => {
@@ -1358,30 +984,12 @@ const FitCheckYourSize4 = ({
                 >
                   Create an account
                 </Button>
-                <p>To always have your size.</p>
-                {/* <p>To use your measurements anytime you shop online</p> */}
+                <p className="text-lg lg:text-xl">To always have your size.</p>
               </>
             )}
           </div>
         )}
-
-      <Dialog
-        open={openMeasurementData}
-        onClose={() => handleCloseMeasurementData()}
-        maxWidth="sm"
-        fullWidth
-      >
-        <DialogTitle>Provide your sizes(In CM)</DialogTitle>
-        <MeasurementDialog
-          handleClickSatisfied={handleClickSatisfied}
-          handleCloseMeasurementData={handleCloseMeasurementData}
-          measurementDialog={measurementDialog}
-          setMeasurementDialog={setMeasurementDialog}
-          errors={errors}
-          setErrors={setErrors}
-        />
-      </Dialog>
-    </>
+    </div>
   );
 };
 

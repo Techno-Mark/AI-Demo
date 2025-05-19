@@ -3,7 +3,22 @@ import React, { useState } from "react";
 import Female from "tsconfig.json/assets/icons/Female`";
 import Male from "tsconfig.json/assets/icons/Male`";
 
-const FitCheckYou = ({
+interface FitCheckYouProps {
+  sex: number;
+  setSex: (value: number) => void;
+  height: number;
+  heightErr: boolean;
+  setHeight: (value: number) => void;
+  setHeightErr: (value: boolean) => void;
+  isHeightInInch: boolean;
+  setIsHeightInInch: (value: boolean) => void;
+  weight: number;
+  weightErr: boolean;
+  setWeight: (value: number) => void;
+  setWeightErr: (value: boolean) => void;
+}
+
+const FitCheckYou: React.FC<FitCheckYouProps> = ({
   sex,
   setSex,
   height,
@@ -16,42 +31,64 @@ const FitCheckYou = ({
   weightErr,
   setWeight,
   setWeightErr,
-}: any) => {
+}) => {
   const [isWeightInLb, setIsWeightInLb] = useState(false);
-
-  const [heightInput, setHeightInput] = useState("");
-  const [weightInput, setWeightInput] = useState("");
+  const [heightInput, setHeightInput] = useState(height.toString());
+  const [weightInput, setWeightInput] = useState(weight.toString());
 
   const inchesToCm = (inch: number) => inch * 2.54;
-
   const lbToKg = (lb: number) => lb / 2.20462;
 
-  // Keep inputs in sync when unit switch is toggled
   const handleHeightSwitch = () => {
-    if (height) {
-      setHeightInput("");
-      setHeight(0);
-    }
+    setHeightInput("");
+    setHeight(0);
     setIsHeightInInch(!isHeightInInch);
   };
 
   const handleWeightSwitch = () => {
-    if (weight) {
-      setWeightInput("");
-      setWeight(0);
-    }
+    setWeightInput("");
+    setWeight(0);
     setIsWeightInLb(!isWeightInLb);
   };
 
+  const handleInputChange = (
+    value: string,
+    isInInchOrLb: boolean,
+    setInput: React.Dispatch<React.SetStateAction<string>>,
+    setValue: (value: number) => void,
+    setError: (value: boolean) => void,
+    conversionFn?: (value: number) => number
+  ) => {
+    const filteredValue = value.replace(/[^0-9.]/g, "");
+    const parts = filteredValue.split(".");
+    if (parts.length > 2) return;
+
+    const regex = isInInchOrLb
+      ? /^\d{0,2}(\.\d{0,2})?$/
+      : /^\d{0,3}(\.\d{0,2})?$/;
+    if (regex.test(filteredValue)) {
+      setInput(filteredValue);
+    }
+
+    if (filteredValue === "") return;
+
+    if (regex.test(filteredValue)) {
+      const num = Number(filteredValue);
+      const convertedValue = conversionFn ? conversionFn(num) : num;
+      setValue(parseFloat(convertedValue.toFixed(2)));
+      setError(false);
+    }
+  };
+
   return (
-    <>
-      <p className="md:text-lg lg:text-xl px-3 py-4 pb-8 md:px-0 flex items-center justify-center md:max-w-[70%] lg:max-w-[50%] text-center h-full">
+    <div className="flex flex-col items-center justify-between md:max-w-[70%] lg:max-w-[50%] min-h-[60vh] md:min-h-[30vh] py-[4%] md:py-0">
+      <p className="md:text-lg lg:text-xl py-4 pb-8 md:px-0 flex items-center justify-center text-center">
         To help us find your size, tell us if you’re shopping for male or female
         clothing.
       </p>
 
       <div className="flex items-center justify-center gap-10">
-        {["Male", "Female"].map((i, index) => (
+        {["Male", "Female"].map((label, index) => (
           <div
             key={index}
             className={`flex flex-col items-center justify-center gap-2 md:gap-5 md:text-2xl px-4 py-2 bg-white rounded-xl shadow-lg ${
@@ -59,13 +96,13 @@ const FitCheckYou = ({
             }`}
             onClick={() => setSex(index)}
           >
-            {i === "Male" ? <Male /> : <Female />}
-            <p>{i}</p>
+            {label === "Male" ? <Male /> : <Female />}
+            <p>{label}</p>
           </div>
         ))}
       </div>
 
-      <div className="flex flex-col lg:flex-row items-center justify-center lg:gap-8 py-4">
+      <div className="flex flex-col lg:flex-row items-center justify-center gap-[8%] md:gap-[10%] lg:gap-8 py-4">
         {/* Height Input */}
         <div className="flex items-end justify-center gap-2">
           <TextField
@@ -77,27 +114,16 @@ const FitCheckYou = ({
                 passive: false,
               })
             }
-            onChange={(e) => {
-              const value = e.target.value;
-              const filteredValue = value.replace(/[^0-9.]/g, "");
-              const parts = filteredValue.split(".");
-              if (parts.length > 2) return;
-
-              const regex = isHeightInInch
-                ? /^\d{0,2}(\.\d{0,2})?$/
-                : /^\d{0,3}(\.\d{0,2})?$/;
-              if (regex.test(filteredValue)) {
-                setHeightInput(filteredValue);
-              }
-
-              if (filteredValue === "") return;
-              if (regex.test(filteredValue)) {
-                const num = Number(filteredValue);
-                const cmVal = isHeightInInch ? inchesToCm(num) : num;
-                setHeight(parseFloat(cmVal.toFixed(2)));
-                setHeightErr(false);
-              }
-            }}
+            onChange={(e) =>
+              handleInputChange(
+                e.target.value,
+                isHeightInInch,
+                setHeightInput,
+                setHeight,
+                setHeightErr,
+                isHeightInInch ? inchesToCm : undefined
+              )
+            }
             margin="normal"
             variant="standard"
             sx={{ width: 200, mx: 0.75 }}
@@ -133,26 +159,16 @@ const FitCheckYou = ({
                 passive: false,
               })
             }
-            onChange={(e) => {
-              const value = e.target.value;
-              const filteredValue = value.replace(/[^0-9.]/g, "");
-              const parts = filteredValue.split(".");
-              if (parts.length > 2) return;
-
-              const regex = /^\d{0,3}(\.\d{0,2})?$/;
-              if (regex.test(filteredValue)) {
-                setWeightInput(filteredValue);
-              }
-
-              if (filteredValue === "") return;
-
-              if (regex.test(filteredValue)) {
-                const num = Number(filteredValue);
-                const kgVal = isWeightInLb ? lbToKg(num) : num;
-                setWeight(parseFloat(kgVal.toFixed(2)));
-                setWeightErr(false);
-              }
-            }}
+            onChange={(e) =>
+              handleInputChange(
+                e.target.value,
+                isWeightInLb,
+                setWeightInput,
+                setWeight,
+                setWeightErr,
+                isWeightInLb ? lbToKg : undefined
+              )
+            }
             margin="normal"
             variant="standard"
             sx={{ width: 200, mx: 0.75 }}
@@ -177,7 +193,7 @@ const FitCheckYou = ({
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

@@ -23,42 +23,30 @@ const Id = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [login, setLogin] = useState<string | null>(null);
   const [userData, setUserData] = useState<Record<string, number> | null>(null);
-  const [productName, setProductName] = useState("");
-  const [measurementMatrix, setMeasurementsMatrix] = useState();
-  const [productPart, setProductPart] = useState("top");
-  const [isLoading, setIsLoading] = useState(false);
-  const [isLoginClicked, setIsLoginClicked] = useState(0);
-  const [isRegister, setIsRegister] = useState(false);
-  const [windowSize, setWindowSize] = useState({
-    width: 0,
-    height: 0,
-  });
-  const [activeTab, setActiveTab] = useState(1);
-  const [camera, setCamera] = useState(false);
+  const [productName, setProductName] = useState<string>("");
+  const [measurementMatrix, setMeasurementsMatrix] = useState<any>(null);
+  const [productPart, setProductPart] = useState<string>("top");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoginClicked, setIsLoginClicked] = useState<number>(0);
+  const [isRegister, setIsRegister] = useState<boolean>(false);
+  const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
+  const [activeTab, setActiveTab] = useState<number>(1);
+  const [camera, setCamera] = useState<boolean>(false);
 
+  // Handle window resize
   useEffect(() => {
     if (typeof window === "undefined") return;
 
     const handleResize = () => {
-      setWindowSize({
-        width: window.innerWidth,
-        height: window.innerHeight,
-      });
+      setWindowSize({ width: window.innerWidth, height: window.innerHeight });
     };
 
     handleResize();
-
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // useEffect(() => {
-  //   if (typeof window !== "undefined") {
-  //     const token = localStorage.getItem("token");
-  //     setLogin(token);
-  //   }
-  // }, []);
-
+  // Handle incoming messages
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
       const { type, productName, measurements, apparelType } = event.data;
@@ -73,16 +61,20 @@ const Id = () => {
     return () => window.removeEventListener("message", handleMessage);
   }, []);
 
+  // Fetch user data
   const getUserData = async () => {
     setIsLoading(true);
     try {
       const token = localStorage.getItem("token");
-      const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_SIZE_MEASUREMENT}/userMeasurement`,
-        {
-          headers: { Authorization: token ? `Bearer ${token}` : "" },
-        }
-      );
+      const apiUrl = process.env.NEXT_PUBLIC_SIZE_MEASUREMENT;
+
+      if (!apiUrl) {
+        throw new Error("API URL is not defined in environment variables.");
+      }
+
+      const response = await axios.get(`${apiUrl}/userMeasurement`, {
+        headers: { Authorization: token ? `Bearer ${token}` : "" },
+      });
 
       if (response.data.status === "success") {
         setUserData(response.data.data?.measurement || null);
@@ -90,44 +82,74 @@ const Id = () => {
         setUserData(null);
       }
     } catch (error) {
-      if (axios.isAxiosError(error) && error.response) {
-        if (error.response.status === 401) {
-          toast.error("Unauthorized! Please log in again.", toastOptions);
-          localStorage.removeItem("token");
-          setLogin(null);
-        } else {
-          toast.error(
-            `Error: ${error.response.data.message || "Something went wrong!"}`,
-            toastOptions
-          );
-        }
-      } else {
-        toast.error(
-          "There is some error. Please try again later.",
-          toastOptions
-        );
-      }
+      handleApiError(error);
       setUserData(null);
     } finally {
       setIsLoading(false);
     }
   };
 
+  // Handle API errors
+  const handleApiError = (error: unknown) => {
+    if (axios.isAxiosError(error) && error.response) {
+      if (error.response.status === 401) {
+        toast.error("Unauthorized! Please log in again.", toastOptions);
+        localStorage.removeItem("token");
+        setLogin(null);
+      } else {
+        toast.error(
+          `Error: ${error.response.data.message || "Something went wrong!"}`,
+          toastOptions
+        );
+      }
+    } else {
+      toast.error("There is some error. Please try again later.", toastOptions);
+    }
+  };
+
+  // Fetch user data when login state changes
   useEffect(() => {
     if (login) {
       getUserData();
     }
   }, [login]);
 
+  // Handle back button logic
+  const handleBackButton = () => {
+    if (isLoginClicked === 1) {
+      setIsLoginClicked(0);
+    } else if (login && activeTab !== 1) {
+      handleTabNavigation();
+    } else if (!login) {
+      handleTabNavigation();
+    }
+  };
+
+  const handleTabNavigation = () => {
+    if (activeTab === 3) {
+      setActiveTab(2);
+      stopCamera();
+    } else if (activeTab === 2) {
+      setActiveTab(1);
+    } else {
+      setIsLoginClicked(0);
+    }
+  };
+
+  const stopCamera = () => {
+    setCamera(false);
+    if (videoRef.current) {
+      const stream = videoRef.current.srcObject as MediaStream | null;
+      stream?.getTracks().forEach((track) => track.stop());
+    }
+  };
+
   return (
     <>
       <ToastContainer />
       <main className="min-h-[95vh] h-[100%] bg-white text-black !font-poppins">
         <div className="py-2.5 border-b flex items-center justify-between px-6">
-          {isLoginClicked === 1 ||
-          (login && activeTab !== 1) ||
-          (login && activeTab !== 1 && isLoginClicked === 2) ||
-          (!login && isLoginClicked === 2) ? (
+          {isLoginClicked !== 0 || (login && activeTab !== 1) ? (
             <svg
               stroke="gray"
               fill="gray"
@@ -137,41 +159,7 @@ const Id = () => {
               width="16"
               xmlns="http://www.w3.org/2000/svg"
               className="cursor-pointer"
-              onClick={() => {
-                if (isLoginClicked === 1) {
-                  setIsLoginClicked(0);
-                }
-                if (login && activeTab !== 1) {
-                  activeTab === 3
-                    ? (() => {
-                        setActiveTab(2);
-                        setCamera(false);
-                        if (videoRef.current) {
-                          const stream = videoRef.current
-                            .srcObject as MediaStream | null;
-                          const tracks = stream?.getTracks();
-                          tracks?.forEach((track) => track.stop());
-                        }
-                      })()
-                    : activeTab === 2 && setActiveTab(1);
-                }
-                if (!login) {
-                  activeTab === 3
-                    ? (() => {
-                        setActiveTab(2);
-                        setCamera(false);
-                        if (videoRef.current) {
-                          const stream = videoRef.current
-                            .srcObject as MediaStream | null;
-                          const tracks = stream?.getTracks();
-                          tracks?.forEach((track) => track.stop());
-                        }
-                      })()
-                    : activeTab === 2
-                    ? setActiveTab(1)
-                    : setIsLoginClicked(0);
-                }
-              }}
+              onClick={handleBackButton}
             >
               <path fill="none" d="M0 0h24v24H0z"></path>
               <path d="M11.67 3.87 9.9 2.1 0 12l9.9 9.9 1.77-1.77L3.54 12z"></path>
@@ -179,8 +167,8 @@ const Id = () => {
           ) : (
             <div>&nbsp;</div>
           )}
-          <div className="mx-auto px-8 lg:px-20">
-            <Logo width={windowSize?.width < 1024 ? 100 : 200} />
+          <div className="mx-auto px-8 md:px-20">
+            <Logo width={windowSize.width < 1024 ? 100 : 200} />
           </div>
           <div>
             <svg
@@ -193,12 +181,7 @@ const Id = () => {
               xmlns="http://www.w3.org/2000/svg"
               className="cursor-pointer"
               onClick={() => {
-                if (videoRef.current) {
-                  const stream = videoRef.current
-                    .srcObject as MediaStream | null;
-                  const tracks = stream?.getTracks();
-                  tracks?.forEach((track) => track.stop());
-                }
+                stopCamera();
                 parent.postMessage({ type: "closeIframeWindow" }, "*");
               }}
             >
@@ -214,9 +197,7 @@ const Id = () => {
 
         {isLoading ? (
           <div className="flex justify-center items-center min-h-[80vh] h-full">
-            <p>
-              <Spinner />
-            </p>
+            <Spinner />
           </div>
         ) : login ? (
           userData ? (
@@ -238,7 +219,7 @@ const Id = () => {
               measurementMatrix={measurementMatrix}
               getUserData={getUserData}
               setIsRegister={setIsRegister}
-              setIsLoginClicked={(val: number) => setIsLoginClicked(val)}
+              setIsLoginClicked={setIsLoginClicked}
               activeTab={activeTab}
               setActiveTab={setActiveTab}
               camera={camera}
@@ -246,25 +227,18 @@ const Id = () => {
               videoRef={videoRef}
             />
           )
-        ) : (
-          <></>
-        )}
-        {!login && isLoginClicked === 0 ? (
-          <div className="flex flex-col items-center justify-center min-h-[88vh] h-full px-5">
-            {/* <p className="text-md text-center lg:hidden">
-              Welcome to your personal sizing assistant. Scan your body and have
-              fun shopping!
-            </p> */}
-            <p className="text-md lg:text-3xl text-center flex flex-col gap-2 items-center justify-center">
+        ) : isLoginClicked === 0 ? (
+          <div className="flex flex-col items-center justify-center min-h-[88vh] h-full px-5 gap-8 md:gap-12">
+            <p className="text-md md:text-4xl text-center flex flex-col gap-4 md:gap-10 items-center justify-center">
               <span>Welcome to your personal sizing assistant.</span>
               <span>Scan your body and have fun shopping!</span>
             </p>
-            <div className="flex items-center justify-center gap-4">
+            <div className="flex items-center justify-center gap-4 mt-8 md:mt-0">
               <Button
                 type="button"
                 color="primary"
                 variant="contained"
-                className="rounded-full !w-fit !font-semibold mt-[10px] lg:mt-[35px] bg-[#6B7CF6] hover:bg-[#6B7CF6] cursor-pointer"
+                className="rounded-full !w-fit !font-semibold mt-4 md:mt-20 md:text-2xl md:py-4 md:px-8 md:mx-4 bg-[#6B7CF6] hover:bg-[#6B7CF6] cursor-pointer"
                 onClick={() => setIsLoginClicked(1)}
               >
                 Login
@@ -273,7 +247,7 @@ const Id = () => {
                 type="button"
                 color="primary"
                 variant="contained"
-                className="rounded-full !w-fit !font-semibold mt-[10px] lg:mt-[35px] bg-[#6B7CF6] hover:bg-[#6B7CF6] cursor-pointer"
+                className="rounded-full !w-fit !font-semibold mt-4 md:mt-20 md:text-2xl md:py-4 md:px-8 md:mx-4 bg-[#6B7CF6] hover:bg-[#6B7CF6] cursor-pointer"
                 onClick={() => {
                   setIsLoginClicked(2);
                   setLogin(null);
@@ -283,33 +257,29 @@ const Id = () => {
               </Button>
             </div>
           </div>
-        ) : !login && isLoginClicked === 1 ? (
+        ) : isLoginClicked === 1 ? (
           <Login
             setLogin={setLogin}
             setIsLoading={setIsLoading}
-            setIsLoginClicked={(val: number) => setIsLoginClicked(val)}
             isRegister={isRegister}
             setIsRegister={setIsRegister}
           />
         ) : (
-          !login &&
-          isLoginClicked === 2 && (
-            <FindSize
-              login={login}
-              setLogin={setLogin}
-              productName={productName}
-              productPart={productPart}
-              measurementMatrix={measurementMatrix}
-              getUserData={getUserData}
-              setIsLoginClicked={(val: number) => setIsLoginClicked(val)}
-              setIsRegister={setIsRegister}
-              activeTab={activeTab}
-              setActiveTab={setActiveTab}
-              camera={camera}
-              setCamera={setCamera}
-              videoRef={videoRef}
-            />
-          )
+          <FindSize
+            login={login}
+            setLogin={setLogin}
+            productName={productName}
+            productPart={productPart}
+            measurementMatrix={measurementMatrix}
+            getUserData={getUserData}
+            setIsLoginClicked={setIsLoginClicked}
+            setIsRegister={setIsRegister}
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
+            camera={camera}
+            setCamera={setCamera}
+            videoRef={videoRef}
+          />
         )}
       </main>
     </>

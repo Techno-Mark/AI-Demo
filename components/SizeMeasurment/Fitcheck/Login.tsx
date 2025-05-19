@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { Button, TextField } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import Spinner from "tsconfig.json/components/Spinner`";
 import { toast, ToastOptions } from "react-toastify";
 import axios from "axios";
 
@@ -18,7 +17,12 @@ const toastOptions: ToastOptions = {
   theme: "light",
 };
 
-const Auth = ({ setLogin, setIsLoading, setIsLoginClicked, isRegister, setIsRegister }: any) => {
+const Auth = ({
+  setLogin,
+  setIsLoading,
+  isRegister,
+  setIsRegister,
+}: any) => {
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [emailError, setEmailError] = useState(false);
@@ -69,12 +73,6 @@ const Auth = ({ setLogin, setIsLoading, setIsLoginClicked, isRegister, setIsRegi
 
   return (
     <div className="flex flex-col bg-white text-black h-[88vh]">
-      {/* <div
-        className="flex items-start justify-start ml-2 cursor-pointer px-2 my-2 bg-[#6B7CF6] text-white rounded-lg w-fit"
-        onClick={() => setIsLoginClicked(0)}
-      >
-        &lt;
-      </div> */}
       <div className="flex flex-col justify-center items-center bg-white text-black h-[88vh]">
         <div className="flex items-center justify-between">
           <div className="flex items-center justify-center font-normal p-20 rounded-xl lg:border border-lightSilver">
@@ -155,9 +153,6 @@ const Auth = ({ setLogin, setIsLoading, setIsLoginClicked, isRegister, setIsRegi
                   }}
                 />
               </div>
-
-              {/* Submit Button */}
-
               <Button
                 type="submit"
                 color="primary"

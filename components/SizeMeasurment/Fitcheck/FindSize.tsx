@@ -1,13 +1,8 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 import { Button } from "@mui/material";
-import React, { useEffect, useState } from "react";
-import Logo from "tsconfig.json/assets/icons/Logo`";
+import React, { useState } from "react";
 import FitCheckYou from "./FitCheckYou";
-import FitCheckYourBody from "./FitCheckYourBody";
-import FitCheckYourSize from "./FitCheckYourSize";
-import FitCheckYourSize1 from "./FitCheckYourSize1";
-import FitCheckYourSize2 from "./FitCheckYourSize2";
 import FitCheckYourSize3 from "./FitCheckYourSize3";
 import Image from "next/image";
 
@@ -17,7 +12,23 @@ const tabs = [
   { label: "Camera", value: 3 },
 ];
 
-const FindSize = ({
+interface FindSizeProps {
+  login: string | null;
+  setLogin: (value: string | null) => void;
+  productPart: string;
+  productName: string;
+  measurementMatrix: any;
+  getUserData: () => void;
+  setIsLoginClicked: (value: number) => void;
+  setIsRegister: (value: boolean) => void;
+  activeTab: number;
+  setActiveTab: (value: number) => void;
+  camera: boolean;
+  setCamera: (value: boolean) => void;
+  videoRef: React.RefObject<HTMLVideoElement>;
+}
+
+const FindSize: React.FC<FindSizeProps> = ({
   login,
   setLogin,
   productPart,
@@ -31,31 +42,28 @@ const FindSize = ({
   camera,
   setCamera,
   videoRef,
-}: any) => {
-  const [height, setHeight] = useState(0);
-  const [isHeightInInch, setIsHeightInInch] = useState(false);
-  const [heightErr, setHeightErr] = useState(false);
-  const [weight, setWeight] = useState(0);
-  const [weightErr, setWeightErr] = useState(false);
-  const [sex, setSex] = useState(0);
+}) => {
+  const [height, setHeight] = useState<number>(0);
+  const [isHeightInInch, setIsHeightInInch] = useState<boolean>(false);
+  const [heightErr, setHeightErr] = useState<boolean>(false);
+  const [weight, setWeight] = useState<number>(0);
+  const [weightErr, setWeightErr] = useState<boolean>(false);
+  const [sex, setSex] = useState<number>(0);
 
   const handleClickOpen = () => {
     if (activeTab === 1) {
-      const regex = isHeightInInch
+      const heightRegex = isHeightInInch
         ? /^\d{0,2}(\.\d{0,2})?$/
         : /^\d{0,3}(\.\d{0,2})?$/;
-      setHeightErr(height === 0 || !regex.test(height.toString()));
-      const regexWeight = /^\d{0,3}(\.\d{0,2})?$/;
-      setWeightErr(weight === 0 || !regexWeight.test(weight.toString()));
+      const weightRegex = /^\d{0,3}(\.\d{0,2})?$/;
 
-      if (
-        height !== 0 &&
-        regex.test(height.toString()) &&
-        !heightErr &&
-        weight !== 0 &&
-        regexWeight.test(weight.toString()) &&
-        !weightErr
-      ) {
+      const isHeightValid = height !== 0 && heightRegex.test(height.toString());
+      const isWeightValid = weight !== 0 && weightRegex.test(weight.toString());
+
+      setHeightErr(!isHeightValid);
+      setWeightErr(!isWeightValid);
+
+      if (isHeightValid && isWeightValid) {
         setActiveTab(2);
       }
     } else {
@@ -63,7 +71,7 @@ const FindSize = ({
     }
   };
 
-  const onClose = () => {
+  const handleClose = () => {
     setHeight(0);
     setHeightErr(false);
     setWeight(0);
@@ -72,77 +80,51 @@ const FindSize = ({
     setCamera(false);
   };
 
+  const renderTabNavigation = () => (
+    <div className="flex items-center justify-center pb-6">
+      <div className="flex items-center gap-4 md:gap-10">
+        {tabs.map((tab, index) => {
+          const isCompleted = tab.value < activeTab;
+          const isActive = tab.value === activeTab;
+
+          return (
+            <React.Fragment key={tab.value}>
+              <div className="flex flex-col items-center">
+                <div
+                  className={`flex items-center justify-center w-10 h-10 rounded-full text-white font-bold 
+                  ${
+                    isCompleted
+                      ? "bg-[#6B7CF6]"
+                      : isActive
+                      ? "bg-[#6B7CF6]"
+                      : "bg-gray-300"
+                  }
+                  border-4 ${
+                    isActive ? "border-[#6B7CF6]" : "border-gray-300"
+                  }`}
+                >
+                  {index + 1}
+                </div>
+              </div>
+              {index < tabs.length - 1 && (
+                <div
+                  className={`h-1 w-10 md:w-20 ${
+                    isCompleted ? "bg-[#6B7CF6]" : "bg-gray-300"
+                  }`}
+                ></div>
+              )}
+            </React.Fragment>
+          );
+        })}
+      </div>
+    </div>
+  );
+
   return (
     <>
-      {/* {!login && (
-        <div
-          className="flex items-start justify-start ml-2 cursor-pointer px-2 my-2 bg-[#6B7CF6] text-white rounded-lg w-fit"
-          onClick={() =>
-            activeTab === 3
-              ? setActiveTab(2)
-              : activeTab === 2
-              ? setActiveTab(1)
-              : setIsLoginClicked(0)
-          }
-        >
-          &lt;
-        </div>
-      )}
-      {login && activeTab !== 1 && (
-        <div
-          className="flex items-start justify-start ml-2 cursor-pointer px-2 my-2 bg-[#6B7CF6] text-white rounded-lg w-fit"
-          onClick={() =>
-            activeTab === 3
-              ? setActiveTab(2)
-              : activeTab === 2 && setActiveTab(1)
-          }
-        >
-          &lt;
-        </div>
-      )} */}
       <div className="flex flex-col items-center justify-start pt-5 md:gap-2 min-h-[88vh] h-full">
-        {!camera && (
-          <div className="flex items-center justify-center pb-6">
-            <div className="flex items-center gap-4 md:gap-10">
-              {tabs.map((tab, index) => {
-                const isCompleted = tab.value < activeTab;
-                const isActive = tab.value === activeTab;
+        {!camera && renderTabNavigation()}
 
-                return (
-                  <React.Fragment key={tab.value}>
-                    <div className="flex flex-col items-center">
-                      <div
-                        className={`flex items-center justify-center w-10 h-10 rounded-full text-white font-bold 
-                    ${
-                      isCompleted
-                        ? "bg-[#6B7CF6]"
-                        : isActive
-                        ? "bg-[#6B7CF6]"
-                        : "bg-gray-300"
-                    }
-                    border-4 ${
-                      isActive ? "border-[#6B7CF6]" : "border-gray-300"
-                    }`}
-                      >
-                        {index + 1}
-                      </div>
-                      {/* <span className="mt-2 text-sm text-gray-700">
-                      {tab.label}
-                    </span> */}
-                    </div>
-                    {index < tabs.length - 1 && (
-                      <div
-                        className={`h-1 w-10 md:w-20 ${
-                          tab.value < activeTab ? "bg-[#6B7CF6]" : "bg-gray-300"
-                        }`}
-                      ></div>
-                    )}
-                  </React.Fragment>
-                );
-              })}
-            </div>
-          </div>
-        )}
         {activeTab === 1 && (
           <FitCheckYou
             sex={sex}
@@ -159,42 +141,41 @@ const FindSize = ({
             setWeightErr={setWeightErr}
           />
         )}
+
         {activeTab === 2 && (
-          <>
+          <div className="flex flex-col items-center justify-between py-12 gap-12 md:gap-[10%] min-h-[50vh]">
             <p className="text-ml flex items-center justify-center text-center py-4 max-w-[70%]">
               For the optimal scan, wear tight clothing, choose a clear
               background, and make sure the lighting is bright and even.
             </p>
             <Image
-              src={`${sex === 0 ? "/men.png" : "/women.png"}`}
+              src={sex === 0 ? "/men.png" : "/women.png"}
               alt="img"
               width={250}
               height={250}
               className="my-4"
             />
-            {/* <p className="flex items-center justify-center text-center mt-2">
-              This is how you get the best results
-            </p> */}
-          </>
+          </div>
         )}
+
         {activeTab === 3 && (
           <FitCheckYourSize3
-            height={height}
+            login={login}
+            setLogin={setLogin}
             camera={camera}
             setCamera={setCamera}
-            sex={sex}
+            videoRef={videoRef}
+            height={height}
             weight={weight}
-            onClose={onClose}
+            sex={sex}
+            onClose={handleClose}
             productName={productName}
             measurementMatrix={measurementMatrix}
             productPart={productPart}
-            login={login}
-            setLogin={setLogin}
             getUserData={getUserData}
             setActiveTab={setActiveTab}
             setIsRegister={setIsRegister}
-            setIsLoginClicked={(val: number) => setIsLoginClicked(val)}
-            videoRef={videoRef}
+            setIsLoginClicked={setIsLoginClicked}
           />
         )}
 
