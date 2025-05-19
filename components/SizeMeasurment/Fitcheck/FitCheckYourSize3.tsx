@@ -607,6 +607,7 @@ const FitCheckYourSize4 = ({
     setStarted(true);
 
     speakText("", new Date());
+    speck("", new Date());
   };
 
   const handleOpen = () => {
