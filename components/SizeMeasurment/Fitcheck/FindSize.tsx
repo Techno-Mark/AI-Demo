@@ -143,7 +143,7 @@ const FindSize: React.FC<FindSizeProps> = ({
         )}
 
         {activeTab === 2 && (
-          <div className="flex flex-col items-center justify-between py-12 gap-12 md:gap-[10%] min-h-[50vh]">
+          <div className="flex flex-col items-center justify-between py-10 gap-10 md:gap-[10%] min-h-[50vh]">
             <p className="text-ml flex items-center justify-center text-center py-4 max-w-[70%]">
               For the optimal scan, wear tight clothing, choose a clear
               background, and make sure the lighting is bright and even.
