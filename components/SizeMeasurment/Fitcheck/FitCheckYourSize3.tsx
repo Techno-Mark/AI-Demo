@@ -996,7 +996,7 @@ const FitCheckYourSize4 = ({
       // const value = new SpeechSynthesisUtterance(text);
       // window.speechSynthesis.cancel();
       // window.speechSynthesis.speak(value);
-      lastSpokenTimeRef.current = now;
+      // lastSpokenTimeRef.current = now;
       // speakText(text, now);
       speck(text, now);
     }
