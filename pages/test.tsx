@@ -2,26 +2,23 @@ import { useEffect, useRef, useState } from "react";
 
 export default function Home() {
   const [started, setStarted] = useState(false);
-  const lastSpokenTimeRef = useRef<Date | null>(null);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  const speck = (file: string, now: any) => {
+  const speck = (file: string) => {
     const audio = new Audio(`/audio/${file}`);
     audio.play().catch((error) => {
       console.error("Audio play error:", error);
     });
-    lastSpokenTimeRef.current = now;
   };
-  
+
   const startSpeaking = () => {
     if (started) return;
     setStarted(true);
-    const now = new Date();
 
-    speck("Hello", now);
+    speck("Hello");
 
     intervalRef.current = setInterval(() => {
-      speck("Please_step_back.mp3", now);
+      speck("Please_turn_to_the_side.mp3");
     }, 5000);
   };
 
