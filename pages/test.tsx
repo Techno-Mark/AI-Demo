@@ -8,10 +8,10 @@ export default function Home() {
     const synth = window.speechSynthesis;
 
     const speak = () => {
-      const textData = "Please_step_forward.mp3";
-      const utterance = new SpeechSynthesisUtterance(textData);
-      synth.cancel();
-      synth.speak(utterance);
+      const audio = new Audio(`/audio/Please_step_forward.mp3`);
+      audio.play().catch((error) => {
+        console.error("Audio play error:", error);
+      });
     };
 
     const voices = synth.getVoices();
