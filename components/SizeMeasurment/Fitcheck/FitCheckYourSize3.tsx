@@ -979,26 +979,26 @@ const FitCheckYourSize4 = ({
       !!distance &&
       distance - 0.31 < -0.01
     ) {
-      // text = "STEP BACK"
-      text = "Please_step_back.mp3";
+      text = "STEP BACK"
+      // text = "Please_step_back.mp3";
       shouldSpeak = true;
     } else if (
       errorMessage.includes("STEP FORWARD") &&
       !!distance &&
       distance - 0.35 > 0.01
     ) {
-      // text = "STEP FORWARD";
-      text = "Please_step_forward.mp3";
+      text = "STEP FORWARD";
+      // text = "Please_step_forward.mp3";
       shouldSpeak = true;
     }
 
     if (shouldSpeak && timeDiffInSeconds > 5) {
-      // const value = new SpeechSynthesisUtterance(text);
-      // window.speechSynthesis.cancel();
-      // window.speechSynthesis.speak(value);
-      // lastSpokenTimeRef.current = now;
-      // speakText(text, now);
-      speck(text, now);
+      const value = new SpeechSynthesisUtterance(text);
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(value);
+      lastSpokenTimeRef.current = now;
+      speakText(text, now);
+      // speck(text, now);
     }
   }, [errorMessage, distance]);
 
