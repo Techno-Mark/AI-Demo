@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 export default function Home() {
   const [started, setStarted] = useState(false);
   const lastSpokenTimeRef = useRef<Date | null>(null);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const speck = (file: string) => {
     const now = new Date();
@@ -12,26 +13,23 @@ export default function Home() {
     });
     lastSpokenTimeRef.current = now;
   };
-
+  
   const startSpeaking = () => {
-    const now = new Date();
     if (started) return;
     setStarted(true);
 
-    speck("Hello");
-    lastSpokenTimeRef.current = now;
+    speck("Hello.mp3");
+
+    intervalRef.current = setInterval(() => {
+      speck("Please_step_back.mp3");
+    }, 5000);
   };
 
   useEffect(() => {
-    const now = new Date();
-
-    const timeDiffInSeconds = lastSpokenTimeRef.current
-      ? (now.getTime() - lastSpokenTimeRef.current.getTime()) / 1000
-      : Infinity;
-    if (timeDiffInSeconds > 5) {
-      speck("Please_turn_to_the_side.mp3");
-    }
-  }, [lastSpokenTimeRef]);
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  }, []);
 
   return (
     <main
