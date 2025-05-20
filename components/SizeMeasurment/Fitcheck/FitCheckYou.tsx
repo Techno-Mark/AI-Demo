@@ -81,7 +81,7 @@ const FitCheckYou: React.FC<FitCheckYouProps> = ({
   };
 
   return (
-    <div className="flex flex-col items-center justify-between md:max-w-[70%] lg:max-w-[50%] min-h-[60vh] md:min-h-[30vh] py-[4%] md:py-0">
+    <div className="flex flex-col items-center justify-between md:max-w-[70%] lg:max-w-[50%] min-h-[60vh] md:min-h-[30vh]">
       <p className="md:text-lg lg:text-xl py-4 pb-8 md:px-0 flex items-center justify-center text-center">
         To help us find your size, tell us if you’re shopping for male or female
         clothing.
