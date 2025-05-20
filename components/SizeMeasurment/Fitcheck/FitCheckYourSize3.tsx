@@ -806,7 +806,7 @@ const FitCheckYourSize4 = ({
   return (
     <div className="flex flex-col items-center justify-between w-full h-full min-h-[60vh]">
       {!camera && !capturedImage && (
-        <div className="flex flex-col items-center justify-center py-10 md:py-0 gap-8 overflow-y-auto my-16">
+        <div className="flex flex-col items-center justify-center py-5 md:py-0 gap-8 overflow-y-auto my-10">
           <div className="flex items-center justify-center py-4 px-4 mx-4 rounded-lg border border-gray gap-5">
             <p>Turn up your volume to be guided during the scan</p>
             <svg
