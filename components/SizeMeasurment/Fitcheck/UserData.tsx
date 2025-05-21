@@ -194,16 +194,18 @@ const UserData = ({
   return (
     <div className="flex flex-col items-center justify-center gap-4 mt-5 pb-5 h-full">
       <div className="flex items-center justify-center w-full mx-10">
-        <p className="font-bold">
+        <p className="font-bold text-lg md:text-2xl">
           As per Fitcheck, your {productName} size is{" "}
-          {estimateTShirtSize(
-            Number(
-              (productPart === "top"
-                ? userData.chestSize
-                : userData.waistSize
-              ).toFixed(2)
-            )
-          )}
+          <span className="text-[#6B7CF6]">
+            {estimateTShirtSize(
+              Number(
+                (productPart === "top"
+                  ? userData.chestSize
+                  : userData.waistSize
+                ).toFixed(2)
+              )
+            )}
+          </span>
           .
         </p>
       </div>

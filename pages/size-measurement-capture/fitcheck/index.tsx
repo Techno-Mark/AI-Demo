@@ -229,7 +229,7 @@ const Id = () => {
           )
         ) : isLoginClicked === 0 ? (
           <div className="flex flex-col items-center justify-center min-h-[88vh] h-full px-5 gap-8 md:gap-12">
-            <p className="text-md md:text-4xl text-center flex flex-col gap-4 md:gap-10 items-center justify-center">
+            <p className="text-md md:text-[2.5rem] text-center flex flex-col gap-4 md:gap-10 items-center justify-center">
               <span>Welcome to your personal sizing assistant.</span>
               <span>Scan your body and have fun shopping!</span>
             </p>
@@ -238,7 +238,7 @@ const Id = () => {
                 type="button"
                 color="primary"
                 variant="contained"
-                className="rounded-full !w-fit !font-semibold mt-4 md:mt-20 md:text-2xl md:py-4 md:px-8 md:mx-4 bg-[#6B7CF6] hover:bg-[#6B7CF6] cursor-pointer"
+                className="!w-fit !font-semibold mt-4 md:mt-20 md:text-2xl md:py-4 md:px-8 md:mx-4 bg-[#6B7CF6] hover:bg-[#6B7CF6] cursor-pointer"
                 onClick={() => setIsLoginClicked(1)}
               >
                 Login
@@ -247,7 +247,7 @@ const Id = () => {
                 type="button"
                 color="primary"
                 variant="contained"
-                className="rounded-full !w-fit !font-semibold mt-4 md:mt-20 md:text-2xl md:py-4 md:px-8 md:mx-4 bg-[#6B7CF6] hover:bg-[#6B7CF6] cursor-pointer"
+                className="!w-fit !font-semibold mt-4 md:mt-20 md:text-2xl md:py-4 md:px-8 md:mx-4 bg-[#6B7CF6] hover:bg-[#6B7CF6] cursor-pointer"
                 onClick={() => {
                   setIsLoginClicked(2);
                   setLogin(null);
