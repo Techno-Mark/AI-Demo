@@ -626,6 +626,14 @@ const FitCheckYourSize4 = ({
       blob: capturedImage,
       sideBlob: sideCapturedImage,
     };
+    parent.postMessage(
+      {
+        type: "fitcheckUserSize",
+        chest: averageMeasurements.chestSize * 2.54,
+        waist: averageMeasurements.waistSize * 2.54,
+      },
+      "*"
+    );
     try {
       const response = login
         ? await axios.post(
@@ -651,14 +659,6 @@ const FitCheckYourSize4 = ({
     try {
       const response = await updateSatisfiedStatus();
       if (response.status.toLowerCase() == "success") {
-        parent.postMessage(
-          {
-            type: "fitcheckUserSize",
-            chest: averageMeasurements.chestSize * 2.54,
-            waist: averageMeasurements.waistSize * 2.54,
-          },
-          "*"
-        );
         handleClose();
         onClose();
       } else {
