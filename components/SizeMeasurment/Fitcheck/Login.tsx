@@ -81,7 +81,7 @@ const Auth = ({
         />
       </div>
 
-      <div className="mt-10 md:mt-0 md:w-1/2 bg-white flex flex-col justify-center px-10">
+      <div className="mt-5 md:mt-0 md:w-1/2 bg-white flex flex-col justify-center px-6 md:px-10">
         <h2 className="text-lg md:text-2xl font-bold text-[#6B7CF6] mb-2">
           Welcome to your personal sizing assistant.
         </h2>
@@ -91,7 +91,7 @@ const Auth = ({
 
         <form
           onSubmit={handleAuth}
-          className="space-y-6 md:space-y-4 max-w-md"
+          className="space-y-4 md:space-y-4 max-w-md"
           autoComplete="off"
         >
           <div>
