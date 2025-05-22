@@ -77,7 +77,7 @@ const Auth = ({
         <img
           src="/login.png"
           alt="Body Scanner"
-          className="max-h-[85%] -mt-2 rounded-2xl"
+          className="max-h-[85%] -mt-2"
         />
       </div>
 
