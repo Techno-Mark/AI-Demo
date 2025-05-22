@@ -82,7 +82,7 @@ const FitCheckYou: React.FC<FitCheckYouProps> = ({
 
   return (
     <div className="flex flex-col items-center justify-between md:max-w-[70%] lg:max-w-[50%] min-h-[60vh] md:min-h-[30vh]">
-      <p className="md:text-lg lg:text-xl py-4 md:pb-8 md:px-0 flex items-center justify-center text-center">
+      <p className="md:text-lg lg:text-xl pb-2 md:py-4 md:pb-8 md:px-0 flex items-center justify-center text-center">
         To help us find your size, tell us if you’re shopping for male or female
         clothing.
       </p>
@@ -140,7 +140,7 @@ const FitCheckYou: React.FC<FitCheckYouProps> = ({
           ))}
         </div>
 
-        <div className="flex flex-col items-center justify-center gap-[8%] md:gap-[10%] lg:gap-8 py-2 md:py-4">
+        <div className="flex flex-col items-center justify-center gap-[8%] md:gap-[10%] lg:gap-8 pt-2 md:py-4">
           {/* Height Input */}
           <div className="flex items-end justify-center gap-2">
             <TextField

@@ -962,7 +962,7 @@ const FitCheckYourSize4 = ({
                     <div className="flex-grow h-px bg-gray-300" />
                   </div>
                 </div>
-                <p className="text-lg lg:text-xl">
+                <p className="text-md lg:text-xl text-center">
                   Create an Account to always have your size
                 </p>
                 <Button
