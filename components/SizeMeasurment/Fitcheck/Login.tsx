@@ -1,7 +1,6 @@
-/* eslint-disable react-hooks/rules-of-hooks */
 "use client";
 import { useState } from "react";
-import { Button, TextField } from "@mui/material";
+import { TextField, Button } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { toast, ToastOptions } from "react-toastify";
 import axios from "axios";
@@ -22,6 +21,7 @@ const Auth = ({
   setIsLoading,
   isRegister,
   setIsRegister,
+  setIsLoginClicked,
 }: any) => {
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
@@ -32,156 +32,174 @@ const Auth = ({
 
   const regex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
-  const handleAuth = async (e: { preventDefault: () => void }) => {
+  const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
-    setEmailError(
-      !regex.test(email) || email.trim().length < 1 || email.trim().length > 100
-    );
-    setPasswordError(password.trim().length < 1);
 
-    if (emailError || passwordError) {
-      setLoading(false);
-      return;
-    }
+    const isEmailInvalid =
+      !regex.test(email) ||
+      email.trim().length < 1 ||
+      email.trim().length > 100;
+    const isPasswordInvalid = password.trim().length < 1;
+
+    setEmailError(isEmailInvalid);
+    setPasswordError(isPasswordInvalid);
+
+    if (isEmailInvalid || isPasswordInvalid) return;
 
     setLoading(true);
-
     try {
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_SIZE_MEASUREMENT}/${
           isRegister ? "register" : "login"
         }`,
-        { email: email, password: password }
+        { email, password }
       );
       const data = response.data;
       if (data.status === "success") {
         setLogin(data.token);
         localStorage.setItem("token", data.token);
         toast.success(data.message, toastOptions);
-        response.status == 201 && setIsRegister(false);
+        if (response.status === 201) setIsRegister(false);
         setIsLoading(true);
       } else {
         toast.error(data.message, toastOptions);
       }
     } catch (error) {
       toast.error("There is some error. Please try again later.", toastOptions);
-      throw error;
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   return (
-    <div className="flex flex-col bg-white text-black h-[88vh]">
-      <div className="flex flex-col justify-center items-center bg-white text-black h-[88vh]">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center justify-center font-normal p-20 rounded-xl lg:border border-lightSilver">
-            <form
-              className="text-start w-full max-w-3xl py-5 px-3 flex flex-col items-center justify-center"
-              onSubmit={handleAuth}
-            >
-              <h2 className="text-xl font-semibold mb-5">
-                {isRegister ? "Create an Account" : "Sign In"}
-              </h2>
+    <div className="flex flex-col md:flex-row min-h-[88vh] h-full w-full">
+      <div className="hidden md:flex w-1/2 bg-white items-center justify-center">
+        <img
+          src="/login.png"
+          alt="Body Scanner"
+          className="max-h-[85%] -mt-2 rounded-2xl"
+        />
+      </div>
 
-              {/* Email Field */}
-              <div className="mb-4 w-[300px] lg:w-[356px]">
-                <span className="text-gray-500 text-sm">
-                  Email<span className="!text-defaultRed"> *</span>
-                </span>
-                <TextField
-                  type="email"
-                  sx={{ mt: "-3px" }}
-                  fullWidth
-                  value={email}
-                  onChange={(e) => {
-                    setEmail(e.target.value);
-                    setEmailError(false);
-                  }}
-                  onBlur={() =>
-                    setEmailError(
-                      !regex.test(email) ||
-                        email.trim().length < 1 ||
-                        email.trim().length > 100
-                    )
-                  }
-                  error={emailError}
-                  helperText={
-                    emailError
-                      ? email.length > 100
-                        ? "Maximum 100 characters allowed."
-                        : "Please enter a valid email."
-                      : ""
-                  }
-                  margin="normal"
-                  variant="standard"
-                />
-              </div>
+      <div className="mt-10 md:mt-0 md:w-1/2 bg-white flex flex-col justify-center px-10">
+        <h2 className="text-2xl md:text-2xl font-bold text-[#6B7CF6] mb-2">
+          Welcome to your personal sizing assistant.
+        </h2>
+        <p className="text-gray-600 mb-6 md:mb-4 md:text-xl">
+          Scan your body and have fun shopping!
+        </p>
 
-              {/* Password Field */}
-              <div className="mb-5 w-[300px] lg:w-[356px]">
-                <span className="text-gray-500 text-sm">
-                  Password<span className="!text-defaultRed"> *</span>
-                </span>
-                <TextField
-                  type={showPassword ? "text" : "password"}
-                  sx={{ mt: "-3px" }}
-                  fullWidth
-                  value={password}
-                  onChange={(e) => {
-                    setPassword(e.target.value);
-                    setPasswordError(false);
-                  }}
-                  onBlur={() => setPasswordError(password.trim().length < 1)}
-                  error={passwordError}
-                  helperText={passwordError ? "This is a required field." : ""}
-                  margin="normal"
-                  variant="standard"
-                  InputProps={{
-                    endAdornment: (
-                      <span
-                        className="absolute top-1 right-2 text-slatyGrey cursor-pointer"
-                        onClick={() => setShowPassword(!showPassword)}
-                      >
-                        {showPassword ? (
-                          <VisibilityOff className="text-[18px]" />
-                        ) : (
-                          <Visibility className="text-[18px]" />
-                        )}
-                      </span>
-                    ),
-                  }}
-                />
-              </div>
-              <Button
-                type="submit"
-                color="primary"
-                variant="contained"
-                className={`rounded-full !w-[300px] !font-semibold mt-[35px] ${
-                  loading
-                    ? "bg-gray-400 hover:bg-gray-400 cursor-not-allowed"
-                    : "bg-[#6B7CF6] hover:bg-[#6B7CF6] cursor-pointer"
-                }`}
-                disabled={loading}
-              >
-                {isRegister ? "REGISTER" : "SIGN IN"}
-              </Button>
-
-              {/* Toggle Between Login/Register */}
-              <p className="mt-4 text-sm">
-                {isRegister
-                  ? "Already have an account?"
-                  : "Don't have an account?"}
-                <span
-                  className="text-[#6B7CF6] cursor-pointer ml-1"
-                  onClick={() => setIsRegister(!isRegister)}
-                >
-                  {isRegister ? "Sign In" : "Register"}
-                </span>
-              </p>
-            </form>
+        <form
+          onSubmit={handleAuth}
+          className="space-y-6 md:space-y-4 max-w-md"
+          autoComplete="off"
+        >
+          <div>
+            <label className="block text-sm text-gray-500 mb-1">
+              Email Address
+            </label>
+            <TextField
+              type="email"
+              fullWidth
+              value={email}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                setEmailError(false);
+              }}
+              onBlur={() =>
+                setEmailError(
+                  !regex.test(email) ||
+                    email.trim().length < 1 ||
+                    email.trim().length > 100
+                )
+              }
+              error={emailError}
+              helperText={
+                emailError
+                  ? email.length > 100
+                    ? "Maximum 100 characters allowed."
+                    : "Please enter a valid email."
+                  : ""
+              }
+              variant="outlined"
+              size="small"
+            />
           </div>
-        </div>
+
+          <div>
+            <label className="block text-sm text-gray-500 mb-1">Password</label>
+            <TextField
+              type={showPassword ? "text" : "password"}
+              fullWidth
+              value={password}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                setPasswordError(false);
+              }}
+              onBlur={() => setPasswordError(password.trim().length < 1)}
+              error={passwordError}
+              helperText={passwordError ? "This is a required field." : ""}
+              variant="outlined"
+              size="small"
+              InputProps={{
+                endAdornment: (
+                  <span
+                    className="absolute right-3 top-[10px] cursor-pointer text-gray-500"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? (
+                      <VisibilityOff fontSize="small" />
+                    ) : (
+                      <Visibility fontSize="small" />
+                    )}
+                  </span>
+                ),
+              }}
+            />
+          </div>
+
+          <Button
+            type="submit"
+            variant="contained"
+            fullWidth
+            className={`rounded-md py-2 text-white ${
+              loading
+                ? "bg-gray-400 hover:bg-gray-400 cursor-not-allowed"
+                : "bg-[#6B7CF6] hover:bg-[#5a6adf] cursor-pointer"
+            }`}
+            disabled={loading}
+          >
+            {isRegister ? "Register" : "Login"}
+          </Button>
+
+          <div className="text-sm text-center">
+            {isRegister ? "Already have an account?" : "Don't have an account?"}
+            <span
+              className="ml-1 text-[#6B7CF6] cursor-pointer"
+              onClick={() => setIsRegister(!isRegister)}
+            >
+              {isRegister ? "Sign In" : "Register"}
+            </span>
+          </div>
+          
+          <div className="flex items-center gap-4">
+            <div className="flex-grow h-px bg-gray-300" />
+            <div className="text-center text-gray-400 text-sm">OR</div>
+            <div className="flex-grow h-px bg-gray-300" />
+          </div>
+
+          <Button
+            variant="outlined"
+            fullWidth
+            className="rounded-md py-2 border-[#6B7CF6] text-[#6B7CF6]"
+            onClick={() => {
+              setIsLoginClicked(2);
+              setLogin(null);
+            }}
+          >
+            Get Started
+          </Button>
+        </form>
       </div>
     </div>
   );

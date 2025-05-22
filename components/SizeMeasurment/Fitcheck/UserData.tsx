@@ -44,21 +44,14 @@ const toastOptions: ToastOptions = {
 
 const UserData = ({
   userData,
-  setUserData,
   productPart,
   productName,
   measurementMatrix,
   setLogin,
   getUserData,
-}: {
-  userData: Record<string, number>;
-  setUserData: any;
-  productPart: string;
-  productName: string;
-  measurementMatrix: any;
-  setLogin: any;
-  getUserData: () => void;
-}) => {
+  setIsLoginClicked,
+  setActiveTab,
+}: any) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedData, setEditedData] = useState<{
     [key: string]: string | number;
@@ -280,7 +273,10 @@ const UserData = ({
               )}
               <Button
                 variant="contained"
-                onClick={() => setUserData(null)}
+                onClick={() => {
+                  setIsLoginClicked(2);
+                  setActiveTab(1);
+                }}
                 className="!bg-[#6B7CF6] hover:!bg-[#4e5ab6]"
               >
                 Re Check

@@ -82,12 +82,38 @@ const FitCheckYou: React.FC<FitCheckYouProps> = ({
 
   return (
     <div className="flex flex-col items-center justify-between md:max-w-[70%] lg:max-w-[50%] min-h-[60vh] md:min-h-[30vh]">
-      <p className="md:text-lg lg:text-xl py-4 pb-8 md:px-0 flex items-center justify-center text-center">
+      <p className="md:text-lg lg:text-xl py-4 md:pb-8 md:px-0 flex items-center justify-center text-center">
         To help us find your size, tell us if you’re shopping for male or female
         clothing.
       </p>
+      <div className="flex items-center justify-center gap-10 md:hidden">
+        {["Male", "Female"].map((label, index) => (
+          <div
+            key={index}
+            className={`flex flex-col items-center justify-center gap-2 md:gap-5 md:text-2xl px-4 py-2 bg-white rounded-xl shadow-lg ${
+              sex === index ? "border-[#6B7CF6] border-2" : ""
+            }`}
+            onClick={() => setSex(index)}
+          >
+            {label === "Male" ? (
+              <img src="/male.png" alt={label} />
+            ) : (
+              <img src="/female.png" alt={label} />
+            )}
+            <input
+              type="radio"
+              name="gender"
+              value={label}
+              checked={sex === index}
+              onChange={() => setSex(index)}
+              className="scale-125 accent-[#6B7CF6]"
+            />
+            <p>{label}</p>
+          </div>
+        ))}
+      </div>
       <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-12">
-        <div className="flex items-center justify-center gap-10">
+        <div className="hidden md:flex items-center justify-center gap-10">
           {["Male", "Female"].map((label, index) => (
             <div
               key={index}
@@ -112,21 +138,9 @@ const FitCheckYou: React.FC<FitCheckYouProps> = ({
               <p>{label}</p>
             </div>
           ))}
-          {/* {["Male", "Female"].map((label, index) => (
-            <div
-              key={index}
-              className={`flex flex-col items-center justify-center gap-2 md:gap-5 md:text-2xl px-4 py-2 bg-white rounded-xl shadow-lg ${
-                sex === index ? "border-[#6B7CF6] border-2" : ""
-              }`}
-              onClick={() => setSex(index)}
-            >
-              {label === "Male" ? <Male /> : <Female />}
-              <p>{label}</p>
-            </div>
-          ))} */}
         </div>
 
-        <div className="flex flex-col items-center justify-center gap-[8%] md:gap-[10%] lg:gap-8 py-4">
+        <div className="flex flex-col items-center justify-center gap-[8%] md:gap-[10%] lg:gap-8 py-2 md:py-4">
           {/* Height Input */}
           <div className="flex items-end justify-center gap-2">
             <TextField
