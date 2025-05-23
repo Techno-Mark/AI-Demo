@@ -95,9 +95,9 @@ const Auth = ({
           autoComplete="off"
         >
           <Button
-            variant="outlined"
+            variant="contained"
             fullWidth
-            className="rounded-md py-2 border-[#6B7CF6] text-[#6B7CF6]"
+            className="rounded-md py-2 bg-[#6B7CF6] hover:bg-[#5a6adf]"
             onClick={() => {
               setIsLoginClicked(2);
               setLogin(null);
@@ -177,12 +177,12 @@ const Auth = ({
 
           <Button
             type="submit"
-            variant="contained"
+            variant="outlined"
             fullWidth
             className={`rounded-md py-2 text-white ${
               loading
-                ? "bg-gray-400 hover:bg-gray-400 cursor-not-allowed"
-                : "bg-[#6B7CF6] hover:bg-[#5a6adf] cursor-pointer"
+                ? "border-gray-400 hover:border-gray-400 !text-gray-600 cursor-not-allowed"
+                : "border-[#6B7CF6] !text-[#6B7CF6] cursor-pointer"
             }`}
             disabled={loading}
           >
