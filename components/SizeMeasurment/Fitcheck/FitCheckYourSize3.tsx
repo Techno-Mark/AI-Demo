@@ -817,11 +817,11 @@ const FitCheckYourSize4 = ({
     <div className="flex flex-col items-center justify-between w-full h-full min-h-[60vh]">
       {!camera && !capturedImage && (
         <div className="flex flex-col items-center justify-center py-5 md:py-0 gap-4 overflow-y-auto my-10">
-          <div className="flex items-center justify-center py-4 px-4 mx-4 rounded-lg border border-gray gap-5 max-w-[80%]">
+          <div className="flex items-center justify-center md:py-4 px-4 mx-4 rounded-lg border border-gray gap-5 max-w-[80%]">
             <Voice />
             <p>Turn up your volume to be guided during the scan</p>
           </div>
-          <div className="flex items-center justify-center py-4 px-4 mx-4 rounded-lg border border-gray gap-5 max-w-[80%]">
+          <div className="flex items-center justify-center md:py-4 px-4 mx-4 rounded-lg border border-gray gap-5 max-w-[80%]">
             <Mobile />
             <p>
               Set your phone straight onto a table, around your waist height
@@ -921,7 +921,7 @@ const FitCheckYourSize4 = ({
         !isCounting &&
         measurements.length > 0 && (
           <div className="flex flex-col items-center justify-center gap-4">
-            <p className="px-8 pt-6 text-lg lg:text-3xl">
+            <p className="px-4 md:px-8 pt-6 text-lg lg:text-3xl">
               We recommend you get size{" "}
               <span className="text-[#6B7CF6]">
                 {estimateTShirtSize(
@@ -963,7 +963,7 @@ const FitCheckYourSize4 = ({
                   </div>
                 </div>
                 <p className="text-md lg:text-xl text-center">
-                  Create an Account to always have your size
+                  Always know your size
                 </p>
                 <Button
                   variant="outlined"
@@ -976,7 +976,7 @@ const FitCheckYourSize4 = ({
                   }}
                   className="border-[#6B7CF6] text-[#6B7CF6]"
                 >
-                  Create an account now
+                  Create an account
                 </Button>
               </>
             )}

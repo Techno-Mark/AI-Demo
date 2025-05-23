@@ -8,6 +8,7 @@ const Voice = () => {
       height="100"
       viewBox="0 0 134 130"
       fill="none"
+      className="rounded-lg"
     >
       <rect width="134" height="130" rx="4" fill="#5F5BB2" />
       <path

@@ -1,7 +1,5 @@
 import { TextField, Switch } from "@mui/material";
-import React, { useState } from "react";
-import Female from "tsconfig.json/assets/icons/Female`";
-import Male from "tsconfig.json/assets/icons/Male`";
+import React, { useEffect, useState } from "react";
 
 interface FitCheckYouProps {
   sex: number;
@@ -33,11 +31,20 @@ const FitCheckYou: React.FC<FitCheckYouProps> = ({
   setWeightErr,
 }) => {
   const [isWeightInLb, setIsWeightInLb] = useState(false);
-  const [heightInput, setHeightInput] = useState(height.toString());
-  const [weightInput, setWeightInput] = useState(weight.toString());
+  const [heightInput, setHeightInput] = useState("");
+  const [weightInput, setWeightInput] = useState("");
 
   const inchesToCm = (inch: number) => inch * 2.54;
   const lbToKg = (lb: number) => lb / 2.20462;
+
+  // Keep input field blank if value is 0
+  useEffect(() => {
+    setHeightInput(height > 0 ? height.toString() : "");
+  }, [height]);
+
+  useEffect(() => {
+    setWeightInput(weight > 0 ? weight.toString() : "");
+  }, [weight]);
 
   const handleHeightSwitch = () => {
     setHeightInput("");
@@ -66,11 +73,15 @@ const FitCheckYou: React.FC<FitCheckYouProps> = ({
     const regex = isInInchOrLb
       ? /^\d{0,2}(\.\d{0,2})?$/
       : /^\d{0,3}(\.\d{0,2})?$/;
+
     if (regex.test(filteredValue)) {
       setInput(filteredValue);
     }
 
-    if (filteredValue === "") return;
+    if (filteredValue === "") {
+      setValue(0);
+      return;
+    }
 
     if (regex.test(filteredValue)) {
       const num = Number(filteredValue);
@@ -82,10 +93,11 @@ const FitCheckYou: React.FC<FitCheckYouProps> = ({
 
   return (
     <div className="flex flex-col items-center justify-between md:max-w-[70%] lg:max-w-[50%] min-h-[60vh] md:min-h-[30vh]">
-      <p className="md:text-lg lg:text-xl pb-2 md:py-4 md:pb-8 md:px-0 flex items-center justify-center text-center">
-        To help us find your size, tell us if you’re shopping for male or female
+      <p className="md:text-lg lg:text-xl pb-6 md:py-4 md:pb-8 md:px-0 flex items-center justify-center text-center">
+        To help us find your size, tell us if you’re<br className="md:hidden" /> shopping for male or female
         clothing.
       </p>
+
       <div className="flex items-center justify-center gap-10 md:hidden">
         {["Male", "Female"].map((label, index) => (
           <div
@@ -100,25 +112,26 @@ const FitCheckYou: React.FC<FitCheckYouProps> = ({
             ) : (
               <img src="/female.png" alt={label} />
             )}
-            <input
+            {/* <input
               type="radio"
               name="gender"
               value={label}
               checked={sex === index}
               onChange={() => setSex(index)}
               className="scale-125 accent-[#6B7CF6]"
-            />
+            /> */}
             <p>{label}</p>
           </div>
         ))}
       </div>
+
       <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-12">
         <div className="hidden md:flex items-center justify-center gap-10">
           {["Male", "Female"].map((label, index) => (
             <div
               key={index}
-              className={`flex flex-col items-center justify-center gap-2 md:gap-5 md:text-2xl px-4 py-2 bg-white rounded-xl shadow-lg ${
-                sex === index ? "border-[#6B7CF6] border-2" : ""
+              className={`flex flex-col items-center justify-center gap-2 md:gap-5 md:text-2xl min-w-[116px] px-4 py-2 bg-white rounded-xl shadow-lg ${
+                sex === index ? "border-[#6B7CF6] border-2" : "border-white border-2"
               }`}
               onClick={() => setSex(index)}
             >
@@ -127,22 +140,22 @@ const FitCheckYou: React.FC<FitCheckYouProps> = ({
               ) : (
                 <img src="/female.png" alt={label} />
               )}
-              <input
+              {/* <input
                 type="radio"
                 name="gender"
                 value={label}
                 checked={sex === index}
                 onChange={() => setSex(index)}
-                className="scale-125 accent-[#6B7CF6]"
-              />
+                className="scale-125 accent-[#6B7CF6] !-mb-2"
+              /> */}
               <p>{label}</p>
             </div>
           ))}
         </div>
 
-        <div className="flex flex-col items-center justify-center gap-[8%] md:gap-[10%] lg:gap-8 pt-2 md:py-4">
+        <div className="flex flex-col items-center justify-center gap-[8%] md:gap-[4%] pt-6 pb-2 md:py-4">
           {/* Height Input */}
-          <div className="flex items-end justify-center gap-2">
+          <div className="flex items-center justify-center gap-2">
             <TextField
               label={`Height (${isHeightInInch ? "IN" : "CM"})`}
               type="text"
@@ -166,8 +179,9 @@ const FitCheckYou: React.FC<FitCheckYouProps> = ({
               variant="standard"
               sx={{ width: 200, mx: 0.75 }}
               error={heightErr}
-              helperText={heightErr ? "Enter a valid height." : ""}
+              helperText={heightErr ? "Enter a valid height." : " "}
             />
+
             <div className="flex items-center gap-2">
               <span className="text-sm">cm</span>
               <Switch
@@ -187,7 +201,7 @@ const FitCheckYou: React.FC<FitCheckYouProps> = ({
           </div>
 
           {/* Weight Input */}
-          <div className="flex items-end justify-center gap-2">
+          <div className="flex items-center justify-center gap-2">
             <TextField
               label={`Weight (${isWeightInLb ? "LB" : "KG"})`}
               type="text"
@@ -210,8 +224,9 @@ const FitCheckYou: React.FC<FitCheckYouProps> = ({
               margin="normal"
               variant="standard"
               sx={{ width: 200, mx: 0.75 }}
+              className="!mt-0 md:mt-auto"
               error={weightErr}
-              helperText={weightErr ? "Enter a valid weight." : ""}
+              helperText={weightErr ? "Enter a valid weight." : " "}
             />
             <div className="flex items-center gap-2">
               <span className="text-sm">kg</span>

@@ -85,15 +85,32 @@ const Auth = ({
         <h2 className="text-xl md:text-2xl font-bold text-[#6B7CF6] mb-2">
           Welcome to your personal sizing assistant.
         </h2>
-        <p className="text-gray-600 mb-6 md:mb-4 md:text-xl">
+        <p className="text-gray-600 mb-6 md:mb-4 lg:mb-8 md:text-xl">
           Scan your body and have fun shopping!
         </p>
 
         <form
           onSubmit={handleAuth}
-          className="space-y-6 md:space-y-4 max-w-md"
+          className="space-y-6 md:space-y-4 lg:space-y-8 max-w-lg"
           autoComplete="off"
         >
+          <Button
+            variant="outlined"
+            fullWidth
+            className="rounded-md py-2 border-[#6B7CF6] text-[#6B7CF6]"
+            onClick={() => {
+              setIsLoginClicked(2);
+              setLogin(null);
+            }}
+          >
+            Get Started
+          </Button>
+
+          <div className="flex items-center gap-4">
+            <div className="flex-grow h-px bg-gray-300" />
+            <div className="text-center text-gray-400 text-sm">OR</div>
+            <div className="flex-grow h-px bg-gray-300" />
+          </div>
           <div>
             <label className="block text-sm text-gray-500 mb-1">
               Email Address
@@ -181,24 +198,6 @@ const Auth = ({
               {isRegister ? "Sign In" : "Register"}
             </span>
           </div>
-          
-          <div className="flex items-center gap-4">
-            <div className="flex-grow h-px bg-gray-300" />
-            <div className="text-center text-gray-400 text-sm">OR</div>
-            <div className="flex-grow h-px bg-gray-300" />
-          </div>
-
-          <Button
-            variant="outlined"
-            fullWidth
-            className="rounded-md py-2 border-[#6B7CF6] text-[#6B7CF6]"
-            onClick={() => {
-              setIsLoginClicked(2);
-              setLogin(null);
-            }}
-          >
-            Get Started
-          </Button>
         </form>
       </div>
     </div>

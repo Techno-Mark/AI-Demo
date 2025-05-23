@@ -4,10 +4,11 @@ const Mobile = () => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width="100"
-      height="100"
+      width="130"
+      height="110"
       viewBox="0 0 130 130"
       fill="none"
+      className="rounded-lg"
     >
       <g clip-path="url(#clip0_19_582)">
         <path d="M130 0H0V130H130V0Z" fill="#5F5BB2" />

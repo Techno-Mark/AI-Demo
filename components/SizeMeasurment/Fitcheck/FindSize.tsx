@@ -144,16 +144,16 @@ const FindSize: React.FC<FindSizeProps> = ({
 
         {activeTab === 2 && (
           <div className="flex flex-col items-center justify-between py-1 gap-2 min-h-[50vh]">
-            <p className="text-ml flex items-center justify-center text-center py-3 max-w-[70%]">
+            <p className="text-ml flex items-center justify-center text-center max-w-[85%] md:max-w-[70%] pb-2">
               For the optimal scan, wear tight clothing, choose a clear
               background, and make sure the lighting is bright and even.
             </p>
             <Image
               src={sex === 0 ? "/men.png" : "/women.png"}
               alt="img"
-              width={250}
-              height={250}
-              className="my-4"
+              width={300}
+              height={300}
+              className="my-3 md:my-0 rounded-lg"
             />
           </div>
         )}
