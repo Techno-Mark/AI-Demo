@@ -878,8 +878,12 @@ const FitCheckYourSize4 = ({
 
     const baseStyle = "flex items-center justify-center rounded-full border";
     const sizeStyle = highlight
-      ? "w-16 h-16 text-xl md:w-20 md:h-20 md:text-3xl border-2"
-      : "w-12 h-12 text-lg md:w-12 md:h-12 md:text-2xl border-2";
+      ? `w-16 h-16 ${
+          productPart === "top" ? "!text-xl" : "!text-md"
+        } md:w-20 md:h-20 md:text-3xl border-2`
+      : `w-12 h-12 ${
+          productPart === "top" ? "!text-lg" : "!text-sm"
+        } md:w-12 md:h-12 md:text-2xl border-2`;
     const colorStyle = getSizeColor(position);
 
     return (
