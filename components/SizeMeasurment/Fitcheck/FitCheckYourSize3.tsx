@@ -138,6 +138,7 @@ const FitCheckYourSize4 = ({
   });
   const [device, setDevice] = useState("desktop");
   const [started, setStarted] = useState(false);
+  const [imageValue, setImageValue] = useState("green");
 
   useEffect(() => {
     function updateDevice() {
@@ -156,6 +157,7 @@ const FitCheckYourSize4 = ({
     setId(0);
     setCapturedImage(null);
     setSideCapturedImage(null);
+    setImageValue("green");
     setMeasurementDialog({
       chestSize: 0,
       waistSize: 0,
@@ -697,25 +699,47 @@ const FitCheckYourSize4 = ({
     setIsCounting(false);
   };
 
-  const estimateTShirtSize = (chestInCM: number) => {
+  const estimateTShirtSize = (
+    chestInCM: number,
+    position: "current" | "prev" | "next" = "current",
+    isSmall: boolean = false
+  ) => {
     const sizeChart = !!measurementMatrix
       ? measurementMatrix
       : [
-          { min: 0, max: 87.99, size: "Check kids section" },
-          { min: 88, max: 91.99, size: "Small (S)" },
-          { min: 92, max: 95.99, size: "Medium (M)" },
-          { min: 96, max: 99.99, size: "Large (L)" },
-          { min: 100, max: 103.99, size: "XL" },
-          { min: 104, max: 107.99, size: "XXL" },
-          { min: 108, max: null, size: "Too large size not available" },
+          { min: 0, max: 87.99, size: "Check kids section", smallSize: "" },
+          { min: 88, max: 91.99, size: "Small (S)", smallSize: "20 - 30" },
+          { min: 92, max: 95.99, size: "Medium (M)", smallSize: "M" },
+          { min: 96, max: 99.99, size: "Large (L)", smallSize: "L" },
+          { min: 100, max: 103.99, size: "XL", smallSize: "XL" },
+          { min: 104, max: 107.99, size: "XXL", smallSize: "XXL" },
+          {
+            min: 108,
+            max: null,
+            size: "Too large size not available",
+            smallSize: "",
+          },
         ];
 
-    const size = sizeChart.find(
-      ({ min, max }: { min: number; max: number }) =>
+    const index = sizeChart.findIndex(
+      ({ min, max }: any) =>
         chestInCM >= min && (max === null || chestInCM < max)
     );
 
-    return size ? size.size : "Size not found";
+    if (index === -1) return "";
+
+    if (position === "current")
+      return isSmall ? sizeChart[index].smallSize : sizeChart[index].size;
+    if (position === "prev" && index > 0)
+      return isSmall
+        ? sizeChart[index - 1].smallSize
+        : sizeChart[index - 1].size;
+    if (position === "next" && index < sizeChart.length - 1)
+      return isSmall
+        ? sizeChart[index + 1].smallSize
+        : sizeChart[index + 1].size;
+
+    return "";
   };
 
   useEffect(() => {
@@ -812,6 +836,63 @@ const FitCheckYourSize4 = ({
       }
     };
   }, []);
+
+  const getSizeColor = (position: "current" | "prev" | "next") => {
+    switch (position) {
+      case "prev":
+        return `bg-red-200 ${
+          imageValue === "red" ? "border-red-600" : "border-red-200"
+        } text-red-600`;
+      case "current":
+        return `bg-green-200 ${
+          imageValue === "green" ? "border-green-700" : "border-green-200"
+        }  text-green-700`;
+      case "next":
+        return `bg-yellow-100 ${
+          imageValue === "yellow" ? "border-yellow-600" : "border-yellow-200"
+        } text-yellow-600`;
+    }
+  };
+
+  const getSizeText = (chest: number, position: "current" | "prev" | "next") =>
+    estimateTShirtSize(chest, position, true);
+
+  const SizeCircle = ({
+    position,
+    value,
+    highlight = false,
+  }: {
+    position: "current" | "prev" | "next";
+    value: string;
+    highlight?: boolean;
+  }) => {
+    const size = getSizeText(
+      Number(
+        (productPart === "top"
+          ? averageMeasurements.chestSize * 2.54
+          : averageMeasurements.waistSize * 2.54
+        ).toFixed(2)
+      ),
+      position
+    );
+
+    const baseStyle = "flex items-center justify-center rounded-full border";
+    const sizeStyle = highlight
+      ? "w-16 h-16 text-xl md:w-20 md:h-20 md:text-3xl border-2"
+      : "w-12 h-12 text-lg md:w-12 md:h-12 md:text-2xl border-2";
+    const colorStyle = getSizeColor(position);
+
+    return (
+      <div
+        className={`${baseStyle} ${sizeStyle} ${colorStyle} text-center truncate cursor-pointer ${
+          !size && "hidden"
+        }`}
+        onClick={() => setImageValue(value)}
+      >
+        {size}
+      </div>
+    );
+  };
 
   return (
     <div className="flex flex-col items-center justify-between w-full h-full min-h-[60vh]">
@@ -920,66 +1001,112 @@ const FitCheckYourSize4 = ({
         sideCapturedImage &&
         !isCounting &&
         measurements.length > 0 && (
-          <div className="flex flex-col items-center justify-center gap-4">
-            <p className="px-4 md:px-8 pt-6 text-lg lg:text-3xl">
-              We recommend you get size{" "}
-              <span className="text-[#6B7CF6]">
-                {estimateTShirtSize(
-                  Number(
-                    (productPart === "top"
-                      ? averageMeasurements.chestSize * 2.54
-                      : averageMeasurements.waistSize * 2.54
-                    ).toFixed(2)
-                  )
-                )}
-              </span>
-              .
-            </p>
-            <Button
-              variant="contained"
-              onClick={() => {
-                parent.postMessage({ type: "closeIframeWindow" }, "*");
-              }}
-              className="mt-6 !bg-[#6B7CF6] hover:!bg-[#4e5ab6]"
-            >
-              Return to shopping
-            </Button>
-            {login && (
-              <Button
-                variant="outlined"
-                onClick={() => getUserData()}
-                className="rounded-md border-[#6B7CF6] text-[#6B7CF6] mt-6"
-              >
-                Change my metrics
-              </Button>
-            )}
-            {!login && (
-              <>
-                <div className="w-full">
-                  <div className="flex items-center gap-4 mt-6">
-                    <div className="flex-grow h-px bg-gray-300" />
-                    <div className="text-center text-gray-400 text-sm">OR</div>
-                    <div className="flex-grow h-px bg-gray-300" />
-                  </div>
+          <div className="flex items-center md:items-start justify-center">
+            <img
+              src={`/${
+                productPart === "top" ? "top" : "bottom"
+              }/${imageValue}.png`}
+              alt=""
+              className="hidden md:flex h-[75vh]"
+            />
+            <div className="flex flex-col items-center justify-center gap-4">
+              <p className="px-2 md:px-8 pt-2 md:mt-0 text-lg lg:text-3xl">
+                We recommend you get size{" "}
+                <span className="text-[#6B7CF6]">
+                  {estimateTShirtSize(
+                    Number(
+                      (productPart === "top"
+                        ? averageMeasurements.chestSize * 2.54
+                        : averageMeasurements.waistSize * 2.54
+                      ).toFixed(2)
+                    )
+                  )}
+                </span>
+                .
+              </p>
+              <div className="flex items-center justify-center gap-3 md:gap-6">
+                <img
+                  src={`/${
+                    productPart === "top" ? "top" : "bottom"
+                  }/${imageValue}.png`}
+                  alt=""
+                  className="h-64 md:hidden"
+                />
+                <div className="flex flex-col md:flex-row items-center justify-center gap-3 pb-6">
+                  <SizeCircle
+                    position="prev"
+                    value="red"
+                    highlight={imageValue === "red"}
+                  />
+                  <SizeCircle
+                    position="current"
+                    value="green"
+                    highlight={imageValue === "green"}
+                  />
+                  <SizeCircle
+                    position="next"
+                    value="yellow"
+                    highlight={imageValue === "yellow"}
+                  />
                 </div>
-                <p className="text-md lg:text-xl text-center">
-                  Always know your size
-                </p>
+              </div>
+              <p className="-mt-10 md:-mt-6 text-md lg:text-xl text-center">
+                {imageValue === "green"
+                  ? "Perfect regular fit"
+                  : imageValue === "red"
+                  ? "This shirt might be too tight"
+                  : imageValue === "yellow"
+                  ? "This size might be a bit loose."
+                  : ""}
+              </p>
+              <Button
+                variant="contained"
+                onClick={() => {
+                  parent.postMessage({ type: "closeIframeWindow" }, "*");
+                }}
+                className="md:mt-6 !bg-[#6B7CF6] hover:!bg-[#4e5ab6]"
+              >
+                Return to shopping
+              </Button>
+              {login && (
                 <Button
                   variant="outlined"
-                  onClick={() => {
-                    localStorage.removeItem("token");
-                    setLogin(null);
-                    setIsRegister(true);
-                    setIsLoginClicked(0);
-                    setActiveTab(1);
-                  }}
-                  className="border-[#6B7CF6] text-[#6B7CF6]"
+                  onClick={() => getUserData()}
+                  className="rounded-md border-[#6B7CF6] text-[#6B7CF6] mt-3 md:mt-6"
                 >
-                  Create an account
+                  Change my metrics
                 </Button>
-              </>
-            )}
+              )}
+              {!login && (
+                <>
+                  <div className="w-full">
+                    <div className="flex items-center gap-4 mt-1 md:mt-4">
+                      <div className="flex-grow h-px bg-gray-300" />
+                      <div className="text-center text-gray-400 text-sm">
+                        OR
+                      </div>
+                      <div className="flex-grow h-px bg-gray-300" />
+                    </div>
+                  </div>
+                  <p className="text-md lg:text-xl text-center -mt-1">
+                    Always know your size
+                  </p>
+                  <Button
+                    variant="outlined"
+                    onClick={() => {
+                      localStorage.removeItem("token");
+                      setLogin(null);
+                      setIsRegister(true);
+                      setIsLoginClicked(0);
+                      setActiveTab(1);
+                    }}
+                    className="border-[#6B7CF6] text-[#6B7CF6]"
+                  >
+                    Create an account
+                  </Button>
+                </>
+              )}
+            </div>
           </div>
         )}
     </div>
