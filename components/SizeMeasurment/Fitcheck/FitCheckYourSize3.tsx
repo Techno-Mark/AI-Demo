@@ -708,7 +708,7 @@ const FitCheckYourSize4 = ({
       ? measurementMatrix
       : [
           { min: 0, max: 87.99, size: "Check kids section", smallSize: "" },
-          { min: 88, max: 91.99, size: "Small (S)", smallSize: "20 - 30" },
+          { min: 88, max: 91.99, size: "Small (S)", smallSize: "S" },
           { min: 92, max: 95.99, size: "Medium (M)", smallSize: "M" },
           { min: 96, max: 99.99, size: "Large (L)", smallSize: "L" },
           { min: 100, max: 103.99, size: "XL", smallSize: "XL" },
@@ -1011,17 +1011,30 @@ const FitCheckYourSize4 = ({
             />
             <div className="flex flex-col items-center justify-center gap-4">
               <p className="px-2 md:px-8 pt-2 md:mt-0 text-lg lg:text-3xl">
-                We recommend you get size{" "}
-                <span className="text-[#6B7CF6]">
-                  {estimateTShirtSize(
-                    Number(
-                      (productPart === "top"
-                        ? averageMeasurements.chestSize * 2.54
-                        : averageMeasurements.waistSize * 2.54
-                      ).toFixed(2)
-                    )
-                  )}
-                </span>
+                {estimateTShirtSize(
+                  Number(
+                    (productPart === "top"
+                      ? averageMeasurements.chestSize * 2.54
+                      : averageMeasurements.waistSize * 2.54
+                    ).toFixed(2)
+                  )
+                ) ? (
+                  <>
+                    We recommend you get size
+                    <span className="text-[#6B7CF6]">
+                      {estimateTShirtSize(
+                        Number(
+                          (productPart === "top"
+                            ? averageMeasurements.chestSize * 2.54
+                            : averageMeasurements.waistSize * 2.54
+                          ).toFixed(2)
+                        )
+                      )}
+                    </span>
+                  </>
+                ) : (
+                  "Your size is not available"
+                )}
                 .
               </p>
               <div className="flex items-center justify-center gap-3 md:gap-6">
@@ -1050,15 +1063,26 @@ const FitCheckYourSize4 = ({
                   />
                 </div>
               </div>
-              <p className="-mt-10 md:-mt-6 text-md lg:text-xl text-center">
-                {imageValue === "green"
-                  ? "Perfect regular fit"
-                  : imageValue === "red"
-                  ? "This shirt might be too tight"
-                  : imageValue === "yellow"
-                  ? "This size might be a bit loose."
-                  : ""}
-              </p>
+              {estimateTShirtSize(
+                Number(
+                  (productPart === "top"
+                    ? averageMeasurements.chestSize * 2.54
+                    : averageMeasurements.waistSize * 2.54
+                  ).toFixed(2)
+                )
+              ) ? (
+                <p className="-mt-10 md:-mt-6 text-md lg:text-xl text-center">
+                  {imageValue === "green"
+                    ? "Perfect regular fit"
+                    : imageValue === "red"
+                    ? "This shirt might be too tight"
+                    : imageValue === "yellow"
+                    ? "This size might be a bit loose."
+                    : ""}
+                </p>
+              ) : (
+                <></>
+              )}
               <Button
                 variant="contained"
                 onClick={() => {
