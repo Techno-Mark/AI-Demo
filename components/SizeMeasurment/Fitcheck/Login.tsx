@@ -81,7 +81,7 @@ const Auth = ({
         />
       </div> */}
 
-      <div className="mt-5 md:mt-0 md:w-1/2 bg-white flex flex-col justify-center md:items-center px-6 md:px-10">
+      <div className="mt-5 md:mt-0 bg-white flex flex-col justify-center md:items-center px-6 md:px-10">
         <h2 className="text-xl md:text-2xl font-bold text-[#6B7CF6] mb-2">
           Welcome to your personal sizing assistant.
         </h2>
