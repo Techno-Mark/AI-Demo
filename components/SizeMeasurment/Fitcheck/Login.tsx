@@ -72,16 +72,16 @@ const Auth = ({
   };
 
   return (
-    <div className="flex flex-col md:flex-row min-h-[88vh] h-full w-full">
-      <div className="hidden md:flex w-1/2 bg-white items-center justify-center">
+    <div className="flex flex-col items-center justify-center md:flex-row min-h-[88vh] h-full w-full">
+      {/* <div className="hidden md:flex w-1/2 bg-white items-center justify-center">
         <img
           src="/login.png"
           alt="Body Scanner"
           className="max-h-[85%] -mt-2"
         />
-      </div>
+      </div> */}
 
-      <div className="mt-5 md:mt-0 md:w-1/2 bg-white flex flex-col justify-center px-6 md:px-10">
+      <div className="mt-5 md:mt-0 md:w-1/2 bg-white flex flex-col justify-center md:items-center px-6 md:px-10">
         <h2 className="text-xl md:text-2xl font-bold text-[#6B7CF6] mb-2">
           Welcome to your personal sizing assistant.
         </h2>
@@ -91,7 +91,7 @@ const Auth = ({
 
         <form
           onSubmit={handleAuth}
-          className="space-y-6 md:space-y-4 lg:space-y-8 max-w-lg"
+          className="space-y-6 md:space-y-4 lg:space-y-8 max-w-lg md:min-w-[400px]"
           autoComplete="off"
         >
           <Button
